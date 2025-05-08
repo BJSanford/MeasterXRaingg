@@ -523,7 +523,14 @@ export async function fetchRaces(participantCount = 50): Promise<RacesFetchRespo
       throw new Error(`HTTP error! Status: ${response.status}`)
     }
 
-    return await response.json()
+    const data = await response.json()
+    console.log('Race data received:', data)
+
+    // Transform the data to match our expected format
+    return {
+      code: "success",
+      results: Array.isArray(data) ? data : [data]
+    }
   } catch (error) {
     console.error('Error fetching races:', error)
     return mockRacesData
