@@ -48,19 +48,17 @@ export default function WeeklyRacePage() {
       return
     }
 
-    // Fix milliseconds calculation for seconds
+    // Calculate remaining time
     const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24))
     const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
     const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60))
     const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000)
 
-    // Only update if we have valid numbers
-    if (!isNaN(days) && !isNaN(hours) && !isNaN(minutes) && !isNaN(seconds)) {
-      setRaceInfo(prev => ({
-        ...prev,
-        timeLeft: `${days}d ${hours}h ${minutes}m ${seconds}s`
-      }))
-    }
+    // Update state with formatted time
+    setRaceInfo(prev => ({
+      ...prev,
+      timeLeft: `${days}d ${hours}h ${minutes}m ${seconds}s`
+    }))
   }
 
   async function loadLeaderboard() {
@@ -82,6 +80,8 @@ export default function WeeklyRacePage() {
       // Parse dates from race info
       if (data.race) {
         const startDate = new Date(data.race.starts_at)
+        const endDate = new Date(data.race.ends_at)
+        
         setRaceInfo({
           startDate: startDate.toLocaleDateString('en-US', {
             year: 'numeric',
@@ -90,7 +90,7 @@ export default function WeeklyRacePage() {
             timeZone: 'UTC'
           }),
           endDate: data.race.ends_at,
-          timeLeft: ''
+          timeLeft: ''  // This will be updated by the timer
         })
       }
 
