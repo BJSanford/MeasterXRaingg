@@ -208,12 +208,12 @@ export default function LeaderboardPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {leaderboard.map((user, index) => {
+                      {leaderboard.slice(0, 15).map((user, index) => {
                         // Calculate rakeback percentage based on wagered amount
                         let rakebackPercentage = 5 // Default
-                        if (user.wagered >= 10000) {
+                        if (Math.round(user.wagered) >= 10000) {
                           rakebackPercentage = 10
-                        } else if (user.wagered >= 5000) {
+                        } else if (Math.round(user.wagered) >= 5000) {
                           rakebackPercentage = 7.5
                         }
 
@@ -272,7 +272,7 @@ export default function LeaderboardPage() {
                               </div>
                             </td>
                             <td className="p-4">
-                              {(leaderboardType === "wagered" ? user.wagered : user.deposited).toLocaleString()} coins
+                              {Math.round(leaderboardType === "wagered" ? user.wagered : user.deposited).toLocaleString()} coins
                             </td>
                             {leaderboardType === "wagered" && (
                               <td className="p-4">
