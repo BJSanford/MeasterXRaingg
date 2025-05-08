@@ -35,17 +35,29 @@ export default function LoginPage() {
 
     try {
       if (!userId.trim()) {
-        setError("Please enter a user ID")
+        setError("Please enter your username")
         toast({
           title: "Login failed",
-          description: "Please enter a user ID",
+          description: "Please enter your username",
           variant: "destructive",
         })
         setIsLoading(false)
         return
       }
 
-      await login(userId)
+      const userData = await verifyUser(userId.trim())
+      if (!userData) {
+        setError("Username not found in MEASTER community")
+        toast({
+          title: "Login failed",
+          description: "Username not found in MEASTER community",
+          variant: "destructive",
+        })
+        setIsLoading(false)
+        return
+      }
+
+      await login(userData.id)
       toast({
         title: "Login successful",
         description: "Welcome to the MEASTER community!",

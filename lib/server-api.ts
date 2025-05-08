@@ -10,6 +10,39 @@ const headers = {
   "x-api-key": API_KEY,
 }
 
+// Cache configuration
+let userDataCache: ReferredUser[] | null = null;
+let lastCacheTime: number = 0;
+const CACHE_DURATION = 20 * 60 * 1000; // 20 minutes in milliseconds
+
+// Function to fetch and cache user data
+async function getUserData(): Promise<ReferredUser[]> {
+  const now = Date.now();
+  if (userDataCache && (now - lastCacheTime) < CACHE_DURATION) {
+    return userDataCache;
+  }
+
+  const response = await fetch(`${API_BASE_URL}/affiliates/raffle`, {
+    headers,
+    cache: 'no-store'
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch user data');
+  }
+
+  const data = await response.json();
+  userDataCache = data.results;
+  lastCacheTime = now;
+  return userDataCache;
+}
+
+// Function to verify user and get their data
+export async function verifyUser(username: string): Promise<ReferredUser | null> {
+  const users = await getUserData();
+  return users.find(user => user.username.toLowerCase() === username.toLowerCase()) || null;
+}
+
 // API date range
 const defaultDateRange = {
   startDate: "2025-01-01T00:00:00.00Z",
