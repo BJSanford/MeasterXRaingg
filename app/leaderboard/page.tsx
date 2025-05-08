@@ -70,19 +70,22 @@ export default function WeeklyRacePage() {
         return
       }
 
-      const raceData = Array.isArray(data.results) ? data.results[0] : data
-      setLeaderboard(raceData.participants || [])
+      const raceData = Array.isArray(data.results) ? data.results[0] : data;
       
-      setRaceInfo({
-        startDate: new Date(raceData.starts_at).toLocaleDateString(),
-        endDate: raceData.ends_at,
-        timeLeft: '',
-        payoutDistribution: raceData.payout_distribution || [],
-        name: raceData.name,
-        description: raceData.description
-      })
+      if (raceData) {
+        setLeaderboard(raceData.participants || []);
+        
+        setRaceInfo({
+          startDate: new Date(raceData.starts_at).toLocaleDateString(),
+          endDate: new Date(raceData.ends_at).toISOString(),
+          timeLeft: '',
+          payoutDistribution: raceData.payout_distribution || [],
+          name: raceData.name || 'Weekly Race',
+          description: raceData.description || 'Compete for prizes'
+        });
+      }
 
-      if (data.results[0]?.username === "Player123") {
+      if (data.results?.[0]?.username === "Player123") {
         setUsingMockData(true)
       }
     } catch (err) {
