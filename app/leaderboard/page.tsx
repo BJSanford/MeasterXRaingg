@@ -47,11 +47,12 @@ export default function WeeklyRacePage() {
     const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
 
-    let timeString = '';
-    if (days > 0) timeString += `${days}d `;
-    if (hours > 0 || days > 0) timeString += `${hours}h `;
-    if (minutes > 0 || hours > 0 || days > 0) timeString += `${minutes}m `;
-    timeString += `${seconds}s`;
+    const timeString = [
+      days > 0 ? `${days}d` : '',
+      hours > 0 ? `${hours}h` : '',
+      minutes > 0 ? `${minutes}m` : '',
+      `${seconds}s`
+    ].filter(Boolean).join(' ');
 
     setRaceInfo(prev => ({
       ...prev,
@@ -74,17 +75,20 @@ export default function WeeklyRacePage() {
       }
 
       const raceData = Array.isArray(data.results) ? data.results[0] : data;
-      setLeaderboard(raceData.participants || []);
-      
-      if (raceData.starts_at && raceData.ends_at) {
+      if (raceData && Array.isArray(raceData.participants)) {
+        setLeaderboard(raceData.participants);
+        
         setRaceInfo({
-          startDate: new Date(raceData.starts_at).toLocaleDateString(),
-          endDate: raceData.ends_at,
-          timeLeft: ''
+          startDate: raceData.starts_at ? new Date(raceData.starts_at).toLocaleDateString() : '',
+          endDate: raceData.ends_at || '',
+          timeLeft: '',
+          payoutDistribution: raceData.payout_distribution || [],
+          name: raceData.name || '',
+          description: raceData.description || ''
         });
       }
 
-      if (data.results[0]?.username === "Player123") {
+      if (data.results?.[0]?.username === "Player123") {
         setUsingMockData(true)
       }
     } catch (err) {
