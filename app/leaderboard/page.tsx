@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useEffect, useState } from "react"
@@ -69,13 +68,13 @@ export default function WeeklyRacePage() {
 
       setLeaderboard(data.results)
       
-      if (data.starts_at && data.ends_at) {
-        setRaceInfo({
-          startDate: new Date(data.starts_at).toLocaleDateString(),
-          endDate: data.ends_at,
-          timeLeft: ''
-        })
-      }
+      // Extract race timing information from the first race
+      const race = data.race || {} // Add this fallback
+      setRaceInfo({
+        startDate: race.starts_at ? new Date(race.starts_at).toLocaleDateString() : 'N/A',
+        endDate: race.ends_at || '', // This is used for countdown calculation
+        timeLeft: ''
+      })
 
       if (data.results[0]?.username === "Player123") {
         setUsingMockData(true)

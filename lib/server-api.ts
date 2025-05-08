@@ -123,6 +123,11 @@ export interface LeaderboardUser {
 
 export interface LeaderboardResponse {
   code: string
+  race?: {
+    starts_at: string
+    ends_at: string
+    prize_pool: number
+  }
   results: LeaderboardUser[]
 }
 
@@ -376,9 +381,14 @@ export async function fetchLeaderboard(type: "wagered" | "deposited" = "wagered"
     // Get the active race data
     const activeRace = Array.isArray(data.results) ? data.results[0] : data;
     
-    // Map the participants to our leaderboard format
+    // Return both race info and participants
     return {
       code: "success",
+      race: {
+        starts_at: activeRace.starts_at,
+        ends_at: activeRace.ends_at,
+        prize_pool: activeRace.prize_pool || 500
+      },
       results: activeRace.participants?.map((participant: any) => ({
         username: participant.username,
         wagered: participant.wagered,
