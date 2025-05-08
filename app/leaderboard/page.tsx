@@ -15,6 +15,7 @@ import { fetchLeaderboard } from "@/lib/server-api"
 // Hardcoded payout distribution for top 8 places
 const payouts = [500, 250, 150, 50, 20, 15, 10, 5]
 const prizePool = payouts.reduce((a, b) => a + b, 0)
+const coinImg = "/coin.png" // Place your image as /public/coin.png
 
 export default function WeeklyRacePage() {
   const [leaderboard, setLeaderboard] = useState<any[]>([])
@@ -203,19 +204,31 @@ export default function WeeklyRacePage() {
                 </div>
                 <div className="rounded-lg border border-gray-800 p-4 text-center">
                   <p className="text-sm text-gray-400">Prize Pool</p>
-                  <p className="text-lg font-medium">
-                    {prizePool} Coins
+                  <p className="text-lg font-medium flex items-center justify-center gap-1">
+                    <img src={coinImg} alt="Coin" className="inline-block h-6 w-6 mr-1" />
+                    {prizePool}
                   </p>
-                  <div className="mt-2 text-xs text-gray-400">
-                    <div>Distribution:</div>
-                    {payouts.map((amt, idx) => (
-                      <div key={idx}>
-                        {idx + 1}
-                        {["st", "nd", "rd"][idx] || "th"}: {amt} Coins
-                      </div>
-                    ))}
-                  </div>
                 </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Prize Distribution Card */}
+          <Card className="mb-6 border-gray-800 bg-gray-900/70 text-white">
+            <CardHeader>
+              <CardTitle>Prize Distribution</CardTitle>
+              <CardDescription>How the prize pool is split among top places</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="text-sm text-gray-300">
+                {payouts.map((amt, idx) => (
+                  <div key={idx} className="flex items-center gap-1">
+                    {idx + 1}
+                    {["st", "nd", "rd"][idx] || "th"}:
+                    <img src={coinImg} alt="Coin" className="inline-block h-5 w-5 mr-1" />
+                    {amt}
+                  </div>
+                ))}
               </div>
             </CardContent>
           </Card>
@@ -317,12 +330,23 @@ export default function WeeklyRacePage() {
                               <span className="font-medium">{user.username}</span>
                             </div>
                           </td>
-                          <td className="p-4">
-                            {Math.round(user.wagered).toLocaleString()} coins
+                          <td className="p-4 flex items-center gap-1">
+                            <img src={coinImg} alt="Coin" className="inline-block h-4 w-4 mr-1" />
+                            {Math.round(user.wagered).toLocaleString()}
                           </td>
                           <td className="p-4">
-                            <span className="rounded-full bg-purple-900/30 px-2 py-1 text-xs text-purple-400">
-                              {index < payouts.length ? `${payouts[index]} Coins` : "0"}
+                            <span className="rounded-full bg-purple-900/30 px-2 py-1 text-xs text-purple-400 flex items-center gap-1">
+                              {index < payouts.length ? (
+                                <>
+                                  <img src={coinImg} alt="Coin" className="inline-block h-4 w-4 mr-1" />
+                                  {payouts[index]}
+                                </>
+                              ) : (
+                                <>
+                                  <img src={coinImg} alt="Coin" className="inline-block h-4 w-4 mr-1" />
+                                  0
+                                </>
+                              )}
                             </span>
                           </td>
                         </motion.tr>
