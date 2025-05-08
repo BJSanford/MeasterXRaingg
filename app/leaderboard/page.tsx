@@ -41,6 +41,7 @@ export default function WeeklyRacePage() {
       return
     }
 
+    // Calculate days accounting for timezone differences
     const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24))
     const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
     const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60))
@@ -68,11 +69,18 @@ export default function WeeklyRacePage() {
 
       setLeaderboard(data.results)
       
-      // Extract race timing information from the first race
-      const race = data.race || {} // Add this fallback
+      // Extract race timing information, using the correct start date
+      const race = data.race || {}
+      const startDate = race.starts_at ? new Date(race.starts_at) : null
+      const endDate = race.ends_at ? new Date(race.ends_at) : null
+
       setRaceInfo({
-        startDate: race.starts_at ? new Date(race.starts_at).toLocaleDateString() : 'N/A',
-        endDate: race.ends_at || '', // This is used for countdown calculation
+        startDate: startDate ? startDate.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        }) : 'N/A',
+        endDate: race.ends_at || '',
         timeLeft: ''
       })
 
