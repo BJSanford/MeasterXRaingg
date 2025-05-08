@@ -12,6 +12,10 @@ import CityOverlay from "../city-overlay"
 import SnowOverlay from "../snow-overlay"
 import { fetchLeaderboard } from "@/lib/server-api"
 
+// Hardcoded payout distribution for top 8 places
+const payouts = [500, 250, 150, 50, 20, 15, 10, 5]
+const prizePool = payouts.reduce((a, b) => a + b, 0)
+
 export default function WeeklyRacePage() {
   const [leaderboard, setLeaderboard] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -22,8 +26,6 @@ export default function WeeklyRacePage() {
     endDate: '',
     timeLeft: ''
   })
-  const [prizePool, setPrizePool] = useState<number>(0)
-  const [payouts, setPayouts] = useState<number[]>([])
 
   const updateTimeLeft = useCallback(() => {
     if (!raceInfo.endDate) return
@@ -76,25 +78,10 @@ export default function WeeklyRacePage() {
       }
 
       setLeaderboard(data.results)
-      
-      // Parse dates and payout info from race info
+
+      // Parse dates from race info
       if (data.race) {
         const startDate = new Date(data.race.starts_at)
-        // payout_distribution may be a string or array, handle both
-        let payoutArr: number[] = []
-        if (Array.isArray(data.race.payout_distribution)) {
-          payoutArr = data.race.payout_distribution
-        } else if (typeof data.race.payout_distribution === "string") {
-          // Try to parse as JSON array, fallback to split by comma
-          try {
-            payoutArr = JSON.parse(data.race.payout_distribution)
-          } catch {
-            payoutArr = data.race.payout_distribution.split(",").map((v: string) => parseInt(v.trim(), 10)).filter(Boolean)
-          }
-        }
-        setPayouts(payoutArr)
-        setPrizePool(payoutArr.reduce((a, b) => a + b, 0))
-
         setRaceInfo({
           startDate: startDate.toLocaleDateString('en-US', {
             year: 'numeric',
@@ -217,20 +204,17 @@ export default function WeeklyRacePage() {
                 <div className="rounded-lg border border-gray-800 p-4 text-center">
                   <p className="text-sm text-gray-400">Prize Pool</p>
                   <p className="text-lg font-medium">
-                    {prizePool > 0 ? `${prizePool} Coins` : "Loading..."}
+                    {prizePool} Coins
                   </p>
-                  {payouts.length > 0 && (
-                    <div className="mt-2 text-xs text-gray-400">
-                      Distribution:{" "}
-                      {payouts.map((amt, idx) => (
-                        <span key={idx}>
-                          {idx + 1}
-                          {["st", "nd", "rd"][idx] || "th"}: {amt}
-                          {idx < payouts.length - 1 ? ", " : ""}
-                        </span>
-                      ))}
-                    </div>
-                  )}
+                  <div className="mt-2 text-xs text-gray-400">
+                    <div>Distribution:</div>
+                    {payouts.map((amt, idx) => (
+                      <div key={idx}>
+                        {idx + 1}
+                        {["st", "nd", "rd"][idx] || "th"}: {amt} Coins
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </CardContent>
@@ -338,7 +322,7 @@ export default function WeeklyRacePage() {
                           </td>
                           <td className="p-4">
                             <span className="rounded-full bg-purple-900/30 px-2 py-1 text-xs text-purple-400">
-                              ${index === 0 ? '250' : index === 1 ? '150' : index === 2 ? '100' : '0'}
+                              {index < payouts.length ? `${payouts[index]} Coins` : "0"}
                             </span>
                           </td>
                         </motion.tr>
