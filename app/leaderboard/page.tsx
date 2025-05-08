@@ -80,9 +80,7 @@ export default function WeeklyRacePage() {
         payoutDistribution: raceData.payout_distribution || [],
         name: raceData.name,
         description: raceData.description
-          endDate: data.ends_at,
-          timeLeft: ''
-        })
+      })
       }
 
       if (data.results[0]?.username === "Player123") {
