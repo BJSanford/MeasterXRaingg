@@ -89,8 +89,8 @@ export default function WeeklyRacePage() {
             day: 'numeric',
             timeZone: 'UTC'
           }),
-          endDate: data.race.ends_at,
-          timeLeft: ''  // This will be updated by the timer
+          endDate: data.race.ends_at,  // Store the raw UTC date string
+          timeLeft: 'Ends May 12th'    // Static end date display
         })
       }
 
