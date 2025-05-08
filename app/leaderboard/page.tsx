@@ -11,11 +11,12 @@ import { fadeIn, staggerContainer } from "@/lib/animation-utils"
 import CityOverlay from "../city-overlay"
 import SnowOverlay from "../snow-overlay"
 import { fetchLeaderboard } from "@/lib/server-api"
+import Image from "next/image"
 
 // Hardcoded payout distribution for top 8 places
 const payouts = [500, 250, 150, 50, 20, 15, 10, 5]
 const prizePool = payouts.reduce((a, b) => a + b, 0)
-const coinImg = "/coin.png" // Place your image as /public/coin.png
+const coinImg = "/coin.png" // Make sure /public/coin.png exists
 
 export default function WeeklyRacePage() {
   const [leaderboard, setLeaderboard] = useState<any[]>([])
@@ -205,7 +206,7 @@ export default function WeeklyRacePage() {
                 <div className="rounded-lg border border-gray-800 p-4 text-center">
                   <p className="text-sm text-gray-400">Prize Pool</p>
                   <p className="text-lg font-medium flex items-center justify-center gap-1">
-                    <img src={coinImg} alt="Coin" className="inline-block h-6 w-6 mr-1" />
+                    <Image src={coinImg} alt="Coin" width={24} height={24} className="inline-block mr-1" />
                     {prizePool}
                   </p>
                 </div>
@@ -225,7 +226,7 @@ export default function WeeklyRacePage() {
                   <div key={idx} className="flex items-center gap-1">
                     {idx + 1}
                     {["st", "nd", "rd"][idx] || "th"}:
-                    <img src={coinImg} alt="Coin" className="inline-block h-5 w-5 mr-1" />
+                    <Image src={coinImg} alt="Coin" width={20} height={20} className="inline-block mr-1" />
                     {amt}
                   </div>
                 ))}
@@ -331,19 +332,19 @@ export default function WeeklyRacePage() {
                             </div>
                           </td>
                           <td className="p-4 flex items-center gap-1">
-                            <img src={coinImg} alt="Coin" className="inline-block h-4 w-4 mr-1" />
+                            <Image src={coinImg} alt="Coin" width={16} height={16} className="inline-block mr-1" />
                             {Math.round(user.wagered).toLocaleString()}
                           </td>
                           <td className="p-4">
                             <span className="rounded-full bg-purple-900/30 px-2 py-1 text-xs text-purple-400 flex items-center gap-1">
                               {index < payouts.length ? (
                                 <>
-                                  <img src={coinImg} alt="Coin" className="inline-block h-4 w-4 mr-1" />
+                                  <Image src={coinImg} alt="Coin" width={16} height={16} className="inline-block mr-1" />
                                   {payouts[index]}
                                 </>
                               ) : (
                                 <>
-                                  <img src={coinImg} alt="Coin" className="inline-block h-4 w-4 mr-1" />
+                                  <Image src={coinImg} alt="Coin" width={16} height={16} className="inline-block mr-1" />
                                   0
                                 </>
                               )}
