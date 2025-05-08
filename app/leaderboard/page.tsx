@@ -21,10 +21,7 @@ export default function WeeklyRacePage() {
   const [raceInfo, setRaceInfo] = useState({
     startDate: '',
     endDate: '',
-    timeLeft: '',
-    payoutDistribution: [],
-    name: 'Weekly Race',
-    description: 'Compete for prizes'
+    timeLeft: ''
   })
 
   useEffect(() => {
@@ -63,7 +60,6 @@ export default function WeeklyRacePage() {
 
     try {
       const data = await fetchLeaderboard()
-      
       if (!data || !data.results) {
         setError("No data available. Please try again later.")
         setUsingMockData(true)
@@ -71,24 +67,17 @@ export default function WeeklyRacePage() {
         return
       }
 
-      const raceData = Array.isArray(data.results) ? data.results[0] : data
+      setLeaderboard(data.results)
       
-      if (raceData) {
-        setLeaderboard(raceData.participants || [])
-        
-        if (raceData.starts_at && raceData.ends_at) {
-          setRaceInfo({
-            startDate: new Date(raceData.starts_at).toLocaleDateString(),
-            endDate: new Date(raceData.ends_at).toISOString(),
-            timeLeft: '',
-            payoutDistribution: raceData.payout_distribution || [],
-            name: raceData.name || 'Weekly Race',
-            description: raceData.description || 'Compete for prizes'
-          })
-        }
+      if (data.starts_at && data.ends_at) {
+        setRaceInfo({
+          startDate: new Date(data.starts_at).toLocaleDateString(),
+          endDate: data.ends_at,
+          timeLeft: ''
+        })
       }
 
-      if (data.results?.[0]?.username === "Player123") {
+      if (data.results[0]?.username === "Player123") {
         setUsingMockData(true)
       }
     } catch (err) {
@@ -196,9 +185,8 @@ export default function WeeklyRacePage() {
                   </p>
                 </div>
                 <div className="rounded-lg border border-gray-800 p-4 text-center">
-                  <p className="text-sm text-gray-400">Race Info</p>
-                  <p className="text-lg font-medium">{raceInfo.name}</p>
-                  <p className="text-sm text-gray-400 mt-1">{raceInfo.description}</p>
+                  <p className="text-sm text-gray-400">Prize Pool</p>
+                  <p className="text-lg font-medium">$500</p>
                 </div>
               </div>
             </CardContent>
@@ -290,7 +278,7 @@ export default function WeeklyRacePage() {
                               <div className="h-8 w-8 overflow-hidden rounded-full">
                                 {user.avatar ? (
                                   <img
-                                    src={user.avatar.small || "/placeholder.svg"}
+                                    src={user.avatar.small || "/placeholder.svg?height=50&width=50"}
                                     alt={user.username}
                                     className="h-full w-full object-cover"
                                   />
