@@ -21,7 +21,10 @@ export default function WeeklyRacePage() {
   const [raceInfo, setRaceInfo] = useState({
     startDate: '',
     endDate: '',
-    timeLeft: ''
+    timeLeft: '',
+    payoutDistribution: [],
+    name: '',
+    description: ''
   })
 
   useEffect(() => {
@@ -67,11 +70,16 @@ export default function WeeklyRacePage() {
         return
       }
 
-      setLeaderboard(data.results)
+      const raceData = Array.isArray(data.results) ? data.results[0] : data;
+      setLeaderboard(raceData.participants || [])
       
-      if (data.starts_at && data.ends_at) {
-        setRaceInfo({
-          startDate: new Date(data.starts_at).toLocaleDateString(),
+      setRaceInfo({
+        startDate: new Date(raceData.starts_at).toLocaleDateString(),
+        endDate: raceData.ends_at,
+        timeLeft: '',
+        payoutDistribution: raceData.payout_distribution || [],
+        name: raceData.name,
+        description: raceData.description
           endDate: data.ends_at,
           timeLeft: ''
         })
@@ -185,8 +193,9 @@ export default function WeeklyRacePage() {
                   </p>
                 </div>
                 <div className="rounded-lg border border-gray-800 p-4 text-center">
-                  <p className="text-sm text-gray-400">Prize Pool</p>
-                  <p className="text-lg font-medium">$500</p>
+                  <p className="text-sm text-gray-400">Race Info</p>
+                  <p className="text-lg font-medium">{raceInfo.name || 'Weekly Race'}</p>
+                  <p className="text-sm text-gray-400 mt-1">{raceInfo.description}</p>
                 </div>
               </div>
             </CardContent>
