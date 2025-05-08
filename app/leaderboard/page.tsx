@@ -70,7 +70,7 @@ export default function WeeklyRacePage() {
         return
       }
 
-      const raceData = Array.isArray(data.results) ? data.results[0] : data;
+      const raceData = Array.isArray(data.results) ? data.results[0] : data
       setLeaderboard(raceData.participants || [])
       
       setRaceInfo({
@@ -81,7 +81,6 @@ export default function WeeklyRacePage() {
         name: raceData.name,
         description: raceData.description
       })
-      }
 
       if (data.results[0]?.username === "Player123") {
         setUsingMockData(true)
