@@ -357,7 +357,7 @@ async function handleApiRequest<T>(url: string, mockData: T, options: RequestIni
 export async function fetchLeaderboard(type: "wagered" | "deposited" = "wagered"): Promise<LeaderboardResponse> {
   console.log(`Fetching ${type} leaderboard from server-side...`)
 
-  const url = `${API_BASE_URL}/affiliates/leaderboard?start_date=${defaultDateRange.startDate}&end_date=${defaultDateRange.endDate}&type=${type}`
+  const url = `${API_BASE_URL}/affiliates/races?participant_count=50`
   console.log(`Request URL: ${url}`)
 
   try {
@@ -372,19 +372,24 @@ export async function fetchLeaderboard(type: "wagered" | "deposited" = "wagered"
     }
 
     const data = await response.json()
+    
+    // Get the active race data
+    const activeRace = Array.isArray(data.results) ? data.results[0] : data;
+    
+    // Map the participants to our leaderboard format
     return {
       code: "success",
-      results: data.leaderboard?.map((entry: any) => ({
-        username: entry.username || entry.user_id,
-        wagered: entry.wagered,
-        deposited: entry.deposited,
-        position: entry.position || 0,
-        avatar: {
-          small: entry.avatar?.small || "/placeholder.svg?height=50&width=50",
-          medium: entry.avatar?.medium || "/placeholder.svg?height=100&width=100",
-          large: entry.avatar?.large || "/placeholder.svg?height=200&width=200"
+      results: activeRace.participants?.map((participant: any) => ({
+        username: participant.username,
+        wagered: participant.wagered,
+        deposited: participant.wagered_excluding_boost || participant.wagered,
+        position: participant.position,
+        avatar: participant.avatar || {
+          small: "/placeholder.svg?height=50&width=50",
+          medium: "/placeholder.svg?height=100&width=100",
+          large: "/placeholder.svg?height=200&width=200"
         }
-      })) || []
+      })).sort((a: any, b: any) => a.position - b.position) || []
     }
   } catch (error) {
     console.error('Error fetching leaderboard:', error)
