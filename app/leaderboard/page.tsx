@@ -22,6 +22,8 @@ export default function WeeklyRacePage() {
     endDate: '',
     timeLeft: ''
   })
+  const [prizePool, setPrizePool] = useState<number>(0)
+  const [payouts, setPayouts] = useState<number[]>([])
 
   const updateTimeLeft = useCallback(() => {
     if (!raceInfo.endDate) return
@@ -75,10 +77,24 @@ export default function WeeklyRacePage() {
 
       setLeaderboard(data.results)
       
-      // Parse dates from race info
+      // Parse dates and payout info from race info
       if (data.race) {
         const startDate = new Date(data.race.starts_at)
-        
+        // payout_distribution may be a string or array, handle both
+        let payoutArr: number[] = []
+        if (Array.isArray(data.race.payout_distribution)) {
+          payoutArr = data.race.payout_distribution
+        } else if (typeof data.race.payout_distribution === "string") {
+          // Try to parse as JSON array, fallback to split by comma
+          try {
+            payoutArr = JSON.parse(data.race.payout_distribution)
+          } catch {
+            payoutArr = data.race.payout_distribution.split(",").map((v: string) => parseInt(v.trim(), 10)).filter(Boolean)
+          }
+        }
+        setPayouts(payoutArr)
+        setPrizePool(payoutArr.reduce((a, b) => a + b, 0))
+
         setRaceInfo({
           startDate: startDate.toLocaleDateString('en-US', {
             year: 'numeric',
@@ -86,8 +102,8 @@ export default function WeeklyRacePage() {
             day: 'numeric',
             timeZone: 'UTC'
           }),
-          endDate: data.race.ends_at,  // Store the raw UTC date string
-          timeLeft: ''    // Static end date display
+          endDate: data.race.ends_at,
+          timeLeft: ''
         })
       }
 
@@ -200,7 +216,21 @@ export default function WeeklyRacePage() {
                 </div>
                 <div className="rounded-lg border border-gray-800 p-4 text-center">
                   <p className="text-sm text-gray-400">Prize Pool</p>
-                  <p className="text-lg font-medium">$500</p>
+                  <p className="text-lg font-medium">
+                    {prizePool > 0 ? `${prizePool} Coins` : "Loading..."}
+                  </p>
+                  {payouts.length > 0 && (
+                    <div className="mt-2 text-xs text-gray-400">
+                      Distribution:{" "}
+                      {payouts.map((amt, idx) => (
+                        <span key={idx}>
+                          {idx + 1}
+                          {["st", "nd", "rd"][idx] || "th"}: {amt}
+                          {idx < payouts.length - 1 ? ", " : ""}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </CardContent>

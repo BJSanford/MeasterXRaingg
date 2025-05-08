@@ -34,15 +34,15 @@ export default function SnowOverlay() {
 
     // Initialize snowflakes
     const initSnowflakes = () => {
-      const snowflakeCount = Math.floor((canvas.width * canvas.height) / 6000) // Adjust density
+      const snowflakeCount = Math.floor((canvas.width * canvas.height) / 12000) // Lower density (was 6000)
       snowflakesRef.current = []
 
       for (let i = 0; i < snowflakeCount; i++) {
         snowflakesRef.current.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          radius: Math.random() * 3 + 1,
-          speed: Math.random() * 1 + 0.5,
+          radius: Math.random() * 2 + 1, // Slightly smaller max radius
+          speed: Math.random() * 0.5 + 0.2, // Slower speed (was 0.5 to 1.5)
           opacity: Math.random() * 0.5 + 0.3,
           swing: Math.random() * 2 + 1,
           swingOffset: Math.random() * Math.PI * 2,
