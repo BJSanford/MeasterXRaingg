@@ -94,10 +94,15 @@ export default function SnowOverlay() {
     animate()
 
     // Handle window resize
-    window.addEventListener("resize", resizeCanvas)
+    let resizeTimeout: NodeJS.Timeout | null = null
+    const handleResize = () => {
+      if (resizeTimeout) clearTimeout(resizeTimeout)
+      resizeTimeout = setTimeout(resizeCanvas, 100)
+    }
+    window.addEventListener("resize", handleResize)
 
     return () => {
-      window.removeEventListener("resize", resizeCanvas)
+      window.removeEventListener("resize", handleResize)
       cancelAnimationFrame(animationFrameId)
     }
   }, [])

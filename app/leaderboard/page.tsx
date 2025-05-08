@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import Link from "next/link"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
@@ -23,43 +23,41 @@ export default function WeeklyRacePage() {
     timeLeft: ''
   })
 
-  useEffect(() => {
-    loadLeaderboard()
-    const timer = setInterval(updateTimeLeft, 1000)
-    return () => clearInterval(timer)
-  }, [])
-
-  function updateTimeLeft() {
+  const updateTimeLeft = useCallback(() => {
     if (!raceInfo.endDate) return
-
-    const now = new Date().getTime()
+    const now = Date.now()
     const end = new Date(raceInfo.endDate).getTime()
-
-    // Check if dates are valid
     if (isNaN(end)) {
       setRaceInfo(prev => ({ ...prev, timeLeft: 'Invalid date' }))
       return
     }
-
     const timeLeft = end - now
-
     if (timeLeft <= 0) {
       setRaceInfo(prev => ({ ...prev, timeLeft: 'Race Ended' }))
       return
     }
-
-    // Calculate remaining time
     const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24))
     const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
     const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60))
     const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000)
-
-    // Update state with formatted time
     setRaceInfo(prev => ({
       ...prev,
       timeLeft: `${days}d ${hours}h ${minutes}m ${seconds}s`
     }))
-  }
+  }, [raceInfo.endDate])
+
+  useEffect(() => {
+    loadLeaderboard()
+    // Only start timer after endDate is set
+    let timer: NodeJS.Timeout | undefined
+    if (raceInfo.endDate) {
+      timer = setInterval(updateTimeLeft, 1000)
+    }
+    return () => {
+      if (timer) clearInterval(timer)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [raceInfo.endDate])
 
   async function loadLeaderboard() {
     setIsLoading(true)
@@ -80,7 +78,6 @@ export default function WeeklyRacePage() {
       // Parse dates from race info
       if (data.race) {
         const startDate = new Date(data.race.starts_at)
-        const endDate = new Date(data.race.ends_at)
         
         setRaceInfo({
           startDate: startDate.toLocaleDateString('en-US', {
@@ -90,7 +87,7 @@ export default function WeeklyRacePage() {
             timeZone: 'UTC'
           }),
           endDate: data.race.ends_at,  // Store the raw UTC date string
-          timeLeft: 'Ends May 12th'    // Static end date display
+          timeLeft: ''    // Static end date display
         })
       }
 
