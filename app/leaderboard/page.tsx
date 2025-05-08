@@ -69,7 +69,6 @@ export default function WeeklyRacePage() {
 
       setLeaderboard(data.results)
       
-      // Set race dates from the response
       if (data.starts_at && data.ends_at) {
         setRaceInfo({
           startDate: new Date(data.starts_at).toLocaleDateString(),
@@ -309,6 +308,5 @@ export default function WeeklyRacePage() {
         </motion.div>
       </main>
     </div>
-  </div>
   )
 }
