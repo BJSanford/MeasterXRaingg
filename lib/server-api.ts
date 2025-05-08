@@ -1,13 +1,19 @@
 "use server"
 
 // API configuration
-const API_BASE_URL = "https://api.rain.gg/v1" // Added /v1 to the base URL
+const API_BASE_URL = "https://api.rain.gg/v1"
 const API_KEY = "14d2ae5d-cea5-453a-b814-6fd810bda580"
 
-// API headers - Updated to match the curl command
+// API headers
 const headers = {
   accept: "application/json",
   "x-api-key": API_KEY,
+}
+
+// API date range
+const defaultDateRange = {
+  startDate: "2025-01-01T00:00:00.00Z",
+  endDate: "2025-05-09T20:00:00.00Z"
 }
 
 // Types (same as before)
@@ -318,19 +324,39 @@ async function handleApiRequest<T>(url: string, mockData: T, options: RequestIni
 export async function fetchLeaderboard(type: "wagered" | "deposited" = "wagered"): Promise<LeaderboardResponse> {
   console.log(`Fetching ${type} leaderboard from server-side...`)
 
-  // Use fixed dates that match the curl command
-  const startDate = "2024-01-01"
-  const endDate = "2025-12-12"
-
-  console.log(`Using date range: ${startDate} to ${endDate}`)
-
-  // Use the helper function to handle the API request with the correct parameters
-  // Make sure the URL is correctly formatted with no spaces or special characters
-  const url = `${API_BASE_URL}/affiliates/leaderboard?start_date=${startDate}&end_date=${endDate}&type=${type}&code=Measter`
+  const url = `${API_BASE_URL}/affiliates/leaderboard?start_date=${defaultDateRange.startDate}&end_date=${defaultDateRange.endDate}&type=${type}`
   console.log(`Request URL: ${url}`)
 
-  // For now, just return mock data to avoid any potential issues
-  return mockLeaderboardData
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers,
+      cache: 'no-store'
+    })
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`)
+    }
+
+    const data = await response.json()
+    return {
+      code: "success",
+      results: data.leaderboard?.map((entry: any) => ({
+        username: entry.username || entry.user_id,
+        wagered: entry.wagered,
+        deposited: entry.deposited,
+        position: entry.position || 0,
+        avatar: {
+          small: entry.avatar?.small || "/placeholder.svg?height=50&width=50",
+          medium: entry.avatar?.medium || "/placeholder.svg?height=100&width=100",
+          large: entry.avatar?.large || "/placeholder.svg?height=200&width=200"
+        }
+      })) || []
+    }
+  } catch (error) {
+    console.error('Error fetching leaderboard:', error)
+    return mockLeaderboardData
+  }
 }
 
 // Update the fetchReferrals function to match the curl command format
@@ -449,10 +475,24 @@ export async function fetchUserProfile(userId: string): Promise<UserProfile | nu
   }
 }
 
-export async function fetchRaces(participantCount = 30): Promise<RacesFetchResponse> {
+export async function fetchRaces(participantCount = 50): Promise<RacesFetchResponse> {
   console.log("Fetching races from server-side...")
-  const url = `${API_BASE_URL}/affiliates/races?participant_count=${participantCount}&code=Measter`
+  const url = `${API_BASE_URL}/affiliates/races?participant_count=${participantCount}`
 
-  // For now, just return mock data to avoid any potential issues
-  return mockRacesData
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers,
+      cache: 'no-store'
+    })
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`)
+    }
+
+    return await response.json()
+  } catch (error) {
+    console.error('Error fetching races:', error)
+    return mockRacesData
+  }
 }

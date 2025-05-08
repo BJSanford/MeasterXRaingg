@@ -162,10 +162,10 @@ export default function LoginPage() {
                 <motion.form variants={fadeIn("up", 0.4)} onSubmit={handleLogin} className="mb-4">
                   <div className="grid gap-4">
                     <div className="grid gap-2">
-                      <Label htmlFor="userId">User ID</Label>
+                      <Label htmlFor="userId">Rain.gg Username</Label>
                       <Input
                         id="userId"
-                        placeholder="Enter your user ID"
+                        placeholder="Enter your Rain.gg username"
                         type="text"
                         autoCapitalize="none"
                         autoCorrect="off"

@@ -272,7 +272,7 @@ export default function LeaderboardPage() {
                               </div>
                             </td>
                             <td className="p-4">
-                              ${(leaderboardType === "wagered" ? user.wagered : user.deposited).toLocaleString()}
+                              {(leaderboardType === "wagered" ? user.wagered : user.deposited).toLocaleString()} coins
                             </td>
                             {leaderboardType === "wagered" && (
                               <td className="p-4">
