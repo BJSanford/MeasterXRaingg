@@ -1,6 +1,6 @@
 // API configuration
 const API_BASE_URL = "https://api.rain.gg"
-const API_KEY = "14d2ae5d-cea5-453a-b814-6fd810bda580"
+const API_KEY = process.env.RAIN_API_KEY
 
 // API headers
 const headers = {

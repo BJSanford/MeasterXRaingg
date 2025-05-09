@@ -2,8 +2,8 @@ const express = require('express');
 const axios = require('axios');
 const router = express.Router();
 
-// Directly set your API key here
-const YOUTUBE_API_KEY = 'AIzaSyCo2FCAcYakOz7GqnYhESAwigNczROBNdc';
+// Use environment variable for API key
+const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
 const CHANNEL_ID = 'UCWwH9Hg56k97Ze3gSFG8sRQ';
 
 router.get('/latest-videos', async (req, res) => {

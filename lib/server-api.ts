@@ -2,7 +2,7 @@
 
 // API configuration
 const API_BASE_URL = "https://api.rain.gg/v1"
-const API_KEY = "14d2ae5d-cea5-453a-b814-6fd810bda580"
+const API_KEY = process.env.RAIN_API_KEY
 
 // API headers
 const headers = {
@@ -457,7 +457,7 @@ export async function fetchUserProfile(userId: string): Promise<UserProfile | nu
             bonus: 40,
           },
           {
-            date: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+            date: new Date(Date.now() - 60 * 24 * 60 * 1000).toISOString().split("T")[0],
             amount: 150,
             bonus: 30,
           },
@@ -468,7 +468,7 @@ export async function fetchUserProfile(userId: string): Promise<UserProfile | nu
             amount: 2500,
           },
           {
-            date: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString().split("T")[0].substring(0, 7),
+            date: new Date(Date.now() - 60 * 24 * 60 * 1000).toISOString().split("T")[0].substring(0, 7),
             amount: 2500,
           },
           {
