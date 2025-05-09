@@ -318,43 +318,44 @@ export default function Dashboard() {
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
           <Tabs defaultValue="overview" className="w-full" onValueChange={setActiveTab}>
-            <TabsList className="mb-8 grid w-full grid-cols-2 gap-4 bg-transparent md:grid-cols-5">
-              <motion.div whileHover={{ y: -2 }}>
+            {/* Change TabsList to flex and make triggers flex-1 */}
+            <TabsList className="mb-8 flex w-full gap-4 bg-transparent">
+              <motion.div whileHover={{ y: -2 }} className="flex-1">
                 <TabsTrigger
                   value="overview"
-                  className="border border-gray-800 bg-gray-900/70 data-[state=active]:bg-purple-900/50 data-[state=active]:text-white"
+                  className="flex-1 border border-gray-800 bg-gray-900/70 data-[state=active]:bg-purple-900/50 data-[state=active]:text-white"
                 >
                   Overview
                 </TabsTrigger>
               </motion.div>
-              <motion.div whileHover={{ y: -2 }}>
+              <motion.div whileHover={{ y: -2 }} className="flex-1">
                 <TabsTrigger
                   value="rakeback"
-                  className="border border-gray-800 bg-gray-900/70 data-[state=active]:bg-purple-900/50 data-[state=active]:text-white"
+                  className="flex-1 border border-gray-800 bg-gray-900/70 data-[state=active]:bg-purple-900/50 data-[state=active]:text-white"
                 >
                   Rakeback
                 </TabsTrigger>
               </motion.div>
-              <motion.div whileHover={{ y: -2 }}>
+              <motion.div whileHover={{ y: -2 }} className="flex-1">
                 <TabsTrigger
                   value="giveaways"
-                  className="border border-gray-800 bg-gray-900/70 data-[state=active]:bg-purple-900/50 data-[state=active]:text-white"
+                  className="flex-1 border border-gray-800 bg-gray-900/70 data-[state=active]:bg-purple-900/50 data-[state=active]:text-white"
                 >
                   Giveaways
                 </TabsTrigger>
               </motion.div>
-              <motion.div whileHover={{ y: -2 }}>
+              <motion.div whileHover={{ y: -2 }} className="flex-1">
                 <TabsTrigger
                   value="rewards"
-                  className="border border-gray-800 bg-gray-900/70 data-[state=active]:bg-purple-900/50 data-[state=active]:text-white"
+                  className="flex-1 border border-gray-800 bg-gray-900/70 data-[state=active]:bg-purple-900/50 data-[state=active]:text-white"
                 >
                   Rewards
                 </TabsTrigger>
               </motion.div>
-              <motion.div whileHover={{ y: -2 }}>
+              <motion.div whileHover={{ y: -2 }} className="flex-1">
                 <TabsTrigger
                   value="tournaments"
-                  className="border border-gray-800 bg-gray-900/70 data-[state=active]:bg-purple-900/50 data-[state=active]:text-white opacity-80"
+                  className="flex-1 border border-gray-800 bg-gray-900/70 data-[state=active]:bg-purple-900/50 data-[state=active]:text-white opacity-80"
                 >
                   Tournaments
                 </TabsTrigger>
