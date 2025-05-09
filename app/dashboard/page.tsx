@@ -288,7 +288,7 @@ export default function Dashboard() {
               <CardContent className="flex items-center justify-between p-6">
                 <div>
                   <p className="text-sm text-gray-400">Total Wagered</p>
-                  <p className="text-2xl font-bold">${user.totalWagered.toLocaleString()}</p>
+                  <p className="text-2xl font-bold">${(user.totalWagered ?? 0).toLocaleString()}</p>
                 </div>
                 <motion.div animate={floatAnimation}>
                   <DollarSign className="h-8 w-8 text-green-500" />
@@ -301,7 +301,7 @@ export default function Dashboard() {
               <CardContent className="flex items-center justify-between p-6">
                 <div>
                   <p className="text-sm text-gray-400">Current Rakeback</p>
-                  <p className="text-2xl font-bold">{user.rakebackPercentage}%</p>
+                  <p className="text-2xl font-bold">{user.rakebackPercentage ?? 0}%</p>
                 </div>
                 <motion.div animate={floatAnimation}>
                   <Zap className="h-8 w-8 text-yellow-500" />
@@ -314,7 +314,7 @@ export default function Dashboard() {
               <CardContent className="flex items-center justify-between p-6">
                 <div>
                   <p className="text-sm text-gray-400">Rakeback Earned</p>
-                  <p className="text-2xl font-bold">${user.rakebackEarned.toLocaleString()}</p>
+                  <p className="text-2xl font-bold">${(user.rakebackEarned ?? 0).toLocaleString()}</p>
                 </div>
                 <motion.div animate={floatAnimation}>
                   <Star className="h-8 w-8 text-purple-500" />
@@ -327,7 +327,7 @@ export default function Dashboard() {
               <CardContent className="flex items-center justify-between p-6">
                 <div>
                   <p className="text-sm text-gray-400">Measter Coins</p>
-                  <p className="text-2xl font-bold">{user.measterCoins}</p>
+                  <p className="text-2xl font-bold">{user.measterCoins ?? 0}</p>
                 </div>
                 <motion.div animate={floatAnimation}>
                   <Coins className="h-8 w-8 text-amber-500" />
@@ -621,11 +621,11 @@ export default function Dashboard() {
                       <div className="space-y-4">
                         <div className="flex items-center justify-between rounded-lg border border-gray-800 p-4">
                           <span className="text-gray-400">Current Percentage</span>
-                          <span className="text-xl font-bold">{user.rakebackPercentage}%</span>
+                          <span className="text-xl font-bold">{user.rakebackPercentage ?? 0}%</span>
                         </div>
                         <div className="flex items-center justify-between rounded-lg border border-gray-800 p-4">
                           <span className="text-gray-400">Total Earned</span>
-                          <span className="text-xl font-bold">${user.rakebackEarned.toLocaleString()}</span>
+                          <span className="text-xl font-bold">${(user.rakebackEarned ?? 0).toLocaleString()}</span>
                         </div>
                         <div className="flex items-center justify-between rounded-lg border border-gray-800 p-4">
                           <span className="text-gray-400">Next Payout</span>
@@ -800,7 +800,7 @@ export default function Dashboard() {
                       </div>
                       <div className="flex items-center gap-2 rounded-full bg-amber-900/30 px-3 py-1">
                         <Coins className="h-4 w-4 text-amber-500" />
-                        <span className="font-medium text-amber-500">{user.measterCoins} Coins</span>
+                        <span className="font-medium text-amber-500">{user.measterCoins ?? 0} Coins</span>
                       </div>
                     </CardHeader>
                     <CardContent>
