@@ -136,21 +136,6 @@ export default function SocialsPage() {
 								Dashboard
 							</Link>
 						</motion.div>
-						{/* Add Subscribe on YouTube button */}
-						<motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-							<Button
-								asChild
-								className="bg-gradient-to-r from-red-500 to-red-700 text-white hover:opacity-90"
-							>
-								<a
-									href="https://www.youtube.com/@MeasterCS_Skins"
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									Subscribe on YouTube
-								</a>
-							</Button>
-						</motion.div>
 					</div>
 				</div>
 			</motion.header>
@@ -199,6 +184,21 @@ export default function SocialsPage() {
 						<a href="https://kick.com/meastercs-skins" target="_blank" rel="noopener noreferrer">
 							<span className="text-green-500 font-bold text-lg">K</span>
 							Follow on Kick
+							<ExternalLink className="h-4 w-4" />
+						</a>
+					</Button>
+					<Button
+						asChild
+						className="flex items-center gap-2 bg-gradient-to-r from-red-500 to-red-700 text-white hover:opacity-90"
+						size="sm"
+					>
+						<a
+							href="https://www.youtube.com/@MeasterCS_Skins"
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							<Youtube className="h-5 w-5" />
+							Subscribe on YouTube
 							<ExternalLink className="h-4 w-4" />
 						</a>
 					</Button>
