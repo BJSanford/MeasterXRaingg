@@ -58,6 +58,8 @@ export default function LoginPage() {
 
       // Store the username in localStorage for dashboard use
       localStorage.setItem("rainUsername", userData.username)
+      // Set a cookie for SSR middleware (expires in 7 days)
+      document.cookie = `rainUsername=${encodeURIComponent(userData.username)}; path=/; max-age=604800`
       await login(userData.username)
       toast({
         title: "Login successful",
