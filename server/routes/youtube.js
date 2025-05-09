@@ -2,13 +2,13 @@ const express = require('express');
 const axios = require('axios');
 const router = express.Router();
 
-const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
-// Use the actual channel ID for MeasterCS_Skins
+// Directly set your API key here
+const YOUTUBE_API_KEY = 'AIzaSyCo2FCAcYakOz7GqnYhESAwigNczROBNdc';
 const CHANNEL_ID = 'UCWwH9Hg56k97Ze3gSFG8sRQ';
 
 router.get('/latest-videos', async (req, res) => {
   try {
-    // Fetch latest 3 videos from the channel
+    console.log('Fetching latest YouTube videos...');
     const videosRes = await axios.get(
       `https://www.googleapis.com/youtube/v3/search`,
       {
@@ -22,6 +22,7 @@ router.get('/latest-videos', async (req, res) => {
         },
       }
     );
+    console.log('YouTube API response:', videosRes.data);
     const videos = (videosRes.data.items || []).map((item) => ({
       id: item.id.videoId,
       title: item.snippet.title,
@@ -29,6 +30,7 @@ router.get('/latest-videos', async (req, res) => {
     }));
     res.json({ videos });
   } catch (err) {
+    console.error('YouTube API error:', err.response?.data || err.message);
     res.json({ videos: [] });
   }
 });
