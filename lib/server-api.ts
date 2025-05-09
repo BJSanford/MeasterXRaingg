@@ -43,15 +43,18 @@ async function getUserData(): Promise<ReferredUser[]> {
 }
 
 // Function to verify user and get their data
-export async function verifyUser(username: string): Promise<ReferredUser | null> {
-  // Fetch all referred users and find by username
-  const response = await fetch(`${API_BASE_URL}/affiliates/raffle`, {
+export async function verifyUser(username: string): Promise<LeaderboardUser | null> {
+  // Use the leaderboard endpoint with deposited type and correct date range
+  const url = `${API_BASE_URL}/affiliates/leaderboard?start_date=2025-01-01T00%3A00%3A00.00Z&end_date=2025-05-09T20%3A00%3A00.00Z&type=deposited`;
+  const response = await fetch(url, {
     headers,
     cache: 'no-store'
   });
   if (!response.ok) return null;
   const data = await response.json();
-  return (data.results || []).find((user: ReferredUser) => user.username.toLowerCase() === username.toLowerCase()) || null;
+  // The leaderboard array contains the user data
+  if (!Array.isArray(data.leaderboard)) return null;
+  return data.leaderboard.find((user: any) => user.username?.toLowerCase() === username.toLowerCase()) || null;
 }
 
 // API date range
