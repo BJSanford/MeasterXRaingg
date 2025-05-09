@@ -434,7 +434,7 @@ export default function Dashboard() {
                               </motion.div>
                               <p className="text-center text-gray-400">
                                 Wager history data loaded from API:
-                                {user.wagerHistory.map((item, index) => (
+                                {(user.wagerHistory ?? []).map((item, index) => (
                                   <span key={index} className="block">
                                     {item.date}: ${item.amount.toLocaleString()}
                                   </span>
