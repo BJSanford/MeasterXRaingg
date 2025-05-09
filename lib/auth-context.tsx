@@ -14,6 +14,53 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
+const getWeeklyWagerHistory = async (username: string): Promise<{ date: string, amount: number }[]> => {
+  const API_BASE_URL = "https://api.rain.gg/v1"
+  const API_KEY = process.env.RAIN_API_KEY || "14d2ae5d-cea5-453a-b814-6fd810bda580"
+  const headers = {
+    accept: "application/json",
+    "x-api-key": API_KEY,
+  }
+  const now = new Date()
+  const weeks: { date: string, amount: number }[] = []
+
+  for (let i = 0; i < 4; i++) {
+    // Calculate week start/end
+    const end = new Date(now)
+    end.setDate(now.getDate() - (7 * i))
+    const start = new Date(end)
+    start.setDate(end.getDate() - 6)
+    // Format as ISO string
+    const startStr = start.toISOString().split(".")[0] + ".00Z"
+    const endStr = end.toISOString().split(".")[0] + ".00Z"
+    const url = `${API_BASE_URL}/affiliates/leaderboard?start_date=${encodeURIComponent(startStr)}&end_date=${encodeURIComponent(endStr)}&type=wagered`
+    try {
+      const res = await fetch(url, { headers, cache: "no-store" })
+      if (!res.ok) continue
+      const data = await res.json()
+      const arr = Array.isArray(data.results)
+        ? data.results
+        : Array.isArray(data.leaderboard)
+          ? data.leaderboard
+          : []
+      const userEntry = arr.find((u: any) =>
+        typeof u.username === "string" &&
+        u.username.trim().toLowerCase() === username.trim().toLowerCase()
+      )
+      weeks.unshift({
+        date: startStr.substring(0, 10), // show week start date
+        amount: userEntry?.wagered ?? 0,
+      })
+    } catch {
+      weeks.unshift({
+        date: startStr.substring(0, 10),
+        amount: 0,
+      })
+    }
+  }
+  return weeks
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserProfile | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -43,19 +90,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       // Fetch user data by username
       const userProfile = await verifyUser(rainUsername)
+      let wagerHistory: { date: string, amount: number }[] = []
       if (userProfile) {
+        wagerHistory = await getWeeklyWagerHistory(userProfile.username)
         setUser({
-          id: userProfile.id || userProfile.username, // fallback if id missing
+          id: userProfile.id || userProfile.username,
           username: userProfile.username,
           avatar: userProfile.avatar,
-          totalWagered: userProfile.wagered,
-          totalDeposited: userProfile.deposited,
-          rakebackPercentage: 5, // You can calculate this based on wagered if needed
-          rakebackEarned: Math.round(userProfile.wagered * 0.05), // Example calculation
-          measterCoins: Math.floor(userProfile.wagered / 10), // Example calculation
-          joinDate: "", // Not available from API
+          totalWagered: userProfile.wagered ?? 0,
+          totalDeposited: userProfile.deposited ?? 0,
+          rakebackPercentage: 5,
+          rakebackEarned: Math.round((userProfile.wagered ?? 0) * 0.05),
+          measterCoins: Math.floor((userProfile.wagered ?? 0) / 10),
+          joinDate: "",
           depositHistory: [],
-          wagerHistory: [],
+          wagerHistory, // <-- weekly wager history
         })
       } else {
         localStorage.removeItem("rainUsername")

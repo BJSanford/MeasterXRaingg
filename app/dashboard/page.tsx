@@ -194,13 +194,20 @@ export default function Dashboard() {
     },
   ]
 
+  // Helper to get avatar URL (string or object)
+  const getAvatarUrl = (avatar: any) => {
+    if (!avatar) return "/placeholder.svg"
+    if (typeof avatar === "string") return avatar
+    return avatar.medium || avatar.small || avatar.large || "/placeholder.svg"
+  }
+
   // --- Add this block for the welcome message ---
   const WelcomeHeader = () => (
     <div className="mb-8 flex flex-col items-center justify-center">
       <div className="mb-4 flex flex-col items-center">
         <div className="h-20 w-20 rounded-full overflow-hidden border-4 border-yellow-500 bg-gray-800 mb-2">
           <img
-            src={user.avatar?.medium || user.avatar?.small || "/placeholder.svg"}
+            src={getAvatarUrl(user.avatar)}
             alt={user.username}
             className="h-full w-full object-cover"
           />
@@ -281,7 +288,7 @@ export default function Dashboard() {
           variants={staggerContainer(0.05, 0.1)}
           initial="hidden"
           animate="show"
-          className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-4"
+          className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-5"
         >
           <motion.div variants={fadeIn("up", 0.1)} whileHover={{ y: -5, transition: { duration: 0.2 } }}>
             <Card className="border-gray-800 bg-gray-900/70 text-white">
@@ -296,6 +303,21 @@ export default function Dashboard() {
               </CardContent>
             </Card>
           </motion.div>
+          {/* --- Add Deposited Card --- */}
+          <motion.div variants={fadeIn("up", 0.15)} whileHover={{ y: -5, transition: { duration: 0.2 } }}>
+            <Card className="border-gray-800 bg-gray-900/70 text-white">
+              <CardContent className="flex items-center justify-between p-6">
+                <div>
+                  <p className="text-sm text-gray-400">Total Deposited</p>
+                  <p className="text-2xl font-bold">${(user.totalDeposited ?? 0).toLocaleString(undefined, {maximumFractionDigits: 2})}</p>
+                </div>
+                <motion.div animate={floatAnimation}>
+                  <DollarSign className="h-8 w-8 text-blue-400" />
+                </motion.div>
+              </CardContent>
+            </Card>
+          </motion.div>
+          {/* --- End Deposited Card --- */}
           <motion.div variants={fadeIn("up", 0.2)} whileHover={{ y: -5, transition: { duration: 0.2 } }}>
             <Card className="border-gray-800 bg-gray-900/70 text-white">
               <CardContent className="flex items-center justify-between p-6">
