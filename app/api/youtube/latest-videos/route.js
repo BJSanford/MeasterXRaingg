@@ -4,24 +4,11 @@ export async function GET() {
   const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&maxResults=3&order=date&type=video&key=${YOUTUBE_API_KEY}`;
   const res = await fetch(url);
 
-  if (!res.ok) {
-    const error = await res.text();
-    return new Response(JSON.stringify({ videos: [], error }), {
-      status: res.status,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
   const data = await res.json();
-  const videos = (data.items || [])
-    .filter(item => item.id && item.id.videoId)
-    .map(item => ({
-      id: item.id.videoId,
-      title: item.snippet.title,
-      thumbnail: item.snippet.thumbnails.medium.url,
-    }));
-  return new Response(JSON.stringify({ videos }), {
-    status: 200,
+
+  // Return the full response for debugging
+  return new Response(JSON.stringify(data), {
+    status: res.status,
     headers: { "Content-Type": "application/json" },
   });
 }
