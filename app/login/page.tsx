@@ -16,6 +16,7 @@ import { AlertCircle, Info } from "lucide-react"
 import CityOverlay from "../city-overlay"
 import SnowOverlay from "../snow-overlay"
 import { fadeIn, staggerContainer } from "@/lib/animation-utils"
+import { verifyUser } from "@/lib/server-api"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -25,7 +26,7 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
 
   // Form state
-  const [userId, setUserId] = useState("")
+  const [rainUsername, setRainUsername] = useState("")
 
   // Handle login
   const handleLogin = async (e: React.FormEvent) => {
@@ -34,18 +35,18 @@ export default function LoginPage() {
     setError(null)
 
     try {
-      if (!userId.trim()) {
-        setError("Please enter your username")
+      if (!rainUsername.trim()) {
+        setError("Please enter your Rain.gg username")
         toast({
           title: "Login failed",
-          description: "Please enter your username",
+          description: "Please enter your Rain.gg username",
           variant: "destructive",
         })
         setIsLoading(false)
         return
       }
 
-      const userData = await verifyUser(userId.trim())
+      const userData = await verifyUser(rainUsername.trim())
       if (!userData) {
         setError("Username not found in MEASTER community")
         toast({
@@ -57,7 +58,9 @@ export default function LoginPage() {
         return
       }
 
-      await login(userData.id)
+      // Store the username in localStorage for dashboard use
+      localStorage.setItem("rainUsername", userData.username)
+      await login(userData.username)
       toast({
         title: "Login successful",
         description: "Welcome to the MEASTER community!",
@@ -174,17 +177,17 @@ export default function LoginPage() {
                 <motion.form variants={fadeIn("up", 0.4)} onSubmit={handleLogin} className="mb-4">
                   <div className="grid gap-4">
                     <div className="grid gap-2">
-                      <Label htmlFor="userId">Rain.gg Username</Label>
+                      <Label htmlFor="rainUsername">Rain.gg Username</Label>
                       <Input
-                        id="userId"
+                        id="rainUsername"
                         placeholder="Enter your Rain.gg username"
                         type="text"
                         autoCapitalize="none"
                         autoCorrect="off"
                         className="border-gray-700 bg-gray-800 text-white"
                         required
-                        value={userId}
-                        onChange={(e) => setUserId(e.target.value)}
+                        value={rainUsername}
+                        onChange={(e) => setRainUsername(e.target.value)}
                       />
                     </div>
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>

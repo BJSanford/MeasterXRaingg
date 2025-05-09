@@ -2,10 +2,15 @@
 
 // API configuration
 const API_BASE_URL = "https://api.rain.gg/v1"
-const API_KEY = process.env.RAIN_API_KEY
+const API_KEY = process.env.RAIN_API_KEY || "14d2ae5d-cea5-453a-b814-6fd810bda580"
 
 // API headers
 const headers = {
+  accept: "application/json",
+  "x-api-key": API_KEY,
+}
+
+const leaderboardHeaders = {
   accept: "application/json",
   "x-api-key": API_KEY,
 }
@@ -39,8 +44,14 @@ async function getUserData(): Promise<ReferredUser[]> {
 
 // Function to verify user and get their data
 export async function verifyUser(username: string): Promise<ReferredUser | null> {
-  const users = await getUserData();
-  return users.find(user => user.username.toLowerCase() === username.toLowerCase()) || null;
+  // Fetch all referred users and find by username
+  const response = await fetch(`${API_BASE_URL}/affiliates/raffle`, {
+    headers,
+    cache: 'no-store'
+  });
+  if (!response.ok) return null;
+  const data = await response.json();
+  return (data.results || []).find((user: ReferredUser) => user.username.toLowerCase() === username.toLowerCase()) || null;
 }
 
 // API date range
@@ -405,6 +416,28 @@ export async function fetchLeaderboard(type: "wagered" | "deposited" = "wagered"
     console.error('Error fetching leaderboard:', error)
     return mockLeaderboardData
   }
+}
+
+// Fetch leaderboard by type and date range
+export async function fetchLeaderboardByType(
+  type: "wagered" | "deposited",
+  startDate = "2025-01-01T00:00:00.00Z",
+  endDate = "2026-01-01T00:00:00.00Z"
+) {
+  const url = `${API_BASE_URL}/affiliates/leaderboard?start_date=${encodeURIComponent(
+    startDate
+  )}&end_date=${encodeURIComponent(endDate)}&type=${type}`
+
+  const response = await fetch(url, {
+    method: "GET",
+    headers: leaderboardHeaders,
+  })
+
+  if (!response.ok) {
+    throw new Error(`Leaderboard API error: ${response.status}`)
+  }
+
+  return await response.json()
 }
 
 // Update the fetchReferrals function to match the curl command format

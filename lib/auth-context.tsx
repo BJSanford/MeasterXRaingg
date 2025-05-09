@@ -3,7 +3,7 @@
 import type React from "react"
 import { createContext, useContext, useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { type UserProfile, fetchUserProfile } from "@/lib/server-api"
+import { verifyUser } from "@/lib/server-api" // Make sure this is imported
 
 interface AuthContextType {
   user: UserProfile | null
@@ -23,9 +23,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Check if user is logged in
     const checkAuth = async () => {
       try {
-        const userId = localStorage.getItem("userId")
-        if (userId) {
-          await loadUser(userId)
+        const rainUsername = localStorage.getItem("rainUsername")
+        if (rainUsername) {
+          await loadUser(rainUsername)
         } else {
           setIsLoading(false)
         }
@@ -38,33 +38,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     checkAuth()
   }, [])
 
-  const loadUser = async (userId: string) => {
+  const loadUser = async (rainUsername: string) => {
     setIsLoading(true)
     try {
-      const userProfile = await fetchUserProfile(userId)
+      // Fetch user data by username
+      const userProfile = await verifyUser(rainUsername)
       if (userProfile) {
-        setUser(userProfile)
+        setUser({
+          id: userProfile.id,
+          username: userProfile.username,
+          avatar: userProfile.avatar,
+          totalWagered: userProfile.wagered,
+          totalDeposited: userProfile.deposited,
+          rakebackPercentage: 5, // You can calculate this based on wagered if needed
+          rakebackEarned: Math.round(userProfile.wagered * 0.05), // Example calculation
+          measterCoins: Math.floor(userProfile.wagered / 10), // Example calculation
+          joinDate: "", // Not available from API
+          depositHistory: [],
+          wagerHistory: [],
+        })
       } else {
-        // If user profile couldn't be loaded, log out
-        localStorage.removeItem("userId")
+        localStorage.removeItem("rainUsername")
       }
     } catch (error) {
       console.error("Error loading user:", error)
-      localStorage.removeItem("userId")
+      localStorage.removeItem("rainUsername")
     } finally {
       setIsLoading(false)
     }
   }
 
-  const login = async (userId: string) => {
-    // Use demo-user as a special case for demo account
-    const finalUserId = userId === "demo-user" ? "mock-user-id-123" : userId
-    localStorage.setItem("userId", finalUserId)
-    await loadUser(finalUserId)
+  const login = async (rainUsername: string) => {
+    localStorage.setItem("rainUsername", rainUsername)
+    await loadUser(rainUsername)
   }
 
   const logout = () => {
-    localStorage.removeItem("userId")
+    localStorage.removeItem("rainUsername")
     setUser(null)
     router.push("/")
   }
