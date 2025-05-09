@@ -54,7 +54,12 @@ export async function verifyUser(username: string): Promise<LeaderboardUser | nu
   const data = await response.json();
   // The leaderboard array contains the user data
   if (!Array.isArray(data.leaderboard)) return null;
-  return data.leaderboard.find((user: any) => user.username?.toLowerCase() === username.toLowerCase()) || null;
+  // Robust username match: trim and lowercase both sides
+  const input = username.trim().toLowerCase();
+  return data.leaderboard.find((user: any) =>
+    typeof user.username === "string" &&
+    user.username.trim().toLowerCase() === input
+  ) || null;
 }
 
 // API date range
