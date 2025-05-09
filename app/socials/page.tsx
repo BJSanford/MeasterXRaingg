@@ -136,6 +136,21 @@ export default function SocialsPage() {
 								Dashboard
 							</Link>
 						</motion.div>
+						{/* Add Subscribe on YouTube button */}
+						<motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+							<Button
+								asChild
+								className="bg-gradient-to-r from-red-500 to-red-700 text-white hover:opacity-90"
+							>
+								<a
+									href="https://www.youtube.com/@MeasterCS_Skins"
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									Subscribe on YouTube
+								</a>
+							</Button>
+						</motion.div>
 					</div>
 				</div>
 			</motion.header>
