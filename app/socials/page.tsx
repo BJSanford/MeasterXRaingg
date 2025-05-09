@@ -77,12 +77,23 @@ export default function SocialsPage() {
 	const [activeTab, setActiveTab] = useState("all")
 	const [isLoading, setIsLoading] = useState(true)
 	const [recentVideos, setRecentVideos] = useState<any[]>([])
+	const [videoError, setVideoError] = useState<string | null>(null) // <-- add error state
 
 	useEffect(() => {
 		// Fetch latest YouTube videos
 		fetch("/api/youtube/latest-videos")
-			.then((res) => res.json())
-			.then((data) => setRecentVideos(data.videos || []))
+			.then((res) => {
+				if (!res.ok) throw new Error("Failed to fetch videos")
+				return res.json()
+			})
+			.then((data) => {
+				setRecentVideos(data.videos || [])
+				setVideoError(null)
+			})
+			.catch((err) => {
+				setVideoError("Could not load YouTube videos.")
+				setRecentVideos([])
+			})
 			.finally(() => setIsLoading(false))
 	}, [])
 
@@ -239,7 +250,11 @@ export default function SocialsPage() {
 							>
 								<h2 className="mb-6 text-2xl font-bold">Latest YouTube Video</h2>
 								<div className="rounded-lg border border-gray-800 bg-gray-900/70 p-6">
-									{recentVideos.length > 0 ? (
+									{isLoading ? (
+										<div className="text-gray-400">Loading videos...</div>
+									) : videoError ? (
+										<div className="text-red-400">{videoError}</div>
+									) : recentVideos.length > 0 ? (
 										<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
 											<div className="relative rounded-lg overflow-hidden">
 												<div className="aspect-video bg-gray-800">
