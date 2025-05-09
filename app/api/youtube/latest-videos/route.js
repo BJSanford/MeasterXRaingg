@@ -16,12 +16,3 @@ export async function GET() {
     headers: { "Content-Type": "application/json" },
   });
 }
-export async function GET() {
-  // Proxy to your Express backend
-  const res = await fetch("http://localhost:5000/latest-videos");
-  const data = await res.json();
-  return new Response(JSON.stringify(data), {
-    status: res.status,
-    headers: { "Content-Type": "application/json" },
-  });
-}
