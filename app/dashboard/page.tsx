@@ -924,7 +924,10 @@ export default function Dashboard() {
                             <div className="mb-4 flex items-center justify-between">
                               <h3 className="text-xl font-medium">{race.name}</h3>
                               <span className="rounded-full bg-purple-900/50 px-3 py-1 text-sm">
-                                ${race.participants.reduce((sum, p) => sum + (p.prize || 0), 0)} Prize Pool
+                                $
+                                {Array.isArray(race.participants)
+                                  ? race.participants.reduce((sum, p) => sum + (p.prize || 0), 0)
+                                  : 0} Prize Pool
                               </span>
                             </div>
                             <div className="mb-6 grid grid-cols-3 gap-4">
