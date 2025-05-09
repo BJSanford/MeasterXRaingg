@@ -45,7 +45,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const userProfile = await verifyUser(rainUsername)
       if (userProfile) {
         setUser({
-          id: userProfile.id,
+          id: userProfile.id || userProfile.username, // fallback if id missing
           username: userProfile.username,
           avatar: userProfile.avatar,
           totalWagered: userProfile.wagered,

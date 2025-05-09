@@ -194,6 +194,24 @@ export default function Dashboard() {
     },
   ]
 
+  // --- Add this block for the welcome message ---
+  const WelcomeHeader = () => (
+    <div className="mb-8 flex flex-col items-center justify-center">
+      <div className="mb-4 flex flex-col items-center">
+        <div className="h-20 w-20 rounded-full overflow-hidden border-4 border-yellow-500 bg-gray-800 mb-2">
+          <img
+            src={user.avatar?.medium || user.avatar?.small || "/placeholder.svg"}
+            alt={user.username}
+            className="h-full w-full object-cover"
+          />
+        </div>
+        <h2 className="text-3xl font-bold mb-1">{`Welcome ${user.username}!`}</h2>
+        <p className="text-gray-400 text-lg">Here is your dashboard.</p>
+      </div>
+    </div>
+  )
+  // --- End welcome block ---
+
   return (
     <div className="min-h-screen bg-black text-white">
       <CityOverlay />
@@ -244,6 +262,9 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
+        {/* Add welcome header here */}
+        <WelcomeHeader />
+
         {usingMockData && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
             <Alert className="mb-6 border-amber-800 bg-amber-950/30 text-amber-400">
