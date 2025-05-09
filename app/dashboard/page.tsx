@@ -758,7 +758,7 @@ export default function Dashboard() {
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-3">
-                        {leaderboard.slice(0, 3).map((winner, index) => (
+                        {(leaderboard ?? []).slice(0, 3).map((winner, index) => (
                           <div key={index} className="rounded-lg border border-gray-800 p-3">
                             <div className="mb-1 flex items-center justify-between">
                               <span className="font-medium">Weekly $500 Giveaway</span>
@@ -941,7 +941,7 @@ export default function Dashboard() {
                               </div>
                               <div className="rounded-lg border border-gray-800 p-3 text-center">
                                 <p className="text-xs text-gray-400">Participants</p>
-                                <p className="font-medium">{race.participants.length}</p>
+                                <p className="font-medium">{(race.participants ?? []).length}</p>
                               </div>
                             </div>
                             <div className="flex justify-end">
