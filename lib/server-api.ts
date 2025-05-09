@@ -52,11 +52,14 @@ export async function verifyUser(username: string): Promise<LeaderboardUser | nu
   });
   if (!response.ok) return null;
   const data = await response.json();
-  // The leaderboard array contains the user data
-  if (!Array.isArray(data.leaderboard)) return null;
-  // Robust username match: trim and lowercase both sides
+  // Prefer data.results, fallback to data.leaderboard
+  const arr = Array.isArray(data.results)
+    ? data.results
+    : Array.isArray(data.leaderboard)
+      ? data.leaderboard
+      : [];
   const input = username.trim().toLowerCase();
-  return data.leaderboard.find((user: any) =>
+  return arr.find((user: any) =>
     typeof user.username === "string" &&
     user.username.trim().toLowerCase() === input
   ) || null;
