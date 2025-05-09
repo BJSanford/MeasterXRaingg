@@ -22,16 +22,21 @@ router.get('/latest-videos', async (req, res) => {
         },
       }
     );
-    console.log('YouTube API response:', videosRes.data);
-    const videos = (videosRes.data.items || []).map((item) => ({
-      id: item.id.videoId,
-      title: item.snippet.title,
-      thumbnail: item.snippet.thumbnails.medium.url,
-    }));
+    console.log('YouTube API response:', JSON.stringify(videosRes.data, null, 2));
+    const videos = (videosRes.data.items || [])
+      .filter(item => item.id && item.id.videoId)
+      .map((item) => ({
+        id: item.id.videoId,
+        title: item.snippet.title,
+        thumbnail: item.snippet.thumbnails.medium.url,
+      }));
     res.json({ videos });
   } catch (err) {
     console.error('YouTube API error:', err.response?.data || err.message);
-    res.json({ videos: [] });
+    res.status(500).json({
+      videos: [],
+      error: err.response?.data || err.message,
+    });
   }
 });
 
