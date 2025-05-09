@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
@@ -20,7 +20,7 @@ import { verifyUser } from "@/lib/server-api"
 
 export default function LoginPage() {
   const router = useRouter()
-  const { login } = useAuth()
+  const { login, user, isLoading: authLoading } = useAuth()
   const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -65,7 +65,7 @@ export default function LoginPage() {
         title: "Login successful",
         description: "Welcome to the MEASTER community!",
       })
-      router.push("/dashboard")
+      // router.push("/dashboard") // <-- Remove this line
     } catch (error) {
       setError("An error occurred during login. Please try again.")
       toast({
@@ -96,6 +96,13 @@ export default function LoginPage() {
       setIsLoading(false)
     }
   }
+
+  // Redirect to dashboard after login is complete and user is set
+  useEffect(() => {
+    if (user && !authLoading) {
+      router.push("/dashboard")
+    }
+  }, [user, authLoading, router])
 
   return (
     <div className="flex min-h-screen flex-col bg-black text-white">
