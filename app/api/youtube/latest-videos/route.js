@@ -1,8 +1,8 @@
 export async function GET() {
   const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
   const CHANNEL_ID = 'UC3Umf_NrgeT2wA3g8K4rFig';
-  // Fetch more than 3 to ensure we get 3 non-shorts
-  const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&maxResults=10&order=date&type=video&key=${YOUTUBE_API_KEY}`;
+  // Fetch up to 50 videos to increase the chance of finding 6 non-shorts
+  const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&maxResults=50&order=date&type=video&key=${YOUTUBE_API_KEY}`;
   const searchRes = await fetch(searchUrl);
   const searchData = await searchRes.json();
 
@@ -37,7 +37,7 @@ export async function GET() {
       const duration = isoDurationToSeconds(item.contentDetails.duration);
       return duration >= 60;
     })
-    .slice(0, 3)
+    .slice(0, 6)
     .map(item => ({
       id: item.id,
       title: item.snippet.title,
