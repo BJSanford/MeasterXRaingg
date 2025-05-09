@@ -24,8 +24,6 @@ export default function LoginPage() {
   const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-
-  // Form state
   const [rainUsername, setRainUsername] = useState("")
 
   // Handle login
@@ -65,7 +63,9 @@ export default function LoginPage() {
         title: "Login successful",
         description: "Welcome to the MEASTER community!",
       })
-      // router.push("/dashboard") // <-- Remove this line
+      // Force reload to ensure dashboard gets the correct user state
+      window.location.href = "/dashboard"
+      return
     } catch (error) {
       setError("An error occurred during login. Please try again.")
       toast({
@@ -96,13 +96,6 @@ export default function LoginPage() {
       setIsLoading(false)
     }
   }
-
-  // Redirect to dashboard after login is complete and user is set
-  useEffect(() => {
-    if (user && !authLoading) {
-      router.push("/dashboard")
-    }
-  }, [user, authLoading, router])
 
   return (
     <div className="flex min-h-screen flex-col bg-black text-white">
