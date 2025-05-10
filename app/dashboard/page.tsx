@@ -47,6 +47,7 @@ export default function Dashboard() {
   const [isDataLoading, setIsDataLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [usingMockData, setUsingMockData] = useState(false)
+  const [userWagered, setUserWagered] = useState<number | null>(null)
 
   useEffect(() => {
     async function loadData() {
@@ -66,8 +67,18 @@ export default function Dashboard() {
         setRaces(racesData.results || [])
         setReferrals(referralsData.results || [])
 
+        // --- Find the logged-in user's wagered value from the leaderboard ---
+        if (user && leaderboardData.results) {
+          const input = user.username.trim().toLowerCase()
+          const lbUser = leaderboardData.results.find(
+            (u: any) =>
+              typeof u.username === "string" &&
+              u.username.trim().toLowerCase() === input
+          )
+          setUserWagered(lbUser?.wagered ?? 0)
+        }
+
         // Check if we're using mock data (this is a heuristic)
-        // If the first username is "Player123", we're likely using mock data
         if (
           leaderboardData.results &&
           leaderboardData.results.length > 0 &&
@@ -295,7 +306,11 @@ export default function Dashboard() {
               <CardContent className="flex items-center justify-between p-6">
                 <div>
                   <p className="text-sm text-gray-400">Total Wagered</p>
-                  <p className="text-2xl font-bold">${(user.totalWagered ?? 0).toLocaleString()}</p>
+                  <p className="text-2xl font-bold">
+                    ${userWagered !== null
+                      ? userWagered.toLocaleString(undefined, { maximumFractionDigits: 2 })
+                      : (user.totalWagered ?? 0).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                  </p>
                 </div>
                 <motion.div animate={floatAnimation}>
                   <DollarSign className="h-8 w-8 text-green-500" />
