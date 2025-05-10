@@ -46,6 +46,7 @@
     "input-otp": "1.4.1",
     "lucide-react": "^0.454.0",
     "next": "15.2.4",
+    "next-auth": "latest",
     "next-themes": "^0.4.4",
     "react": "^19",
     "react-day-picker": "latest",
@@ -59,7 +60,8 @@
     "vaul": "^0.9.6",
     "zod": "^3.24.1",
     "@emotion/is-prop-valid": "latest",
-    "framer-motion": "latest"
+    "framer-motion": "latest",
+    "@prisma/client": "latest"
   },
   "devDependencies": {
     "@types/node": "^22",
