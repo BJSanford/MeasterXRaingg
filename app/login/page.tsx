@@ -17,6 +17,7 @@ import CityOverlay from "../city-overlay"
 import SnowOverlay from "../snow-overlay"
 import { fadeIn, staggerContainer } from "@/lib/animation-utils"
 import { verifyUser } from "@/lib/server-api"
+import { signIn } from "next-auth/react"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -215,14 +216,15 @@ export default function LoginPage() {
                   </div>
                 </motion.div>
 
+                {/* Add Discord login button */}
                 <motion.div variants={fadeIn("up", 0.6)} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                   <Button
-                    onClick={handleDemoLogin}
-                    variant="outline"
-                    className="w-full border-gray-700 text-white hover:bg-gray-800"
+                    onClick={() => signIn("discord")}
+                    className="w-full bg-[#5865F2] text-white hover:bg-[#4752C4]"
                     disabled={isLoading}
+                    type="button"
                   >
-                    Try Demo Account
+                    Sign in with Discord
                   </Button>
                 </motion.div>
               </CardContent>
