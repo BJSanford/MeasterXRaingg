@@ -2,72 +2,102 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { signOut, useSession } from "next-auth/react"
 
-// Prevent static prerendering
 export const dynamic = "force-dynamic"
 
 export default function LinkAccountPage() {
-  const router = useRouter()
-  const { data: session, status } = useSession()
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [timedOut, setTimedOut] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
-    if (typeof window === "undefined") return
-    if (status === "loading") return
+    setMounted(true)
+  }, [])
 
-    // Timeout for fetch (e.g. 10 seconds)
-    const timeout = setTimeout(() => {
+  useEffect(() => {
+    if (!mounted) return
+
+    let timeout: NodeJS.Timeout | null = setTimeout(() => {
       setTimedOut(true)
       setLoading(false)
     }, 10000)
 
-    const rainUsername = sessionStorage.getItem("pendingRainUsername")
-    if (!rainUsername) {
-      setError("No Rain.gg username found. Please start the login process again.")
-      setLoading(false)
-      signOut({ callbackUrl: "/login" })
-      clearTimeout(timeout)
-      return
-    }
+    // Dynamically import next-auth/react and useSession only on client
+    import("next-auth/react").then(({ useSession, signOut }) => {
+      // Use a temporary component to get session
+      function SessionGetter({ onSession }: { onSession: (session: any, status: string) => void }) {
+        const { data: session, status } = useSession()
+        useEffect(() => {
+          if (status !== "loading") {
+            onSession(session, status)
+          }
+        }, [session, status])
+        return null
+      }
 
-    if (!session?.user?.id) {
-      setError("No Discord user found. Please try again.")
-      setLoading(false)
-      signOut({ callbackUrl: "/login" })
-      clearTimeout(timeout)
-      return
-    }
-
-    // Link Discord and Rain.gg username
-    fetch("/api/verification/request", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        discordId: session.user.id,
-        discordUsername: session.user.name,
-        rainUsername,
-      }),
+      // Render SessionGetter in a portal-like way
+      const div = document.createElement("div")
+      document.body.appendChild(div)
+      const onSession = (session: any, status: string) => {
+        if (status === "loading") return
+        const rainUsername = sessionStorage.getItem("pendingRainUsername")
+        if (!rainUsername) {
+          setError("No Rain.gg username found. Please start the login process again.")
+          setLoading(false)
+          signOut({ callbackUrl: "/login" })
+          if (timeout) clearTimeout(timeout)
+          return
+        }
+        if (!session?.user?.id) {
+          setError("No Discord user found. Please try again.")
+          setLoading(false)
+          signOut({ callbackUrl: "/login" })
+          if (timeout) clearTimeout(timeout)
+          return
+        }
+        // Link Discord and Rain.gg username
+        fetch("/api/verification/request", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            discordId: session.user.id,
+            discordUsername: session.user.name,
+            rainUsername,
+          }),
+        })
+          .then((res) => {
+            if (timeout) clearTimeout(timeout)
+            if (!res.ok) throw new Error("Failed to link accounts")
+            sessionStorage.removeItem("pendingRainUsername")
+            setLoading(false)
+            router.replace("/dashboard")
+          })
+          .catch(() => {
+            if (timeout) clearTimeout(timeout)
+            setError("Failed to link accounts. Please try again.")
+            setLoading(false)
+            signOut({ callbackUrl: "/login" })
+          })
+      }
+      // Render SessionGetter
+      import("react-dom").then(({ render, unmountComponentAtNode }) => {
+        render(<SessionGetter onSession={onSession} />, div)
+        // Clean up after a while
+        setTimeout(() => {
+          unmountComponentAtNode(div)
+          document.body.removeChild(div)
+        }, 5000)
+      })
     })
-      .then((res) => {
-        clearTimeout(timeout)
-        if (!res.ok) throw new Error("Failed to link accounts")
-        // Success: clear sessionStorage and redirect
-        sessionStorage.removeItem("pendingRainUsername")
-        setLoading(false)
-        router.replace("/dashboard")
-      })
-      .catch((err) => {
-        clearTimeout(timeout)
-        setError("Failed to link accounts. Please try again.")
-        setLoading(false)
-        signOut({ callbackUrl: "/login" })
-      })
 
-    return () => clearTimeout(timeout)
-  }, [session, status, router])
+    return () => {
+      if (timeout) clearTimeout(timeout)
+    }
+  }, [mounted, router])
+
+  if (!mounted) return null
 
   if (error) {
     return (
