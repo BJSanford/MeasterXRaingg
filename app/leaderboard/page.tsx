@@ -5,7 +5,7 @@ import Link from "next/link"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Trophy, ArrowLeft, AlertCircle, Timer } from "lucide-react"
+import { Trophy, ArrowLeft, AlertCircle, Timer, Award } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { fadeIn, staggerContainer } from "@/lib/animation-utils"
 import CityOverlay from "../city-overlay"
@@ -116,9 +116,9 @@ export default function WeeklyRacePage() {
     return name.slice(0, 2) + "*".repeat(name.length - 4) + name.slice(-2)
   }
 
-  // --- Pedestal layout for top 3 ---
+  // --- Podium for Top 3 (reworked, more modern, no crown, no color borders) ---
   const podium = leaderboard.slice(0, 3)
-  const rest = leaderboard.slice(3)
+  const rest = leaderboard.slice(3, 15) // Only show up to 15 players total
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -234,79 +234,37 @@ export default function WeeklyRacePage() {
           </div>
         </motion.div>
 
-        {/* Podium for Top 3 */}
+        {/* Reworked Podium for Top 3 */}
         <motion.div
           className="flex justify-center items-end gap-8 mb-12"
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          {/* 2nd Place */}
-          <div className="flex flex-col items-center justify-end z-10 scale-95">
-            <div className="mb-2">
-              <div className="rounded-full border-4 border-gray-400 bg-[#23263a] shadow-lg w-24 h-24 flex items-center justify-center">
-                <img src={podium[1]?.avatar?.medium || "/placeholder.svg"} alt={podium[1]?.username} className="w-20 h-20 rounded-full object-cover" />
+          {podium.map((user, idx) => (
+            <div
+              key={user?.id || user?.username || idx}
+              className={`flex flex-col items-center justify-end z-10 ${idx === 1 ? "scale-105" : "scale-100"}`}
+            >
+              <div className="mb-2">
+                <div className={`rounded-full border-4 ${idx === 0 ? "border-yellow-400" : idx === 1 ? "border-gray-400" : "border-orange-400"} bg-[#23263a] shadow-lg w-24 h-24 flex items-center justify-center`}>
+                  <img src={user?.avatar?.medium || "/placeholder.svg"} alt={user?.username} className="w-20 h-20 rounded-full object-cover" />
+                </div>
+              </div>
+              <div className="flex items-center gap-2 mt-2">
+                <Award className={`h-5 w-5 ${idx === 0 ? "text-yellow-400" : idx === 1 ? "text-gray-400" : "text-orange-400"}`} />
+                <span className="text-lg font-bold">{user?.username}</span>
+              </div>
+              <div className="text-gray-400 font-semibold mt-1">{["1st Place", "2nd Place", "3rd Place"][idx]}</div>
+              <div className="text-white text-xl font-bold mb-1">${user?.wagered?.toLocaleString(undefined, { maximumFractionDigits: 2 })}</div>
+              <div className={`rounded px-4 py-1 text-md font-bold ${idx === 0 ? "bg-yellow-400 text-black" : idx === 1 ? "bg-gray-400 text-black" : "bg-orange-400 text-black"} mb-2`}>
+                {payouts[idx] > 0 ? <>+{payouts[idx]}</> : <>-</>}
               </div>
             </div>
-            <div className="text-lg font-bold mt-2">{podium[1]?.username}</div>
-            <div className="text-gray-400 font-semibold mt-1">2nd Place</div>
-            <div className="text-white text-xl font-bold mb-2">${podium[1]?.wagered?.toLocaleString(undefined, { maximumFractionDigits: 2 })}</div>
-            <div className="rounded-lg px-4 py-1 text-md font-bold bg-gray-400 text-black mb-4">
-              ${payouts[1]}
-            </div>
-          </div>
-          {/* 1st Place */}
-          <div className="flex flex-col items-center justify-end z-20 scale-110">
-            <div className="mb-2 relative">
-              <div className="rounded-full border-4 border-yellow-400 bg-[#23263a] shadow-lg w-32 h-32 flex items-center justify-center">
-                <img src={podium[0]?.avatar?.medium || "/placeholder.svg"} alt={podium[0]?.username} className="w-28 h-28 rounded-full object-cover" />
-              </div>
-              <img src="/crown.svg" alt="Crown" className="w-12 h-12 mx-auto absolute -top-10 left-1/2 -translate-x-1/2" />
-            </div>
-            <div className="text-2xl font-bold mt-2">{podium[0]?.username}</div>
-            <div className="text-yellow-400 font-semibold mt-1">1st Place</div>
-            <div className="text-white text-2xl font-bold mb-2">${podium[0]?.wagered?.toLocaleString(undefined, { maximumFractionDigits: 2 })}</div>
-            <div className="rounded-lg px-6 py-2 text-lg font-bold bg-yellow-400 text-black mb-4">
-              ${payouts[0]}
-            </div>
-          </div>
-          {/* 3rd Place */}
-          <div className="flex flex-col items-center justify-end z-10 scale-95">
-            <div className="mb-2">
-              <div className="rounded-full border-4 border-orange-400 bg-[#23263a] shadow-lg w-24 h-24 flex items-center justify-center">
-                <img src={podium[2]?.avatar?.medium || "/placeholder.svg"} alt={podium[2]?.username} className="w-20 h-20 rounded-full object-cover" />
-              </div>
-            </div>
-            <div className="text-lg font-bold mt-2">{podium[2]?.username}</div>
-            <div className="text-orange-400 font-semibold mt-1">3rd Place</div>
-            <div className="text-white text-xl font-bold mb-2">${podium[2]?.wagered?.toLocaleString(undefined, { maximumFractionDigits: 2 })}</div>
-            <div className="rounded-lg px-4 py-1 text-md font-bold bg-orange-400 text-black mb-4">
-              ${payouts[2]}
-            </div>
-          </div>
+          ))}
         </motion.div>
 
-        {/* Prize Distribution */}
-        <Card className="mb-6 border-gray-800 bg-gray-900/70 text-white">
-          <CardHeader>
-            <CardTitle>Prize Distribution</CardTitle>
-            <CardDescription>How the prize pool is split among top places</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-sm text-gray-300 flex flex-wrap gap-4">
-              {payouts.map((amt, idx) => (
-                <div key={idx} className="flex items-center gap-1">
-                  {idx + 1}
-                  {["st", "nd", "rd"][idx] || "th"}:
-                  <Image src={coinImg} alt="Coin" width={20} height={20} className="inline-block mr-1" />
-                  {amt}
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Leaderboard Table */}
+        {/* Leaderboard Table - up to 15 players, reworked row style */}
         <Card className="border-gray-800 bg-gray-900/70 text-white">
           <CardHeader>
             <CardTitle>Current Rankings</CardTitle>
@@ -350,19 +308,15 @@ export default function WeeklyRacePage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {rest.slice(0, 47).map((user, index) => (
-                      <motion.tr
+                    {leaderboard.slice(0, 15).map((user, index) => (
+                      <tr
                         key={user.id || user.username}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.03 }}
-                        whileHover={{ backgroundColor: "rgba(75, 85, 99, 0.2)" }}
-                        className="border-b border-gray-800"
+                        className={`border-b border-gray-800 hover:bg-gray-800/60 transition-colors`}
                       >
-                        <td className="p-4 font-medium">#{index + 4}</td>
+                        <td className="p-4 font-bold text-lg text-gray-300">#{index + 1}</td>
                         <td className="p-4">
                           <div className="flex items-center gap-3">
-                            <div className="h-8 w-8 overflow-hidden rounded-full">
+                            <div className="h-8 w-8 overflow-hidden rounded-full bg-gray-800 border border-gray-700">
                               {user.avatar ? (
                                 <img
                                   src={user.avatar.small || "/placeholder.svg?height=50&width=50"}
@@ -376,26 +330,16 @@ export default function WeeklyRacePage() {
                             <span className="font-medium">{user.username}</span>
                           </div>
                         </td>
-                        <td className="p-4 flex items-center gap-1">
-                          <Image src={coinImg} alt="Coin" width={16} height={16} className="inline-block mr-1" />
+                        <td className="p-4 flex items-center gap-1 font-mono text-base text-yellow-300">
+                          <img src={coinImg} alt="Coin" width={16} height={16} className="inline-block mr-1" />
                           {Math.round(user.wagered).toLocaleString()}
                         </td>
                         <td className="p-4">
-                          <span className="rounded-full bg-purple-900/30 px-2 py-1 text-xs text-purple-400 flex items-center gap-1">
-                            {index + 3 < payouts.length ? (
-                              <>
-                                <Image src={coinImg} alt="Coin" width={16} height={16} className="inline-block mr-1" />
-                                {payouts[index + 3]}
-                              </>
-                            ) : (
-                              <>
-                                <Image src={coinImg} alt="Coin" width={16} height={16} className="inline-block mr-1" />
-                                0
-                              </>
-                            )}
+                          <span className={`inline-block rounded px-3 py-1 font-semibold text-sm ${index < payouts.length ? "bg-yellow-900/60 text-yellow-300" : "bg-gray-800 text-gray-400"}`}>
+                            {index < payouts.length && payouts[index] > 0 ? `+${payouts[index]}` : "-"}
                           </span>
                         </td>
-                      </motion.tr>
+                      </tr>
                     ))}
                   </tbody>
                 </table>
