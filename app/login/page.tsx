@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
@@ -21,48 +21,29 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [rainUsername, setRainUsername] = useState("")
+  const [step, setStep] = useState<"username" | "discord">("username")
 
-  // Handle login with Rain.gg username
-  const handleLogin = async (e: React.FormEvent) => {
+  // On mount, clear any stored username
+  useEffect(() => {
+    sessionStorage.removeItem("pendingRainUsername")
+  }, [])
+
+  // Step 1: User enters Rain.gg username
+  const handleUsernameSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
-    setError(null)
-    try {
-      if (!rainUsername.trim()) {
-        setError("Please enter your Rain.gg username")
-        setIsLoading(false)
-        return
-      }
-      const userData = await verifyUser(rainUsername.trim())
-      if (!userData) {
-        setError("Username not found in MEASTER community")
-        setIsLoading(false)
-        return
-      }
-      localStorage.setItem("rainUsername", userData.username)
-      document.cookie = `rainUsername=${encodeURIComponent(userData.username)}; path=/; max-age=604800`
-      await login(userData.username)
-      window.location.href = "/dashboard"
+    if (!rainUsername.trim()) {
+      setError("Please enter your Rain.gg username")
       return
-    } catch {
-      setError("An error occurred during login. Please try again.")
-    } finally {
-      setIsLoading(false)
     }
+    // Store username for after Discord OAuth
+    sessionStorage.setItem("pendingRainUsername", rainUsername.trim())
+    setStep("discord")
   }
 
-  // Demo login
-  const handleDemoLogin = async () => {
-    setIsLoading(true)
-    setError(null)
-    try {
-      await login("demo-user")
-      router.push("/dashboard")
-    } catch {
-      setError("An error occurred during demo login. Please try again.")
-    } finally {
-      setIsLoading(false)
-    }
+  // Step 2: User clicks Discord login
+  const handleDiscordLogin = () => {
+    // Optionally, pass rainUsername as a query param for callback
+    signIn("discord")
   }
 
   return (
@@ -73,69 +54,60 @@ export default function LoginPage() {
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md">
           <Card className="mx-auto w-full border-gray-800 bg-gray-900/80 text-white shadow-xl">
             <CardHeader className="text-center">
-              <CardTitle className="text-2xl font-bold mb-2">Sign In to MEASTER</CardTitle>
-              <div className="text-gray-400 text-sm mb-2">Access your dashboard and rewards</div>
+              <CardTitle className="text-2xl font-bold mb-2">Secure Login</CardTitle>
+              <div className="text-gray-400 text-sm mb-2">Step {step === "username" ? "1" : "2"} of 2</div>
             </CardHeader>
             <CardContent>
               {error && (
                 <div className="mb-4 rounded bg-red-900/40 p-2 text-red-300 text-center text-sm">{error}</div>
               )}
-              <form onSubmit={handleLogin} className="mb-4">
-                <Input
-                  id="rainUsername"
-                  placeholder="Rain.gg Username"
-                  type="text"
-                  autoCapitalize="none"
-                  autoCorrect="off"
-                  className="border-gray-700 bg-gray-800 text-white mb-3"
-                  required
-                  value={rainUsername}
-                  onChange={(e) => setRainUsername(e.target.value)}
-                  disabled={isLoading}
-                />
-                <Button
-                  type="submit"
-                  className="w-full bg-gradient-to-r from-yellow-500 to-amber-500 text-black hover:from-yellow-600 hover:to-amber-600"
-                  disabled={isLoading}
-                >
-                  {isLoading ? "Signing in..." : "Access Dashboard"}
-                </Button>
-              </form>
-              <div className="relative my-4">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t border-gray-700"></span>
+              {step === "username" && (
+                <form onSubmit={handleUsernameSubmit} className="mb-4">
+                  <Input
+                    id="rainUsername"
+                    placeholder="Rain.gg Username"
+                    type="text"
+                    autoCapitalize="none"
+                    autoCorrect="off"
+                    className="border-gray-700 bg-gray-800 text-white mb-3"
+                    required
+                    value={rainUsername}
+                    onChange={(e) => setRainUsername(e.target.value)}
+                    disabled={isLoading}
+                  />
+                  <Button
+                    type="submit"
+                    className="w-full bg-gradient-to-r from-yellow-500 to-amber-500 text-black hover:from-yellow-600 hover:to-amber-600"
+                    disabled={isLoading}
+                  >
+                    Continue
+                  </Button>
+                </form>
+              )}
+              {step === "discord" && (
+                <div className="flex flex-col gap-4">
+                  <div className="mb-2 text-center text-gray-300">
+                    Rain.gg username: <span className="font-bold">{rainUsername}</span>
+                  </div>
+                  <Button
+                    onClick={handleDiscordLogin}
+                    className="w-full bg-[#5865F2] text-white hover:bg-[#4752C4]"
+                    disabled={isLoading}
+                    type="button"
+                  >
+                    Sign in with Discord
+                  </Button>
+                  <Button
+                    onClick={() => setStep("username")}
+                    className="w-full bg-gray-800 text-gray-200 hover:bg-gray-700"
+                    disabled={isLoading}
+                    type="button"
+                    variant="outline"
+                  >
+                    Back
+                  </Button>
                 </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-gray-900 px-2 text-gray-400">Or</span>
-                </div>
-              </div>
-              <Button
-                onClick={() => {
-                  if (!rainUsername.trim()) {
-                    setError("Please enter your Rain.gg username before Discord login.")
-                    return
-                  }
-                  // Use state param to pass username securely
-                  signIn("discord", {
-                    callbackUrl: "/auth/callback",
-                    state: encodeURIComponent(rainUsername.trim())
-                  })
-                }}
-                className="w-full bg-[#5865F2] text-white hover:bg-[#4752C4] mb-3"
-                disabled={isLoading || !rainUsername.trim()}
-                type="button"
-              >
-                Sign in with Discord
-              </Button>
-              <Button
-                onClick={handleDemoLogin}
-                className="w-full bg-gray-800 text-gray-200 hover:bg-gray-700"
-                disabled={isLoading}
-                type="button"
-                variant="outline"
-              >
-                Try Demo Account
-              </Button>
+              )}
             </CardContent>
             <CardFooter className="flex flex-col gap-2 text-center text-xs text-gray-500">
               <span>
