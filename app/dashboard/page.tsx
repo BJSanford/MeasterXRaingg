@@ -17,6 +17,7 @@ import {
   fetchLeaderboard,
   fetchRaces,
   fetchReferrals,
+  fetchLeaderboardByType,
 } from "@/lib/server-api"
 import CityOverlay from "../city-overlay"
 import SnowOverlay from "../snow-overlay"
@@ -56,18 +57,23 @@ export default function Dashboard() {
       setUsingMockData(false)
 
       try {
+        // Fetch all-time leaderboard (not race leaderboard)
+        const leaderboardData = await fetchLeaderboardByType(
+          "wagered",
+          "2020-01-01T00:00:00.00Z",
+          "2030-01-01T00:00:00.00Z"
+        )
+
         // Fetch data from server actions
-        const [leaderboardData, racesData, referralsData] = await Promise.all([
-          fetchLeaderboard(),
+        const [racesData, referralsData] = await Promise.all([
           fetchRaces(),
           fetchReferrals(),
         ])
-
         setLeaderboard(leaderboardData.results || [])
         setRaces(racesData.results || [])
         setReferrals(referralsData.results || [])
 
-        // --- Find the logged-in user's wagered value from the leaderboard ---
+        // Find the logged-in user's wagered value from the all-time leaderboard
         if (user && leaderboardData.results) {
           const input = user.username.trim().toLowerCase()
           const lbUser = leaderboardData.results.find(
