@@ -9,20 +9,14 @@ export const dynamic = "force-dynamic"
 
 export default function LinkAccountPage() {
   const router = useRouter()
-  const { data: session, status } = useSession()
+  const sessionHook = typeof window !== "undefined" ? useSession() : undefined
+  const session = sessionHook?.data
+  const status = sessionHook?.status
   const [error, setError] = useState<string | null>(null)
-  const [hasPosted, setHasPosted] = useState(false)
 
   useEffect(() => {
-    // Only run on client
-    if (typeof window === "undefined") return
-    if (status !== "authenticated") return
-    if (!session?.user?.id) {
-      setError("No Discord user found. Please try again.")
-      signOut({ callbackUrl: "/login" })
-      return
-    }
-    if (hasPosted) return
+    if (!sessionHook) return
+    if (status === "loading") return
 
     const rainUsername = sessionStorage.getItem("pendingRainUsername")
     if (!rainUsername) {
@@ -31,7 +25,13 @@ export default function LinkAccountPage() {
       return
     }
 
-    setHasPosted(true)
+    if (!session?.user?.id) {
+      setError("No Discord user found. Please try again.")
+      signOut({ callbackUrl: "/login" })
+      return
+    }
+
+    // Link Discord and Rain.gg username
     fetch("/api/verification/request", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -43,14 +43,15 @@ export default function LinkAccountPage() {
     })
       .then((res) => {
         if (!res.ok) throw new Error("Failed to link accounts")
+        // Success: clear sessionStorage and redirect
         sessionStorage.removeItem("pendingRainUsername")
         router.replace("/dashboard")
       })
-      .catch(() => {
+      .catch((err) => {
         setError("Failed to link accounts. Please try again.")
         signOut({ callbackUrl: "/login" })
       })
-  }, [session, status, router, hasPosted])
+  }, [session, status, router, sessionHook])
 
   if (error) {
     return (
