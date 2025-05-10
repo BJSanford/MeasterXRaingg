@@ -68,7 +68,8 @@ const getUserWageredData = async (username: string): Promise<number> => {
     accept: "application/json",
     "x-api-key": API_KEY,
   }
-  const url = `${API_BASE_URL}/affiliates/leaderboard?start_date=2024-01-14T00%3A00%3A00.00Z&end_date=2026-01-14T00%3A00%3A00.00Z&type=wagered`
+  // Use a wide date range to get all-time wagered
+  const url = `${API_BASE_URL}/affiliates/leaderboard?start_date=2020-01-01T00%3A00%3A00.00Z&end_date=2030-01-01T00%3A00%3A00.00Z&type=wagered`
   try {
     const res = await fetch(url, { headers, cache: "no-store" })
     if (!res.ok) return 0
@@ -78,6 +79,7 @@ const getUserWageredData = async (username: string): Promise<number> => {
       : Array.isArray(data.leaderboard)
         ? data.leaderboard
         : []
+    // Always match by username (case-insensitive, trimmed)
     const userEntry = arr.find((u: any) =>
       typeof u.username === "string" &&
       u.username.trim().toLowerCase() === username.trim().toLowerCase()
@@ -120,7 +122,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       let wagerHistory: { date: string, amount: number }[] = []
       let totalWagered = 0
       if (userProfile) {
-        // Fetch wagered value from the wagered endpoint
+        // Always fetch wagered value from the wagered endpoint and match by username
         totalWagered = await getUserWageredData(userProfile.username)
         wagerHistory = await getWeeklyWagerHistory(userProfile.username)
         setUser({
