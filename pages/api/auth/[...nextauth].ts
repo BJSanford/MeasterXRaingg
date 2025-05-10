@@ -13,11 +13,18 @@ export default NextAuth({
   ],
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
-      // Get rainUsername from query or session
-      const rainUsername =
-        (credentials?.rainUsername) ||
-        (typeof profile === "object" && "rainUsername" in profile ? profile.rainUsername : null) ||
-        null;
+      // Rain.gg username is passed via OAuth 'state' param
+      let rainUsername = null;
+      if (account?.provider === "discord" && account?.state) {
+        rainUsername = decodeURIComponent(account.state);
+      }
+      // fallback: try credentials or profile
+      if (!rainUsername) {
+        rainUsername =
+          (credentials?.rainUsername) ||
+          (typeof profile === "object" && "rainUsername" in profile ? profile.rainUsername : null) ||
+          null;
+      }
 
       if (!rainUsername) {
         return false;

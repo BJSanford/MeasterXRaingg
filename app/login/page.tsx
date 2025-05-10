@@ -110,9 +110,19 @@ export default function LoginPage() {
                 </div>
               </div>
               <Button
-                onClick={() => signIn("discord", { callbackUrl: `/auth/callback?rainUsername=${encodeURIComponent(rainUsername)}` })}
+                onClick={() => {
+                  if (!rainUsername.trim()) {
+                    setError("Please enter your Rain.gg username before Discord login.")
+                    return
+                  }
+                  // Use state param to pass username securely
+                  signIn("discord", {
+                    callbackUrl: "/auth/callback",
+                    state: encodeURIComponent(rainUsername.trim())
+                  })
+                }}
                 className="w-full bg-[#5865F2] text-white hover:bg-[#4752C4] mb-3"
-                disabled={isLoading}
+                disabled={isLoading || !rainUsername.trim()}
                 type="button"
               >
                 Sign in with Discord
