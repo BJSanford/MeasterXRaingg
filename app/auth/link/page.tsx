@@ -13,7 +13,9 @@ export default function LinkAccountPage() {
   const [loading, setLoading] = useState(true)
   const [timedOut, setTimedOut] = useState(false)
 
+  // Prevent SSR/prerender crash: only run effect on client
   useEffect(() => {
+    if (typeof window === "undefined") return
     if (status === "loading") return
 
     const timeout = setTimeout(() => {
@@ -21,7 +23,7 @@ export default function LinkAccountPage() {
       setLoading(false)
     }, 10000)
 
-    const rainUsername = typeof window !== "undefined" ? sessionStorage.getItem("pendingRainUsername") : null
+    const rainUsername = sessionStorage.getItem("pendingRainUsername")
     if (!rainUsername) {
       setError("No Rain.gg username found. Please start the login process again.")
       setLoading(false)
@@ -63,6 +65,9 @@ export default function LinkAccountPage() {
 
     return () => clearTimeout(timeout)
   }, [session, status, router])
+
+  // Render nothing on server
+  if (typeof window === "undefined") return null
 
   if (error) {
     return (
