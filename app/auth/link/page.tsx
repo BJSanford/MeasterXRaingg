@@ -4,12 +4,18 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { signOut, useSession } from "next-auth/react"
 
+// Prevent static prerendering
+export const dynamic = "force-dynamic"
+
 export default function LinkAccountPage() {
   const router = useRouter()
-  const { data: session, status } = useSession()
+  const sessionHook = typeof window !== "undefined" ? useSession() : undefined
+  const session = sessionHook?.data
+  const status = sessionHook?.status
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    if (!sessionHook) return
     if (status === "loading") return
 
     const rainUsername = sessionStorage.getItem("pendingRainUsername")
@@ -45,7 +51,7 @@ export default function LinkAccountPage() {
         setError("Failed to link accounts. Please try again.")
         signOut({ callbackUrl: "/login" })
       })
-  }, [session, status, router])
+  }, [session, status, router, sessionHook])
 
   if (error) {
     return (
