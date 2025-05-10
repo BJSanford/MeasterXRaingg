@@ -237,7 +237,7 @@ export default function Dashboard() {
   // --- End welcome block ---
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-gradient-to-br from-[#181c2b] to-[#10121a] text-white">
       <CityOverlay />
       <SnowOverlay />
 
@@ -262,7 +262,7 @@ export default function Dashboard() {
           </motion.div>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <div className="h-8 w-8 overflow-hidden rounded-full bg-purple-900">
+              <div className="h-8 w-8 overflow-hidden rounded-full bg-purple-900 border-2 border-amber-400 shadow-lg">
                 {user.avatar ? (
                   <img
                     src={user.avatar.medium || "/placeholder.svg?height=50&width=50"}
@@ -273,7 +273,7 @@ export default function Dashboard() {
                   <div className="h-full w-full bg-gradient-to-br from-purple-500 to-pink-500"></div>
                 )}
               </div>
-              <span className="font-medium">{user.username}</span>
+              <span className="font-semibold">{user.username}</span>
             </div>
             <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
               <Button variant="ghost" size="icon" onClick={logout}>
@@ -285,7 +285,7 @@ export default function Dashboard() {
       </motion.header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-10">
         {/* Add welcome header here */}
         <WelcomeHeader />
 
@@ -301,80 +301,50 @@ export default function Dashboard() {
           </motion.div>
         )}
 
+        {/* Modern Stat Cards */}
         <motion.div
           variants={staggerContainer(0.05, 0.1)}
           initial="hidden"
           animate="show"
-          className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-5"
+          className="mb-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4"
         >
           <motion.div variants={fadeIn("up", 0.1)} whileHover={{ y: -5, transition: { duration: 0.2 } }}>
-            <Card className="border-gray-800 bg-gray-900/70 text-white">
-              <CardContent className="flex items-center justify-between p-6">
-                <div>
-                  <p className="text-sm text-gray-400">Total Wagered</p>
-                  <p className="text-2xl font-bold">
-                    ${userWagered !== null
-                      ? userWagered.toLocaleString(undefined, { maximumFractionDigits: 2 })
-                      : (user.totalWagered ?? 0).toLocaleString(undefined, { maximumFractionDigits: 2 })}
-                  </p>
-                </div>
-                <motion.div animate={floatAnimation}>
-                  <DollarSign className="h-8 w-8 text-green-500" />
-                </motion.div>
+            <Card className="bg-gradient-to-br from-[#23263a] to-[#181c2b] border-none shadow-xl rounded-2xl">
+              <CardContent className="flex flex-col items-center justify-center p-8">
+                <DollarSign className="h-10 w-10 text-green-400 mb-2" />
+                <p className="text-sm text-gray-400">Total Wagered</p>
+                <p className="text-3xl font-extrabold text-green-300 mt-1">
+                  ${userWagered !== null
+                    ? userWagered.toLocaleString(undefined, { maximumFractionDigits: 2 })
+                    : (user.totalWagered ?? 0).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                </p>
               </CardContent>
             </Card>
           </motion.div>
-          {/* --- Remove Deposited Card --- */}
-          {/* <motion.div variants={fadeIn("up", 0.15)} whileHover={{ y: -5, transition: { duration: 0.2 } }}>
-            <Card className="border-gray-800 bg-gray-900/70 text-white">
-              <CardContent className="flex items-center justify-between p-6">
-                <div>
-                  <p className="text-sm text-gray-400">Total Deposited</p>
-                  <p className="text-2xl font-bold">${(user.totalDeposited ?? 0).toLocaleString(undefined, {maximumFractionDigits: 2})}</p>
-                </div>
-                <motion.div animate={floatAnimation}>
-                  <DollarSign className="h-8 w-8 text-blue-400" />
-                </motion.div>
+          <motion.div variants={fadeIn("up", 0.15)} whileHover={{ y: -5, transition: { duration: 0.2 } }}>
+            <Card className="bg-gradient-to-br from-[#23263a] to-[#181c2b] border-none shadow-xl rounded-2xl">
+              <CardContent className="flex flex-col items-center justify-center p-8">
+                <Zap className="h-10 w-10 text-yellow-400 mb-2" />
+                <p className="text-sm text-gray-400">Current Rakeback</p>
+                <p className="text-3xl font-extrabold text-yellow-300 mt-1">{user.rakebackPercentage ?? 0}%</p>
               </CardContent>
             </Card>
-          </motion.div> */}
-          {/* --- End Deposited Card --- */}
+          </motion.div>
           <motion.div variants={fadeIn("up", 0.2)} whileHover={{ y: -5, transition: { duration: 0.2 } }}>
-            <Card className="border-gray-800 bg-gray-900/70 text-white">
-              <CardContent className="flex items-center justify-between p-6">
-                <div>
-                  <p className="text-sm text-gray-400">Current Rakeback</p>
-                  <p className="text-2xl font-bold">{user.rakebackPercentage ?? 0}%</p>
-                </div>
-                <motion.div animate={floatAnimation}>
-                  <Zap className="h-8 w-8 text-yellow-500" />
-                </motion.div>
+            <Card className="bg-gradient-to-br from-[#23263a] to-[#181c2b] border-none shadow-xl rounded-2xl">
+              <CardContent className="flex flex-col items-center justify-center p-8">
+                <Star className="h-10 w-10 text-purple-400 mb-2" />
+                <p className="text-sm text-gray-400">Rakeback Earned</p>
+                <p className="text-3xl font-extrabold text-purple-300 mt-1">${(user.rakebackEarned ?? 0).toLocaleString()}</p>
               </CardContent>
             </Card>
           </motion.div>
-          <motion.div variants={fadeIn("up", 0.3)} whileHover={{ y: -5, transition: { duration: 0.2 } }}>
-            <Card className="border-gray-800 bg-gray-900/70 text-white">
-              <CardContent className="flex items-center justify-between p-6">
-                <div>
-                  <p className="text-sm text-gray-400">Rakeback Earned</p>
-                  <p className="text-2xl font-bold">${(user.rakebackEarned ?? 0).toLocaleString()}</p>
-                </div>
-                <motion.div animate={floatAnimation}>
-                  <Star className="h-8 w-8 text-purple-500" />
-                </motion.div>
-              </CardContent>
-            </Card>
-          </motion.div>
-          <motion.div variants={fadeIn("up", 0.4)} whileHover={{ y: -5, transition: { duration: 0.2 } }}>
-            <Card className="border-gray-800 bg-gray-900/70 text-white">
-              <CardContent className="flex items-center justify-between p-6">
-                <div>
-                  <p className="text-sm text-gray-400">Measter Coins</p>
-                  <p className="text-2xl font-bold">{user.measterCoins ?? 0}</p>
-                </div>
-                <motion.div animate={floatAnimation}>
-                  <Coins className="h-8 w-8 text-amber-500" />
-                </motion.div>
+          <motion.div variants={fadeIn("up", 0.25)} whileHover={{ y: -5, transition: { duration: 0.2 } }}>
+            <Card className="bg-gradient-to-br from-[#23263a] to-[#181c2b] border-none shadow-xl rounded-2xl">
+              <CardContent className="flex flex-col items-center justify-center p-8">
+                <Coins className="h-10 w-10 text-amber-400 mb-2" />
+                <p className="text-sm text-gray-400">Measter Coins</p>
+                <p className="text-3xl font-extrabold text-amber-300 mt-1">{user.measterCoins ?? 0}</p>
               </CardContent>
             </Card>
           </motion.div>

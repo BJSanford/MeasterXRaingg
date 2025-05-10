@@ -109,6 +109,13 @@ export default function WeeklyRacePage() {
     }
   }
 
+  const obfuscateName = (name: string) => {
+    if (!name) return ""
+    if (name.length <= 2) return name[0] + "*"
+    if (name.length <= 4) return name[0] + "*".repeat(name.length - 1)
+    return name.slice(0, 2) + "*".repeat(name.length - 4) + name.slice(-2)
+  }
+
   return (
     <div className="min-h-screen bg-black text-white">
       <CityOverlay />
@@ -358,6 +365,60 @@ export default function WeeklyRacePage() {
               )}
             </CardContent>
           </Card>
+
+          {/* Top 3 Users Display */}
+          <div className="flex justify-center items-end gap-4 mt-12 mb-10">
+            {leaderboard.slice(0, 3).map((user, idx) => (
+              <div
+                key={user.id}
+                className={`
+                  flex flex-col items-center justify-end
+                  ${idx === 1 ? "z-20" : "z-10"}
+                  ${idx === 1 ? "scale-110" : "scale-100"}
+                `}
+                style={{
+                  marginTop: idx === 1 ? 0 : 40,
+                }}
+              >
+                <div className={`
+                  rounded-full border-4
+                  ${idx === 0 ? "border-gray-400" : idx === 1 ? "border-yellow-400" : "border-orange-400"}
+                  bg-[#23263a] shadow-lg w-28 h-28 flex items-center justify-center mb-2
+                `}>
+                  <img src={user.avatar || "/placeholder.svg"} alt={user.username} className="w-24 h-24 rounded-full object-cover" />
+                </div>
+                {idx === 1 && (
+                  <div className="mb-[-30px]">
+                    <img src="/crown.svg" alt="Crown" className="w-12 h-12 mx-auto" />
+                  </div>
+                )}
+                <div className="text-lg font-bold mt-2">{obfuscateName(user.username)}</div>
+                <div className="text-yellow-400 font-semibold mt-1">WAGERED</div>
+                <div className="text-white text-xl font-bold mb-2">${user.wagered.toLocaleString(undefined, { maximumFractionDigits: 2 })}</div>
+                <div className={`
+                  rounded-lg px-6 py-2 text-lg font-bold
+                  ${idx === 0 ? "bg-gray-400 text-black" : idx === 1 ? "bg-yellow-400 text-black" : "bg-orange-400 text-black"}
+                  mb-4
+                `}>
+                  ${user.prize}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Render the rest of the leaderboard, obfuscating names for top 5 */}
+          {leaderboard.slice(3, 8).map((user, idx) => (
+            <div key={user.id} className="flex items-center gap-4 py-3 border-b border-gray-800">
+              <div className="w-10 text-center text-lg font-bold">{idx + 4}</div>
+              <div className="w-12 h-12 rounded-full overflow-hidden bg-[#23263a] flex items-center justify-center">
+                <img src={user.avatar || "/placeholder.svg"} alt={user.username} className="w-10 h-10 object-cover" />
+              </div>
+              <div className="flex-1 font-semibold text-lg">
+                {idx < 2 ? obfuscateName(user.username) : user.username}
+              </div>
+              <div className="text-yellow-300 font-bold">${user.wagered.toLocaleString(undefined, { maximumFractionDigits: 2 })}</div>
+            </div>
+          ))}
         </motion.div>
       </main>
     </div>
