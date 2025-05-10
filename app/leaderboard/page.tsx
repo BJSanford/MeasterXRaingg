@@ -256,7 +256,10 @@ export default function WeeklyRacePage() {
                 <span className="text-lg font-bold">{user?.username}</span>
               </div>
               <div className="text-gray-400 font-semibold mt-1">{["1st Place", "2nd Place", "3rd Place"][idx]}</div>
-              <div className="text-white text-xl font-bold mb-1">${user?.wagered?.toLocaleString(undefined, { maximumFractionDigits: 2 })}</div>
+              <div className="text-white text-xl font-bold mb-1 flex items-center justify-center">
+                <img src={coinImg} alt="Coin" width={22} height={22} className="inline-block mr-1" />
+                {user?.wagered?.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+              </div>
               <div className={`rounded px-4 py-1 text-md font-bold ${idx === 0 ? "bg-yellow-400 text-black" : idx === 1 ? "bg-gray-400 text-black" : "bg-orange-400 text-black"} mb-2`}>
                 {payouts[idx] > 0 ? <>+{payouts[idx]}</> : <>-</>}
               </div>

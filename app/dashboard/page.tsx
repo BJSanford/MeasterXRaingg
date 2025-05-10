@@ -39,6 +39,8 @@ const depositBonusTiers = [
   { threshold: 500, bonus: 100 },
 ]
 
+const coinImg = "/coin.png" // Add this line near the top, after imports
+
 export default function Dashboard() {
   const { user, logout, isLoading } = useAuth()
   const [activeTab, setActiveTab] = useState("overview")
@@ -311,10 +313,12 @@ export default function Dashboard() {
           <motion.div variants={fadeIn("up", 0.1)} whileHover={{ y: -5, transition: { duration: 0.2 } }}>
             <Card className="bg-gradient-to-br from-[#23263a] to-[#181c2b] border-none shadow-xl rounded-2xl">
               <CardContent className="flex flex-col items-center justify-center p-8">
-                <DollarSign className="h-10 w-10 text-green-400 mb-2" />
+                {/* Replace DollarSign icon and $ with coin PNG */}
+                <img src={coinImg} alt="Coin" width={40} height={40} className="mb-2" />
                 <p className="text-sm text-gray-400">Total Wagered</p>
-                <p className="text-3xl font-extrabold text-green-300 mt-1">
-                  ${userWagered !== null
+                <p className="text-3xl font-extrabold text-green-300 mt-1 flex items-center">
+                  {/* No $ sign, just the coin and value */}
+                  {userWagered !== null
                     ? userWagered.toLocaleString(undefined, { maximumFractionDigits: 2 })
                     : (user.totalWagered ?? 0).toLocaleString(undefined, { maximumFractionDigits: 2 })}
                 </p>
