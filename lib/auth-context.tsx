@@ -121,7 +121,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       let wagerHistory: { date: string, amount: number }[] = []
       let totalWagered = 0
       if (userProfile) {
-        // Fetch correct wagered value from the wagered leaderboard
+        // Fetch correct wagered value from the leaderboard endpoint (all-time, not race)
         totalWagered = await getUserWageredFromLeaderboard(userProfile.username)
         wagerHistory = await getWeeklyWagerHistory(userProfile.username)
         setUser({
