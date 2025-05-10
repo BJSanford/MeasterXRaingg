@@ -13,40 +13,39 @@ export default NextAuth({
   ],
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
-      // Rain.gg username is passed via query param/session
-      const rainUsername = credentials?.rainUsername;
+      // Get rainUsername from query or session
+      const rainUsername =
+        (credentials?.rainUsername) ||
+        (typeof profile === "object" && "rainUsername" in profile ? profile.rainUsername : null) ||
+        null;
 
       if (!rainUsername) {
         return false;
       }
 
-      // Store Discord info + Rain.gg username in DB if not exists
-      const existingUser = await prisma.user.findUnique({
-        where: { email: profile.email },
+      // Store Discord info + Rain.gg username in UserVerification table
+      await prisma.userVerification.upsert({
+        where: { discordId: profile.id },
+        update: { rainUsername, discordUsername: profile.username },
+        create: {
+          discordId: profile.id,
+          discordUsername: profile.username,
+          rainUsername,
+          verified: false,
+        },
       });
-
-      if (!existingUser) {
-        await prisma.user.create({
-          data: {
-            name: profile.name,
-            email: profile.email,
-            image: profile.picture,
-            rainUsername,
-            verified: false,
-          },
-        });
-      }
 
       return true;
     },
     async session({ session, token, user }) {
       // Attach verification status to session
-      const dbUser = await prisma.user.findUnique({
-        where: { email: session.user.email },
+      const dbUser = await prisma.userVerification.findUnique({
+        where: { discordId: session.user.id },
       });
 
       if (dbUser) {
         session.user.verified = dbUser.verified;
+        session.user.rainUsername = dbUser.rainUsername;
       }
 
       return session;

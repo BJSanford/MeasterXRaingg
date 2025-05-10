@@ -110,7 +110,7 @@ export default function LoginPage() {
                 </div>
               </div>
               <Button
-                onClick={() => signIn("discord")}
+                onClick={() => signIn("discord", { callbackUrl: `/auth/callback?rainUsername=${encodeURIComponent(rainUsername)}` })}
                 className="w-full bg-[#5865F2] text-white hover:bg-[#4752C4] mb-3"
                 disabled={isLoading}
                 type="button"
