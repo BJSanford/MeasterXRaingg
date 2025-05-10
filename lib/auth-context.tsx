@@ -117,23 +117,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const loadUser = async (rainUsername: string) => {
     setIsLoading(true)
     try {
-      // Fetch user data by username (deposited endpoint for avatar/id/username)
+      // Fetch user data by username (deposited endpoint for avatar/id/username/wagered)
       const userProfile = await verifyUser(rainUsername)
       let wagerHistory: { date: string, amount: number }[] = []
-      let totalWagered = 0
       if (userProfile) {
-        // Always fetch wagered value from the wagered endpoint and match by username
-        totalWagered = await getUserWageredData(userProfile.username)
         wagerHistory = await getWeeklyWagerHistory(userProfile.username)
         setUser({
           id: userProfile.id || userProfile.username,
           username: userProfile.username,
           avatar: userProfile.avatar,
-          totalWagered,
+          totalWagered: userProfile.wagered ?? 0, // <-- Use the "wagered" from verifyUser
           totalDeposited: userProfile.deposited ?? 0,
           rakebackPercentage: 5,
-          rakebackEarned: Math.round((totalWagered ?? 0) * 0.05),
-          measterCoins: Math.floor((totalWagered ?? 0) / 10),
+          rakebackEarned: Math.round((userProfile.wagered ?? 0) * 0.05),
+          measterCoins: Math.floor((userProfile.wagered ?? 0) / 10),
           joinDate: "",
           depositHistory: [],
           wagerHistory,
