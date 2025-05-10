@@ -1,9 +1,15 @@
 import { Client, GatewayIntentBits, PermissionsBitField, TextChannel } from "discord.js";
 import axios from "axios";
 
-// Replace with your actual IDs
-const GUILD_ID = "1344800932122198068";
-const MOD_ROLE_ID = "1353278415825801240";
+// Use environment variables for IDs and API URL
+const GUILD_ID = process.env.GUILD_ID!;
+const MOD_ROLE_ID = process.env.MOD_ROLE_ID!;
+const API_BASE_URL = process.env.API_BASE_URL!; // e.g. "https://your-backend-url.com"
+
+if (!process.env.DISCORD_BOT_TOKEN || !GUILD_ID || !MOD_ROLE_ID || !API_BASE_URL) {
+  console.error("Missing required environment variables. Please set DISCORD_BOT_TOKEN, GUILD_ID, MOD_ROLE_ID, and API_BASE_URL.");
+  process.exit(1);
+}
 
 const client = new Client({
   intents: [
@@ -17,7 +23,7 @@ const client = new Client({
 // Poll for pending verifications every 30 seconds
 setInterval(async () => {
   try {
-    const res = await axios.get("http://localhost:3000/api/verification/pending");
+    const res = await axios.get(`${API_BASE_URL}/api/verification/pending`);
     const pendingUsers = res.data; // [{ discordId, discordUsername, rainUsername }]
     const guild = await client.guilds.fetch(GUILD_ID);
     for (const user of pendingUsers) {
@@ -63,7 +69,7 @@ client.on("messageCreate", async (message) => {
   }
   const discordId = parts[1];
   try {
-    await axios.post("http://localhost:3000/api/verification/approve", { discordId });
+    await axios.post(`${API_BASE_URL}/api/verification/approve`, { discordId });
     message.channel.send(`<@${discordId}> has been verified!`);
   } catch (err) {
     message.channel.send("Failed to verify user.");
