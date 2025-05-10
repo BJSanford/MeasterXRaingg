@@ -1,0 +1,11 @@
+```prisma
+model UserVerification {
+  id             String   @id @default(cuid())
+  discordId      String   @unique
+  discordUsername String
+  rainUsername   String
+  verified       Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+```
