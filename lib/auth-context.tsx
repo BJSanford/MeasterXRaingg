@@ -61,6 +61,35 @@ const getWeeklyWagerHistory = async (username: string): Promise<{ date: string, 
   return weeks
 }
 
+const getUserWageredFromLeaderboard = async (username: string): Promise<number> => {
+  const API_BASE_URL = "https://api.rain.gg/v1"
+  const API_KEY = process.env.RAIN_API_KEY || "14d2ae5d-cea5-453a-b814-6fd810bda580"
+  const headers = {
+    accept: "application/json",
+    "x-api-key": API_KEY,
+  }
+  // Use a wide date range for all-time wagered
+  const url = `${API_BASE_URL}/affiliates/leaderboard?start_date=2020-01-01T00%3A00%3A00.00Z&end_date=2030-01-01T00%3A00%3A00.00Z&type=wagered`
+  try {
+    const res = await fetch(url, { headers, cache: "no-store" })
+    if (!res.ok) return 0
+    const data = await res.json()
+    const arr = Array.isArray(data.results)
+      ? data.results
+      : Array.isArray(data.leaderboard)
+        ? data.leaderboard
+        : []
+    const input = username.trim().toLowerCase()
+    const userEntry = arr.find((u: any) =>
+      typeof u.username === "string" &&
+      u.username.trim().toLowerCase() === input
+    )
+    return userEntry?.wagered ?? 0
+  } catch {
+    return 0
+  }
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserProfile | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -88,23 +117,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const loadUser = async (rainUsername: string) => {
     setIsLoading(true)
     try {
-      // Fetch user data by username
       const userProfile = await verifyUser(rainUsername)
       let wagerHistory: { date: string, amount: number }[] = []
+      let totalWagered = 0
       if (userProfile) {
+        // Fetch correct wagered value from the wagered leaderboard
+        totalWagered = await getUserWageredFromLeaderboard(userProfile.username)
         wagerHistory = await getWeeklyWagerHistory(userProfile.username)
         setUser({
           id: userProfile.id || userProfile.username,
           username: userProfile.username,
           avatar: userProfile.avatar,
-          totalWagered: userProfile.wagered ?? 0,
+          totalWagered,
           totalDeposited: userProfile.deposited ?? 0,
           rakebackPercentage: 5,
-          rakebackEarned: Math.round((userProfile.wagered ?? 0) * 0.05),
-          measterCoins: Math.floor((userProfile.wagered ?? 0) / 10),
+          rakebackEarned: Math.round((totalWagered ?? 0) * 0.05),
+          measterCoins: Math.floor((totalWagered ?? 0) / 10),
           joinDate: "",
           depositHistory: [],
-          wagerHistory, // <-- weekly wager history
+          wagerHistory,
         })
       } else {
         localStorage.removeItem("rainUsername")
