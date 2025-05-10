@@ -1,11 +1,16 @@
-```prisma
-model UserVerification {
-  id             String   @id @default(cuid())
-  discordId      String   @unique
-  discordUsername String
-  rainUsername   String
-  verified       Boolean  @default(false)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
 }
-```
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model UserVerification {
+  id              Int     @id @default(autoincrement())
+  discordId       String  @unique
+  discordUsername String
+  rainUsername    String
+  verified        Boolean @default(false)
+}
