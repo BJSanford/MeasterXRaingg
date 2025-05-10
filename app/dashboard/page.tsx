@@ -303,8 +303,8 @@ export default function Dashboard() {
               </CardContent>
             </Card>
           </motion.div>
-          {/* --- Add Deposited Card --- */}
-          <motion.div variants={fadeIn("up", 0.15)} whileHover={{ y: -5, transition: { duration: 0.2 } }}>
+          {/* --- Remove Deposited Card --- */}
+          {/* <motion.div variants={fadeIn("up", 0.15)} whileHover={{ y: -5, transition: { duration: 0.2 } }}>
             <Card className="border-gray-800 bg-gray-900/70 text-white">
               <CardContent className="flex items-center justify-between p-6">
                 <div>
@@ -316,7 +316,7 @@ export default function Dashboard() {
                 </motion.div>
               </CardContent>
             </Card>
-          </motion.div>
+          </motion.div> */}
           {/* --- End Deposited Card --- */}
           <motion.div variants={fadeIn("up", 0.2)} whileHover={{ y: -5, transition: { duration: 0.2 } }}>
             <Card className="border-gray-800 bg-gray-900/70 text-white">
