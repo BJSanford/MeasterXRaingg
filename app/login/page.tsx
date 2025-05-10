@@ -42,8 +42,8 @@ export default function LoginPage() {
 
   // Step 2: User clicks Discord login
   const handleDiscordLogin = () => {
-    // Optionally, pass rainUsername as a query param for callback
-    signIn("discord")
+    // After Discord OAuth, NextAuth will redirect to /auth/link
+    signIn("discord", { callbackUrl: "/auth/link" })
   }
 
   return (

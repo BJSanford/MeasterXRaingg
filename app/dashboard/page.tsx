@@ -125,6 +125,17 @@ export default function Dashboard() {
     )
   }
 
+  // Check if user is verified
+  if (user && user.verified === false) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-black text-white">
+        <div className="text-center">
+          <p>Your account is pending verification by a moderator. Please check Discord for instructions.</p>
+        </div>
+      </div>
+    )
+  }
+
   // Calculate next rakeback tier
   const currentTier = rakebackTiers.find(
     (tier, index) =>

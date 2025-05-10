@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
+import { prisma } from "@/lib/prisma"
 
-export function middleware(request: NextRequest) {
-  // Check if user is logged in
-  // Try both cookie and localStorage fallback for SSR/CSR mismatch
+export async function middleware(request: NextRequest) {
   const userId = request.cookies.get("userId")?.value
   const rainUsername = request.cookies.get("rainUsername")?.value
 
@@ -14,6 +13,18 @@ export function middleware(request: NextRequest) {
     !rainUsername
   ) {
     return NextResponse.redirect(new URL("/login", request.url))
+  }
+
+  // Check verification status if user is logged in
+  if (request.nextUrl.pathname.startsWith("/dashboard") && userId) {
+    // Fetch user from DB
+    const dbUser = await prisma.userVerification.findUnique({
+      where: { discordId: userId },
+    })
+    if (!dbUser || !dbUser.verified) {
+      // Not verified, redirect to a "pending verification" page
+      return NextResponse.redirect(new URL("/verification-pending", request.url))
+    }
   }
 
   return NextResponse.next()
