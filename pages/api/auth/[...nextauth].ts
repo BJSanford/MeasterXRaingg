@@ -20,6 +20,7 @@ export default NextAuth({
         session.user.id = token.id; // Discord user ID
         session.user.name = token.name; // Discord username
       }
+      console.log("Session data:", session); // Debugging
       return session;
     },
     async jwt({ token, account, profile }) {
@@ -27,6 +28,7 @@ export default NextAuth({
         token.id = profile.id; // Discord user ID
         token.name = profile.username; // Discord username
       }
+      console.log("JWT token data:", token); // Debugging
       return token;
     },
   },
