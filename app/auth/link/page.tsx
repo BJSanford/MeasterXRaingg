@@ -88,9 +88,10 @@ export default function LinkAccountPage() {
       <div className="text-center">
         <h2 className="text-2xl font-bold mb-2">Linking your accounts...</h2>
         <p>Please wait...</p>
-        {/* Always show debug info */}
         <pre className="mt-4 text-left text-xs bg-gray-900 p-2 rounded">
-          {JSON.stringify(debug, null, 2)}
+          {debug
+            ? JSON.stringify(debug, null, 2)
+            : "Waiting for session and username..."}
         </pre>
       </div>
     </div>
