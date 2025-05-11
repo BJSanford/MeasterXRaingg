@@ -21,9 +21,9 @@ export default function LinkAccountPage() {
 
     const rainUsername = sessionStorage.getItem("pendingRainUsername")
     setDebug({
-      session,
+      session: session ?? "NO_SESSION",
       status,
-      rainUsername,
+      rainUsername: rainUsername ?? "NO_RAIN_USERNAME",
     }) // <-- Set debug info
 
     if (!rainUsername) {
