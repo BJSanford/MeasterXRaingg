@@ -13,12 +13,19 @@ export default function LinkAccountPage() {
   const session = sessionHook?.data
   const status = sessionHook?.status
   const [error, setError] = useState<string | null>(null)
+  const [debug, setDebug] = useState<any>(null) // <-- Add debug state
 
   useEffect(() => {
     if (!sessionHook) return
     if (status === "loading") return
 
     const rainUsername = sessionStorage.getItem("pendingRainUsername")
+    setDebug({
+      session,
+      status,
+      rainUsername,
+    }) // <-- Set debug info
+
     if (!rainUsername) {
       setError("No Rain.gg username found. Please start the login process again.")
       signOut({ callbackUrl: "/login" })
@@ -66,6 +73,11 @@ export default function LinkAccountPage() {
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-2">Account Linking Error</h2>
           <p>{error}</p>
+          {debug && (
+            <pre className="mt-4 text-left text-xs bg-gray-900 p-2 rounded">
+              {JSON.stringify(debug, null, 2)}
+            </pre>
+          )}
         </div>
       </div>
     )
@@ -76,6 +88,11 @@ export default function LinkAccountPage() {
       <div className="text-center">
         <h2 className="text-2xl font-bold mb-2">Linking your accounts...</h2>
         <p>Please wait...</p>
+        {debug && (
+          <pre className="mt-4 text-left text-xs bg-gray-900 p-2 rounded">
+            {JSON.stringify(debug, null, 2)}
+          </pre>
+        )}
       </div>
     </div>
   )
