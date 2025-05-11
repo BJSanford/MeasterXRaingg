@@ -26,11 +26,21 @@ export default NextAuth({
             session.user.rainUsername = dbUser.rainUsername;
           }
         }
+        // Add Discord ID and username to session.user
+        session.user.id = token.id;
+        session.user.name = token.name;
         return session;
       } catch (err) {
         console.error("session error", err);
         return session;
       }
+    },
+    async jwt({ token, account, profile }) {
+      if (account && profile) {
+        token.id = profile.id;
+        token.name = profile.username;
+      }
+      return token;
     },
   },
   pages: {
