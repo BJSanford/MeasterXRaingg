@@ -35,7 +35,7 @@ export default function VerificationPage() {
       />
       <button
         onClick={() => {
-          // Replace with actual Discord ID and username
+          // TODO: Replace with actual Discord ID and username from authenticated user
           const discordId = "user-discord-id";
           const discordUsername = "user-discord-username";
           submitVerification(discordId, discordUsername, rainUsername);

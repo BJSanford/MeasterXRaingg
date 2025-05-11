@@ -31,7 +31,13 @@ export default function LinkAccountPage() {
       return
     }
 
-    // Link Discord and Rain.gg username
+    // Add logging here
+    console.log("Linking accounts:", {
+      discordId: session.user.id,
+      discordUsername: session.user.name,
+      rainUsername,
+    })
+
     fetch("/api/verification/request", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -48,6 +54,7 @@ export default function LinkAccountPage() {
         router.replace("/dashboard")
       })
       .catch((err) => {
+        console.error("Linking error:", err)
         setError("Failed to link accounts. Please try again.")
         signOut({ callbackUrl: "/login" })
       })
