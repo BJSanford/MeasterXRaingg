@@ -4,18 +4,21 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useSession, signOut } from "next-auth/react"
 
-export const dynamic = "force-dynamic"
-
 export default function LinkAccountPage() {
-  const router = useRouter()
-  const { data: session, status } = useSession()
+  const [mounted, setMounted] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [timedOut, setTimedOut] = useState(false)
+  const router = useRouter()
+  const { data: session, status } = useSession()
 
-  // Prevent SSR/prerender crash: only run effect on client
+  // Only render on client
   useEffect(() => {
-    if (typeof window === "undefined") return
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!mounted) return
     if (status === "loading") return
 
     const timeout = setTimeout(() => {
@@ -23,7 +26,7 @@ export default function LinkAccountPage() {
       setLoading(false)
     }, 10000)
 
-    const rainUsername = sessionStorage.getItem("pendingRainUsername")
+    const rainUsername = typeof window !== "undefined" ? sessionStorage.getItem("pendingRainUsername") : null
     if (!rainUsername) {
       setError("No Rain.gg username found. Please start the login process again.")
       setLoading(false)
@@ -64,10 +67,10 @@ export default function LinkAccountPage() {
       })
 
     return () => clearTimeout(timeout)
-  }, [session, status, router])
+  }, [mounted, session, status, router])
 
-  // Render nothing on server
-  if (typeof window === "undefined") return null
+  // Guard: render nothing on server
+  if (!mounted) return null
 
   if (error) {
     return (
