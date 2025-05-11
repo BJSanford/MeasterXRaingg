@@ -22,8 +22,8 @@ export default NextAuth({
 
         // Store in sessionStorage on the client side
         if (typeof window !== "undefined") {
-          sessionStorage.setItem("discordId", token.id);
-          sessionStorage.setItem("discordUsername", token.name);
+          sessionStorage.setItem("discordId", token.id || ""); // Ensure non-null value
+          sessionStorage.setItem("discordUsername", token.name || ""); // Ensure non-null value
         }
       }
       console.log("Session data:", session); // Debugging
