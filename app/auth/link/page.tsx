@@ -19,15 +19,20 @@ export default function LinkAccountPage() {
     if (!sessionHook) return
     if (status === "loading") return
 
+    const discordId = sessionStorage.getItem("discordId")
+    const discordUsername = sessionStorage.getItem("discordUsername")
     const rainUsername = sessionStorage.getItem("pendingRainUsername")
+
     setDebug({
       session: session ?? "NO_SESSION",
       status,
+      discordId: discordId ?? "NO_DISCORD_ID",
+      discordUsername: discordUsername ?? "NO_DISCORD_USERNAME",
       rainUsername: rainUsername ?? "NO_RAIN_USERNAME",
     }) // <-- Set debug info
 
-    if (!rainUsername) {
-      setError("No Rain.gg username found. Please start the login process again.")
+    if (!discordId || !discordUsername || !rainUsername) {
+      setError("Missing required data. Please start the login process again.")
       signOut({ callbackUrl: "/login" })
       return
     }
@@ -41,8 +46,8 @@ export default function LinkAccountPage() {
 
     // Add logging here
     console.log("Linking accounts:", {
-      discordId: session.user.id,
-      discordUsername: session.user.name,
+      discordId,
+      discordUsername,
       rainUsername,
     })
 
@@ -54,8 +59,8 @@ export default function LinkAccountPage() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        discordId: session.user.id,
-        discordUsername: session.user.name,
+        discordId,
+        discordUsername,
         rainUsername,
       }),
     })
