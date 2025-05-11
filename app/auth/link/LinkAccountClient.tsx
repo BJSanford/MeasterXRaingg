@@ -12,7 +12,10 @@ export default function LinkAccountClient() {
   const { data: session, status } = useSession()
 
   useEffect(() => {
-    if (status === "loading") return
+    if (status !== "authenticated") return
+
+    // Debug: log session object
+    console.log("Session after Discord OAuth:", session)
 
     const timeout = setTimeout(() => {
       setTimedOut(true)
