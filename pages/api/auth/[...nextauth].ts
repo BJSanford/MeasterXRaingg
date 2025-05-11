@@ -15,11 +15,6 @@ export default NextAuth({
       return true;
     },
     async session({ session, token, user }) {
-      // Attach Discord user ID to session
-      if (token && session.user) {
-        session.user.id = token.sub; // or token.id, depending on your provider
-      }
-
       try {
         // Attach verification status if available
         if (session.user && session.user.id) {
