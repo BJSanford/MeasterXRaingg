@@ -42,8 +42,10 @@ export default function LoginPage() {
 
   // Step 2: User clicks Discord login
   const handleDiscordLogin = () => {
-    // After Discord OAuth, NextAuth will redirect to /auth/link
-    signIn("discord", { callbackUrl: "/auth/link" })
+    // Store Rain.gg username in sessionStorage
+    sessionStorage.setItem("pendingRainUsername", rainUsername.trim());
+    // Redirect to Discord login
+    signIn("discord", { callbackUrl: "/auth/link" });
   }
 
   return (

@@ -32,7 +32,7 @@ export default function LinkAccountPage() {
       return
     }
 
-    if (!session?.user?.id) {
+    if (!session?.user?.id || !session?.user?.name) {
       setError("No Discord user found. Please try again.")
       signOut({ callbackUrl: "/login" })
       return
