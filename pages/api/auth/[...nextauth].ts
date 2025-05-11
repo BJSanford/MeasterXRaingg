@@ -14,29 +14,13 @@ export default NextAuth({
       // Allow all Discord logins
       return true;
     },
-    async session({ session, token, user }) {
-      try {
-        // Attach verification status if available
-        if (session.user && session.user.id) {
-          const dbUser = await prisma.userVerification.findUnique({
-            where: { discordId: session.user.id },
-          });
-          if (dbUser) {
-            session.user.verified = dbUser.verified;
-            session.user.rainUsername = dbUser.rainUsername;
-          }
-        }
-        // Always add Discord ID and username to session.user
-        if (session.user) {
-          session.user.id = token.id;
-          session.user.name = token.name;
-          session.user.discordUsername = token.name; // Optional: alias for clarity
-        }
-        return session;
-      } catch (err) {
-        console.error("session error", err);
-        return session;
+    async session({ session, token }) {
+      // Attach Discord ID and username to the session
+      if (session.user) {
+        session.user.id = token.id; // Discord user ID
+        session.user.name = token.name; // Discord username
       }
+      return session;
     },
     async jwt({ token, account, profile }) {
       if (account && profile) {
