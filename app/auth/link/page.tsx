@@ -89,6 +89,11 @@ export default function LinkAccountPage() {
               const rainUsername = sessionStorage.getItem("pendingRainUsername");
               if (!session?.user?.id || !rainUsername) {
                 alert("Missing Discord user or Rain.gg username");
+                console.error("Debug Info:", {
+                  discordId: session?.user?.id || "No Discord ID",
+                  discordUsername: session?.user?.name || "No Discord Username",
+                  rainUsername: rainUsername || "No Rain.gg Username",
+                });
                 return;
               }
               fetch("/api/verification/request", {
@@ -101,12 +106,19 @@ export default function LinkAccountPage() {
                 }),
               })
                 .then((res) => {
-                  if (!res.ok) throw new Error("Failed to link accounts")
-                  sessionStorage.removeItem("pendingRainUsername")
-                  router.replace("/dashboard")
+                  if (!res.ok) {
+                    console.error("POST failed with status:", res.status);
+                    return res.json().then((data) => {
+                      console.error("Response body:", data);
+                      throw new Error(data.error || "Failed to link accounts");
+                    });
+                  }
+                  sessionStorage.removeItem("pendingRainUsername");
+                  router.replace("/dashboard");
                 })
                 .catch((err) => {
-                  alert("Manual POST failed: " + err.message)
+                  console.error("Manual POST error:", err);
+                  alert("Manual POST failed: " + err.message);
                 });
             }}
           >
@@ -134,6 +146,11 @@ export default function LinkAccountPage() {
             const rainUsername = sessionStorage.getItem("pendingRainUsername");
             if (!session?.user?.id || !rainUsername) {
               alert("Missing Discord user or Rain.gg username");
+              console.error("Debug Info:", {
+                discordId: session?.user?.id || "No Discord ID",
+                discordUsername: session?.user?.name || "No Discord Username",
+                rainUsername: rainUsername || "No Rain.gg Username",
+              });
               return;
             }
             fetch("/api/verification/request", {
@@ -146,12 +163,19 @@ export default function LinkAccountPage() {
               }),
             })
               .then((res) => {
-                if (!res.ok) throw new Error("Failed to link accounts")
-                sessionStorage.removeItem("pendingRainUsername")
-                router.replace("/dashboard")
+                if (!res.ok) {
+                  console.error("POST failed with status:", res.status);
+                  return res.json().then((data) => {
+                    console.error("Response body:", data);
+                    throw new Error(data.error || "Failed to link accounts");
+                  });
+                }
+                sessionStorage.removeItem("pendingRainUsername");
+                router.replace("/dashboard");
               })
               .catch((err) => {
-                alert("Manual POST failed: " + err.message)
+                console.error("Manual POST error:", err);
+                alert("Manual POST failed: " + err.message);
               });
           }}
         >
