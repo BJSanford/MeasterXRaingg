@@ -45,6 +45,10 @@ export default function LinkAccountPage() {
       rainUsername,
     })
 
+    // DEBUG: Add a guard to prevent double POSTs
+    if (window.__linkingRequestSent) return;
+    window.__linkingRequestSent = true;
+
     fetch("/api/verification/request", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -67,6 +71,7 @@ export default function LinkAccountPage() {
       })
   }, [session, status, router, sessionHook])
 
+  // Add a manual trigger button for debugging
   if (error) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-black text-white">
@@ -78,6 +83,35 @@ export default function LinkAccountPage() {
               {JSON.stringify(debug, null, 2)}
             </pre>
           )}
+          <button
+            style={{ marginTop: 16, padding: 8, background: "#333", color: "#fff", borderRadius: 4 }}
+            onClick={() => {
+              const rainUsername = sessionStorage.getItem("pendingRainUsername");
+              if (!session?.user?.id || !rainUsername) {
+                alert("Missing Discord user or Rain.gg username");
+                return;
+              }
+              fetch("/api/verification/request", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  discordId: session.user.id,
+                  discordUsername: session.user.name,
+                  rainUsername,
+                }),
+              })
+                .then((res) => {
+                  if (!res.ok) throw new Error("Failed to link accounts")
+                  sessionStorage.removeItem("pendingRainUsername")
+                  router.replace("/dashboard")
+                })
+                .catch((err) => {
+                  alert("Manual POST failed: " + err.message)
+                });
+            }}
+          >
+            Try POST manually
+          </button>
         </div>
       </div>
     )

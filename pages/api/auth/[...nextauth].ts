@@ -26,9 +26,12 @@ export default NextAuth({
             session.user.rainUsername = dbUser.rainUsername;
           }
         }
-        // Add Discord ID and username to session.user
-        session.user.id = token.id;
-        session.user.name = token.name;
+        // Always add Discord ID and username to session.user
+        if (session.user) {
+          session.user.id = token.id;
+          session.user.name = token.name;
+          session.user.discordUsername = token.name; // Optional: alias for clarity
+        }
         return session;
       } catch (err) {
         console.error("session error", err);
@@ -37,8 +40,8 @@ export default NextAuth({
     },
     async jwt({ token, account, profile }) {
       if (account && profile) {
-        token.id = profile.id;
-        token.name = profile.username;
+        token.id = profile.id; // Discord user ID
+        token.name = profile.username; // Discord username
       }
       return token;
     },
