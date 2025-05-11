@@ -15,7 +15,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    // Upsert verification request
     await prisma.userVerification.upsert({
       where: { discordId },
       update: { rainUsername, discordUsername, verified: false },
