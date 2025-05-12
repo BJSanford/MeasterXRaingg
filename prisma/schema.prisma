@@ -9,8 +9,8 @@ generator client {
 
 model UserVerification {
   id              Int     @id @default(autoincrement())
-  discordId       String  @unique
-  discordUsername String
+  discordId       String? @unique // Allow null values
+  discordUsername String? // Allow null values
   rainUsername    String
   verified        Boolean @default(false)
 }
