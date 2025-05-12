@@ -1,26 +1,20 @@
-"use client";
-export const dynamic = "force-dynamic";
-
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 
 export default function LinkAccountPage() {
-  const router = useRouter();
   const { data: session, status } = useSession();
+  const router = useRouter();
 
+  const [rainUsername, setRainUsername] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPosting, setIsPosting] = useState(false);
-  const [rainUsername, setRainUsername] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === "loading") return;
 
     const storedRainUsername = sessionStorage.getItem("pendingRainUsername");
     setRainUsername(storedRainUsername);
-
-    console.log("Stored Rain.gg username:", storedRainUsername);
-    console.log("🔵 SESSION DATA IN FRONTEND:", session);
 
     if (!storedRainUsername) {
       setError("No Rain.gg username found. Please start the login process again.");
@@ -60,43 +54,6 @@ export default function LinkAccountPage() {
     }
   }
 
-  function handlePostVerification() {
-    console.log("session.user.id", session?.user?.id);
-    console.log("session.user.name", session?.user?.name);
-    console.log("rainUsername", rainUsername);
-
-    if (session?.user?.id && session?.user?.name && rainUsername) {
-      postVerification(session.user.id, session.user.name, rainUsername);
-    } else {
-      setError("Missing required data to post verification.");
-    }
-  }
-
-  async function postRainUsernameOnly(rainUsername: string) {
-    setIsPosting(true);
-    setError(null);
-
-    try {
-      const res = await fetch("/api/verification/request", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ rainUsername }),
-      });
-
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Failed to post Rain.gg username.");
-      }
-
-      console.log("✅ Successfully posted Rain.gg username:", rainUsername);
-    } catch (err: any) {
-      console.error("🔴 Error posting Rain.gg username:", err);
-      setError(err.message || "An error occurred while posting Rain.gg username.");
-    } finally {
-      setIsPosting(false);
-    }
-  }
-
   return (
     <div className="flex min-h-screen items-center justify-center bg-black text-white">
       <div className="text-center">
@@ -116,25 +73,15 @@ export default function LinkAccountPage() {
         )}
         <div className="flex flex-col gap-4">
           <button
-            onClick={handlePostVerification}
+            onClick={() =>
+              session?.user?.id && session?.user?.name && rainUsername
+                ? postVerification(session.user.id, session.user.name, rainUsername)
+                : setError("Missing required data to post verification.")
+            }
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
             disabled={isPosting}
           >
-            Post Verification (Full Data)
-          </button>
-          <button
-            onClick={() => {
-              if (rainUsername) {
-                console.log("🔵 Triggering postRainUsernameOnly with:", rainUsername);
-                postRainUsernameOnly(rainUsername);
-              } else {
-                setError("Rain.gg username is missing.");
-              }
-            }}
-            className="px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700"
-            disabled={isPosting}
-          >
-            Post Rain.gg Username Only (Test)
+            Post Verification
           </button>
           <button
             onClick={() => signOut({ callbackUrl: "/login" })}
