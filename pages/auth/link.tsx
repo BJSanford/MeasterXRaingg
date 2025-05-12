@@ -1,6 +1,8 @@
-import { useSession, signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
 export default function LinkAccountPage() {
   const { data: session, status } = useSession();
@@ -8,7 +10,7 @@ export default function LinkAccountPage() {
 
   const [rainUsername, setRainUsername] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [isPosting, setIsPosting] = useState(false);
+  const [isChecking, setIsChecking] = useState(false);
 
   useEffect(() => {
     if (status === "loading") return;
@@ -27,71 +29,60 @@ export default function LinkAccountPage() {
     }
   }, [session, status]);
 
-  async function postVerification(discordId: string, discordUsername: string, rainUsername: string) {
-    setIsPosting(true);
+  async function checkVerificationStatus() {
+    setIsChecking(true);
     setError(null);
 
     try {
-      const res = await fetch("/api/verification/request", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ discordId, discordUsername, rainUsername }),
-      });
+      const res = await fetch(`/api/verification/status?discordId=${session?.user?.id}`);
+      const data = await res.json();
 
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Failed to link accounts");
+      if (data.verified) {
+        router.push("/dashboard");
+      } else {
+        setError("Your account is not verified yet. Please wait for a moderator to approve.");
       }
-
-      console.log("✅ Successfully posted verification data:", { discordId, discordUsername, rainUsername });
-      sessionStorage.removeItem("pendingRainUsername");
-      router.replace("/dashboard");
-    } catch (err: any) {
-      console.error("🔴 Error posting verification:", err);
-      setError(err.message || "An error occurred while linking accounts.");
+    } catch (err) {
+      setError("Failed to check verification status. Please try again.");
     } finally {
-      setIsPosting(false);
+      setIsChecking(false);
     }
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-black text-white">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold mb-4">Link Your Accounts</h2>
-        {error && <p className="mb-4 text-red-400">{error}</p>}
-        {rainUsername && (
-          <p className="mb-4">
-            Rain.gg Username: <span className="font-bold">{rainUsername}</span>
-          </p>
-        )}
-        {session?.user?.id && session?.user?.name && (
-          <p className="mb-4">
-            Discord ID: <span className="font-bold">{session.user.id}</span>
-            <br />
-            Discord Username: <span className="font-bold">{session.user.name}</span>
-          </p>
-        )}
-        <div className="flex flex-col gap-4">
-          <button
-            onClick={() =>
-              session?.user?.id && session?.user?.name && rainUsername
-                ? postVerification(session.user.id, session.user.name, rainUsername)
-                : setError("Missing required data to post verification.")
-            }
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-            disabled={isPosting}
+    <div className="flex min-h-screen items-center justify-center bg-gray-900 text-white">
+      <Card className="w-full max-w-md border-gray-800 bg-gray-800/80 shadow-lg">
+        <CardHeader>
+          <CardTitle className="text-center text-2xl font-bold">Account Linking</CardTitle>
+          <CardDescription className="text-center text-gray-400">
+            Link your Rain.gg account with Discord
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {error && <div className="mb-4 text-center text-red-400">{error}</div>}
+          <div className="mb-4 text-center">
+            <p className="text-gray-300">
+              Rain.gg Username: <span className="font-bold">{rainUsername}</span>
+            </p>
+            <p className="text-gray-300">
+              Discord Username: <span className="font-bold">{session?.user?.name}</span>
+            </p>
+          </div>
+          <Button
+            onClick={checkVerificationStatus}
+            className="w-full bg-gradient-to-r from-green-500 to-green-700 hover:from-green-600 hover:to-green-800"
+            disabled={isChecking}
           >
-            Post Verification
-          </button>
-          <button
-            onClick={() => signOut({ callbackUrl: "/login" })}
-            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+            {isChecking ? "Checking..." : "Check Verification Status"}
+          </Button>
+          <Button
+            onClick={() => router.push("/login")}
+            className="mt-4 w-full bg-gray-700 hover:bg-gray-600"
           >
             Go Back to Login
-          </button>
-        </div>
-        {isPosting && <p className="mt-4 text-yellow-400">Submitting your information...</p>}
-      </div>
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 }
