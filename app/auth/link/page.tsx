@@ -8,80 +8,82 @@ export default function LinkAccountPage() {
   const router = useRouter();
   const sessionHook = useSession(); // Use the hook directly
   const session = sessionHook?.data; // Safely access session data
-  const status = sessionHook?.status;seState(false);
+  const status = sessionHook?.status;
   const [error, setError] = useState<string | null>(null);
   const [isPosting, setIsPosting] = useState(false);
-    if (status === "loading") return;
+
   useEffect(() => {
-    if (status === "loading") return;ge.getItem("pendingRainUsername");
-    if (!rainUsername) {
-    console.log("Session data:", session); // Debugging session datass again.");
-Url: "/login" });
+    if (status === "loading") return;
+
     const rainUsername = sessionStorage.getItem("pendingRainUsername");
     if (!rainUsername) {
       setError("No Rain.gg username found. Please start the login process again.");
-      signOut({ callbackUrl: "/login" });f (!session?.user?.id || !session?.user?.name) {
-      return;      setError("No Discord user information found. Please try again.");
+      signOut({ callbackUrl: "/login" });
+      return;
     }
 
     if (!session?.user?.id || !session?.user?.name) {
       setError("No Discord user information found. Please try again.");
-      signOut({ callbackUrl: "/login" });/ Automatically post the data
-      return;    postVerification(session.user.id, session.user.name, rainUsername);
+      signOut({ callbackUrl: "/login" });
+      return;
     }
 
-    // Automatically post the dataification(discordId: string, discordUsername: string, rainUsername: string) {
-    postVerification(session.user.id, session.user.name, rainUsername);    setIsPosting(true);
+    console.log("Session data:", session); // Debugging session data
+
+    // Automatically post the data
+    postVerification(session.user.id, session.user.name, rainUsername);
   }, [session, status]);
 
   async function postVerification(discordId: string, discordUsername: string, rainUsername: string) {
-    setIsPosting(true);      const res = await fetch("/api/verification/request", {
-    setError(null);ethod: "POST",
+    setIsPosting(true);
+    setError(null);
 
-    try {ngify({ discordId, discordUsername, rainUsername }),
+    try {
       const res = await fetch("/api/verification/request", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },(!res.ok) {
-        body: JSON.stringify({ discordId, discordUsername, rainUsername }),        const data = await res.json();
-      });ror(data.error || "Failed to link accounts");
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ discordId, discordUsername, rainUsername }),
+      });
 
       if (!res.ok) {
-        const data = await res.json();essionStorage.removeItem("pendingRainUsername");
-        throw new Error(data.error || "Failed to link accounts");      router.replace("/dashboard");
+        const data = await res.json();
+        throw new Error(data.error || "Failed to link accounts");
       }
-verification:", err);
-      sessionStorage.removeItem("pendingRainUsername");ge || "An error occurred while linking accounts.");
+
+      sessionStorage.removeItem("pendingRainUsername");
       router.replace("/dashboard");
     } catch (err: any) {
       console.error("Error posting verification:", err);
       setError(err.message || "An error occurred while linking accounts.");
     } finally {
-      setIsPosting(false);f (error) {
-    }    return (
-  }ssName="flex min-h-screen items-center justify-center bg-black text-white">
- className="text-center">
+      setIsPosting(false);
+    }
+  }
+
   if (error) {
-    return (</p>
+    return (
       <div className="flex min-h-screen items-center justify-center bg-black text-white">
-        <div className="text-center">backUrl: "/login" })}
-          <h2 className="text-2xl font-bold mb-4">Account Linking Error</h2>Name="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">Account Linking Error</h2>
           <p className="mb-4">{error}</p>
           <button
-            onClick={() => signOut({ callbackUrl: "/login" })}/button>
+            onClick={() => signOut({ callbackUrl: "/login" })}
             className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
           >
             Go Back to Login
           </button>
         </div>
-      </div>eturn (
-    );    <div className="flex min-h-screen items-center justify-center bg-black text-white">
-  } className="text-center">
+      </div>
+    );
+  }
 
-  return (k your Discord and Rain.gg accounts.</p>
-    <div className="flex min-h-screen items-center justify-center bg-black text-white">ormation...</p>}
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-black text-white">
       <div className="text-center">
         <h2 className="text-2xl font-bold mb-4">Linking your accounts...</h2>
         <p>Please wait while we link your Discord and Rain.gg accounts.</p>
         {isPosting && <p className="mt-4 text-yellow-400">Submitting your information...</p>}
-      </div>    </div>  );
+      </div>
+    </div>
+  );
 }
