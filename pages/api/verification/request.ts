@@ -18,18 +18,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     if (discordId && discordUsername) {
       // Handle full verification request with Discord data
-      await prisma.userVerification.upsert({
+      const result = await prisma.userVerification.upsert({
         where: { discordId },
         update: { rainUsername, discordUsername, verified: false },
         create: { discordId, discordUsername, rainUsername, verified: false },
       });
-      console.log("Verification request saved for Discord ID:", discordId);
+      console.log("Verification request saved for Discord ID:", discordId, "Result:", result);
     } else {
       // Handle request with only Rain.gg username
       console.log("Processing request with only Rain.gg username:", rainUsername);
 
       // Save the Rain.gg username to the database
-      await prisma.userVerification.create({
+      const result = await prisma.userVerification.create({
         data: {
           rainUsername,
           discordId: null, // No Discord ID
@@ -37,9 +37,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           verified: false,
         },
       });
-      console.log("Verification request saved for Rain.gg username:", rainUsername);
+      console.log("Verification request saved for Rain.gg username:", rainUsername, "Result:", result);"Result:", result);
     }
 
+    console.log("Database operation executed successfully.");
     res.status(200).json({ success: true });
   } catch (error: any) {
     console.error("Error saving verification request:", error.message, error.stack);
