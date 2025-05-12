@@ -19,6 +19,9 @@ export default function LinkAccountPage() {
     const storedRainUsername = sessionStorage.getItem("pendingRainUsername");
     setRainUsername(storedRainUsername);
 
+    console.log("Stored Rain.gg username:", storedRainUsername); // Debugging Rain.gg username
+    console.log("Session data:", session); // Debugging session data
+
     if (!storedRainUsername) {
       setError("No Rain.gg username found. Please start the login process again.");
       return;
@@ -28,8 +31,6 @@ export default function LinkAccountPage() {
       setError("No Discord user information found. You can still test posting the Rain.gg username.");
       return;
     }
-
-    console.log("Session data:", session); // Debugging session data
   }, [session, status]);
 
   async function postVerification(discordId: string, discordUsername: string, rainUsername: string) {
