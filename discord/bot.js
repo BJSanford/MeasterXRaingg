@@ -28,15 +28,27 @@ setInterval(async () => {
         const res = await axios_1.default.get(`${API_BASE_URL}/api/verification/pending`);
         const pendingUsers = res.data; // [{ discordId, discordUsername, rainUsername }]
         const guild = await client.guilds.fetch(GUILD_ID);
+
         for (const user of pendingUsers) {
-            // Check if channel already exists
-            const existing = guild.channels.cache.find(ch => ch.name === `verify-${user.discordUsername}` && ch.type === 0);
-            if (existing)
+            // Validate discordId and discordUsername
+            if (!user.discordId || !user.discordUsername) {
+                console.warn("Skipping user with invalid Discord data:", user);
                 continue;
+            }
+
+            // Check if channel already exists
+            const existing = guild.channels.cache.find(
+                ch => ch.name === `verify-${user.discordUsername}` && ch.type === 0
+            );
+            if (existing) continue;
+
             // Fetch member
             const member = await guild.members.fetch(user.discordId).catch(() => null);
-            if (!member)
+            if (!member) {
+                console.warn("Skipping user because member could not be fetched:", user.discordId);
                 continue;
+            }
+
             // Create private channel
             const channel = await guild.channels.create({
                 name: `verify-${user.discordUsername}`,
@@ -47,10 +59,12 @@ setInterval(async () => {
                     { id: MOD_ROLE_ID, allow: [discord_js_1.PermissionsBitField.Flags.ViewChannel, discord_js_1.PermissionsBitField.Flags.SendMessages] },
                 ],
             });
-            channel.send(`Hello <@${user.discordId}>! Please provide a screenshot proving you own the Rain.gg account: **${user.rainUsername}**.\nA moderator will review your submission.`);
+
+            channel.send(
+                `Hello <@${user.discordId}>! Please provide a screenshot proving you own the Rain.gg account: **${user.rainUsername}**.\nA moderator will review your submission.`
+            );
         }
-    }
-    catch (err) {
+    } catch (err) {
         console.error("Polling error:", err);
     }
 }, 30000);
