@@ -37,7 +37,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           verified: false,
         },
       });
-      console.log("Verification request saved for Rain.gg username:", rainUsername, "Result:", result);"Result:", result);
+      console.log("Verification request saved for Rain.gg username:", rainUsername, "Result:", result);
     }
 
     console.log("Database operation executed successfully.");
