@@ -4,131 +4,69 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { signOut, useSession } from "next-auth/react"
 
-// Prevent static prerendering
-export const dynamic = "force-dynamic"
-
 export default function LinkAccountPage() {
   const router = useRouter()
-  const sessionHook = typeof window !== "undefined" ? useSession() : undefined
-  const session = sessionHook?.data
-  const status = sessionHook?.status
+  const { data: session, status } = useSession()
   const [error, setError] = useState<string | null>(null)
-  const [debug, setDebug] = useState<any>(null) // <-- Add debug state
+  const [isPosting, setIsPosting] = useState(false)
 
   useEffect(() => {
-    if (!sessionHook) return
     if (status === "loading") return
 
-    const discordId = sessionStorage.getItem("discordId")
-    const discordUsername = sessionStorage.getItem("discordUsername")
     const rainUsername = sessionStorage.getItem("pendingRainUsername")
-
-    setDebug({
-      session: session ?? "NO_SESSION",
-      status,
-      discordId: discordId ?? "NO_DISCORD_ID",
-      discordUsername: discordUsername ?? "NO_DISCORD_USERNAME",
-      rainUsername: rainUsername ?? "NO_RAIN_USERNAME",
-    }) // <-- Set debug info
-
-    if (!discordId || !discordUsername || !rainUsername) {
-      setError("Missing required data. Please start the login process again.")
+    if (!rainUsername) {
+      setError("No Rain.gg username found. Please start the login process again.")
       signOut({ callbackUrl: "/login" })
       return
     }
 
     if (!session?.user?.id || !session?.user?.name) {
-      console.error("Missing Discord data:", session)
-      setError("No Discord user found. Please try again.")
+      setError("No Discord user information found. Please try again.")
       signOut({ callbackUrl: "/login" })
       return
     }
 
-    // Add logging here
-    console.log("Linking accounts:", {
-      discordId,
-      discordUsername,
-      rainUsername,
-    })
+    // Automatically post the data
+    postVerification(session.user.id, session.user.name, rainUsername)
+  }, [session, status])
 
-    // DEBUG: Add a guard to prevent double POSTs
-    if (window.__linkingRequestSent) return;
-    window.__linkingRequestSent = true;
+  async function postVerification(discordId: string, discordUsername: string, rainUsername: string) {
+    setIsPosting(true)
+    setError(null)
 
-    fetch("/api/verification/request", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        discordId,
-        discordUsername,
-        rainUsername,
-      }),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to link accounts")
-        // Success: clear sessionStorage and redirect
-        sessionStorage.removeItem("pendingRainUsername")
-        router.replace("/dashboard")
+    try {
+      const res = await fetch("/api/verification/request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ discordId, discordUsername, rainUsername }),
       })
-      .catch((err) => {
-        console.error("Linking error:", err)
-        setError("Failed to link accounts. Please try again.")
-        signOut({ callbackUrl: "/login" })
-      })
-  }, [session, status, router, sessionHook])
 
-  // Add a manual trigger button for debugging
+      if (!res.ok) {
+        const data = await res.json()
+        throw new Error(data.error || "Failed to link accounts")
+      }
+
+      sessionStorage.removeItem("pendingRainUsername")
+      router.replace("/dashboard")
+    } catch (err: any) {
+      console.error("Error posting verification:", err)
+      setError(err.message || "An error occurred while linking accounts.")
+    } finally {
+      setIsPosting(false)
+    }
+  }
+
   if (error) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-black text-white">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-2">Account Linking Error</h2>
-          <p>{error}</p>
-          {debug && (
-            <pre className="mt-4 text-left text-xs bg-gray-900 p-2 rounded">
-              {JSON.stringify(debug, null, 2)}
-            </pre>
-          )}
+          <h2 className="text-2xl font-bold mb-4">Account Linking Error</h2>
+          <p className="mb-4">{error}</p>
           <button
-            style={{ marginTop: 16, padding: 8, background: "#333", color: "#fff", borderRadius: 4 }}
-            onClick={() => {
-              const rainUsername = sessionStorage.getItem("pendingRainUsername");
-              if (!session?.user?.id || !rainUsername) {
-                alert("Missing Discord user or Rain.gg username");
-                console.error("Debug Info:", {
-                  discordId: session?.user?.id || "No Discord ID",
-                  discordUsername: session?.user?.name || "No Discord Username",
-                  rainUsername: rainUsername || "No Rain.gg Username",
-                });
-                return;
-              }
-              fetch("/api/verification/request", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  discordId: session.user.id,
-                  discordUsername: session.user.name,
-                  rainUsername,
-                }),
-              })
-                .then((res) => {
-                  if (!res.ok) {
-                    console.error("POST failed with status:", res.status);
-                    return res.json().then((data) => {
-                      console.error("Response body:", data);
-                      throw new Error(data.error || "Failed to link accounts");
-                    });
-                  }
-                  sessionStorage.removeItem("pendingRainUsername");
-                  router.replace("/dashboard");
-                })
-                .catch((err) => {
-                  console.error("Manual POST error:", err);
-                  alert("Manual POST failed: " + err.message);
-                });
-            }}
+            onClick={() => signOut({ callbackUrl: "/login" })}
+            className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
           >
-            Try POST manually
+            Go Back to Login
           </button>
         </div>
       </div>
@@ -138,55 +76,9 @@ export default function LinkAccountPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-black text-white">
       <div className="text-center">
-        <h2 className="text-2xl font-bold mb-2">Linking your accounts...</h2>
-        <p>Please wait...</p>
-        <pre className="mt-4 text-left text-xs bg-gray-900 p-2 rounded">
-          {debug
-            ? JSON.stringify(debug, null, 2)
-            : "Waiting for session and username..."}
-        </pre>
-        {/* Debug POST button always visible */}
-        <button
-          style={{ marginTop: 16, padding: 8, background: "#333", color: "#fff", borderRadius: 4 }}
-          onClick={() => {
-            const rainUsername = sessionStorage.getItem("pendingRainUsername");
-            if (!session?.user?.id || !rainUsername) {
-              alert("Missing Discord user or Rain.gg username");
-              console.error("Debug Info:", {
-                discordId: session?.user?.id || "No Discord ID",
-                discordUsername: session?.user?.name || "No Discord Username",
-                rainUsername: rainUsername || "No Rain.gg Username",
-              });
-              return;
-            }
-            fetch("/api/verification/request", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                discordId: session.user.id,
-                discordUsername: session.user.name,
-                rainUsername,
-              }),
-            })
-              .then((res) => {
-                if (!res.ok) {
-                  console.error("POST failed with status:", res.status);
-                  return res.json().then((data) => {
-                    console.error("Response body:", data);
-                    throw new Error(data.error || "Failed to link accounts");
-                  });
-                }
-                sessionStorage.removeItem("pendingRainUsername");
-                router.replace("/dashboard");
-              })
-              .catch((err) => {
-                console.error("Manual POST error:", err);
-                alert("Manual POST failed: " + err.message);
-              });
-          }}
-        >
-          POST manually (debug)
-        </button>
+        <h2 className="text-2xl font-bold mb-4">Linking your accounts...</h2>
+        <p>Please wait while we link your Discord and Rain.gg accounts.</p>
+        {isPosting && <p className="mt-4 text-yellow-400">Submitting your information...</p>}
       </div>
     </div>
   )
