@@ -16,7 +16,9 @@ export default NextAuth({
   ],
   callbacks: {
     async jwt({ token, account, profile }) {
+      // 🔧 Log the full profile from Discord to debug missing fields
       if (account && profile) {
+        console.log("🔵 PROFILE RECEIVED FROM DISCORD:", profile);
         token.id = profile.id; // Discord user ID
         token.name = profile.username; // Discord username
       }
