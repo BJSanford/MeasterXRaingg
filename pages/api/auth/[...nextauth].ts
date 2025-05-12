@@ -16,20 +16,22 @@ export default NextAuth({
   ],
   callbacks: {
     async jwt({ token, account, profile }) {
-      // 🔧 Log the full profile from Discord to debug missing fields
+      // Persist Discord username and ID in the token
       if (account && profile) {
         console.log("🔵 PROFILE RECEIVED FROM DISCORD:", profile);
-        token.id = profile.id; // Discord user ID
         token.name = profile.username; // Discord username
+        token.sub = profile.id; // Discord user ID
       }
+      console.log("🔵 TOKEN AFTER JWT CALLBACK:", token);
       return token;
     },
     async session({ session, token }) {
       // Map token fields to session.user
       if (session.user) {
-        session.user.id = token.id; // Attach Discord user ID to session
+        session.user.id = token.sub; // Attach Discord user ID to session
         session.user.name = token.name; // Attach Discord username to session
       }
+      console.log("🔵 SESSION AFTER SESSION CALLBACK:", session);
       return session;
     },
   },

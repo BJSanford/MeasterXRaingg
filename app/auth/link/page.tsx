@@ -1,8 +1,10 @@
 "use client";
+export const dynamic = "force-dynamic";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
+
 
 export default function LinkAccountPage() {
   const router = useRouter();
@@ -17,8 +19,8 @@ export default function LinkAccountPage() {
     const storedRainUsername = sessionStorage.getItem("pendingRainUsername");
     setRainUsername(storedRainUsername);
 
-    console.log("Stored Rain.gg username:", storedRainUsername); // Debugging Rain.gg username
-    console.log("Session data:", session); // Debugging session data
+    console.log("Stored Rain.gg username:", storedRainUsername);
+    console.log("🔵 SESSION DATA IN FRONTEND:", session);
 
     if (!storedRainUsername) {
       setError("No Rain.gg username found. Please start the login process again.");
