@@ -2,13 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 export default function LinkAccountPage() {
   const router = useRouter();
-  const sessionHook = useSession(); // Use the hook directly
-  const session = sessionHook?.data; // Safely access session data
-  const status = sessionHook?.status;
+  const { data: session, status } = useSession();
   const [error, setError] = useState<string | null>(null);
   const [isPosting, setIsPosting] = useState(false);
   const [rainUsername, setRainUsername] = useState<string | null>(null);
@@ -28,7 +26,7 @@ export default function LinkAccountPage() {
     }
 
     if (!session?.user?.id || !session?.user?.name) {
-      setError("No Discord user information found. You can still test posting the Rain.gg username.");
+      setError("No Discord user information found. Please try again.");
       return;
     }
   }, [session, status]);

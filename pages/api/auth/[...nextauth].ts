@@ -25,6 +25,7 @@ export default NextAuth({
       return token;
     },
     async session({ session, token }) {
+      // Map token fields to session.user
       if (session.user) {
         session.user.id = token.id; // Attach Discord user ID to session
         session.user.name = token.name; // Attach Discord username to session
