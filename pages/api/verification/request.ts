@@ -27,7 +27,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     } else {
       // Handle request with only Rain.gg username
       console.log("Processing request with only Rain.gg username:", rainUsername);
-      // You can add additional logic here if needed
+
+      // Save the Rain.gg username to the database
+      await prisma.userVerification.create({
+        data: {
+          rainUsername,
+          discordId: null, // No Discord ID
+          discordUsername: null, // No Discord Username
+          verified: false,
+        },
+      });
+      console.log("Verification request saved for Rain.gg username:", rainUsername);
     }
 
     res.status(200).json({ success: true });
