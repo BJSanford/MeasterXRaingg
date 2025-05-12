@@ -7,16 +7,14 @@ import { useSession, signOut } from "next-auth/react";
 
 export default function LinkAccountPage() {
   const router = useRouter();
-  const sessionHook = typeof window !== "undefined" ? useSession() : null;
-  const session = sessionHook?.data;
-  const status = sessionHook?.status;
+  const { data: session, status } = useSession();
 
   const [error, setError] = useState<string | null>(null);
   const [isPosting, setIsPosting] = useState(false);
   const [rainUsername, setRainUsername] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!session || status === "loading") return;
+    if (status === "loading") return;
 
     const storedRainUsername = sessionStorage.getItem("pendingRainUsername");
     setRainUsername(storedRainUsername);
@@ -59,6 +57,18 @@ export default function LinkAccountPage() {
       setError(err.message || "An error occurred while linking accounts.");
     } finally {
       setIsPosting(false);
+    }
+  }
+
+  function handlePostVerification() {
+    console.log("session.user.id", session?.user?.id);
+    console.log("session.user.name", session?.user?.name);
+    console.log("rainUsername", rainUsername);
+
+    if (session?.user?.id && session?.user?.name && rainUsername) {
+      postVerification(session.user.id, session.user.name, rainUsername);
+    } else {
+      setError("Missing required data to post verification.");
     }
   }
 
@@ -106,11 +116,7 @@ export default function LinkAccountPage() {
         )}
         <div className="flex flex-col gap-4">
           <button
-            onClick={() =>
-              session?.user?.id && session?.user?.name && rainUsername
-                ? postVerification(session.user.id, session.user.name, rainUsername)
-                : setError("Missing required data to post verification.")
-            }
+            onClick={handlePostVerification}
             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
             disabled={isPosting}
           >
