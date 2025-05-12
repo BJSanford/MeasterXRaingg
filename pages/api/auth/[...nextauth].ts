@@ -19,14 +19,7 @@ export default NextAuth({
       if (session.user) {
         session.user.id = token.id; // Discord user ID
         session.user.name = token.name; // Discord username
-
-        // Store in sessionStorage on the client side
-        if (typeof window !== "undefined") {
-          sessionStorage.setItem("discordId", token.id || ""); // Ensure non-null value
-          sessionStorage.setItem("discordUsername", token.name || ""); // Ensure non-null value
-        }
       }
-      console.log("Session data:", session); // Debugging
       return session;
     },
     async jwt({ token, account, profile }) {
@@ -34,12 +27,11 @@ export default NextAuth({
         token.id = profile.id; // Discord user ID
         token.name = profile.username; // Discord username
       }
-      console.log("JWT token data:", token); // Debugging
       return token;
     },
   },
   pages: {
-    signIn: "/auth/signin",
+    signIn: "/login", // Redirect to the login page if not authenticated
   },
   secret: process.env.NEXTAUTH_SECRET,
 });
