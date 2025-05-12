@@ -5,16 +5,18 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 
-
 export default function LinkAccountPage() {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const sessionHook = typeof window !== "undefined" ? useSession() : null;
+  const session = sessionHook?.data;
+  const status = sessionHook?.status;
+
   const [error, setError] = useState<string | null>(null);
   const [isPosting, setIsPosting] = useState(false);
   const [rainUsername, setRainUsername] = useState<string | null>(null);
 
   useEffect(() => {
-    if (status === "loading") return;
+    if (!session || status === "loading") return;
 
     const storedRainUsername = sessionStorage.getItem("pendingRainUsername");
     setRainUsername(storedRainUsername);
