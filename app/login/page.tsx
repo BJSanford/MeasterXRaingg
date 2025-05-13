@@ -41,11 +41,26 @@ export default function LoginPage() {
   }
 
   // Step 2: User clicks Discord login
-  const handleDiscordLogin = () => {
-    // Store Rain.gg username in sessionStorage
-    sessionStorage.setItem("pendingRainUsername", rainUsername.trim());
-    // Redirect to Discord login
-    signIn("discord", { callbackUrl: "/auth/link" });
+  const handleDiscordLogin = async () => {
+    try {
+      const res = await signIn("discord", { redirect: false });
+      if (res?.error) {
+        setError("Failed to log in. Please try again.");
+        return;
+      }
+
+      // Fetch the Rain.gg username associated with the Discord ID
+      const response = await fetch("/api/user/dashboard");
+      const data = await response.json();
+
+      if (data.rainUsername) {
+        router.push("/dashboard");
+      } else {
+        setError("No Rain.gg account found for this Discord ID. Please register first.");
+      }
+    } catch (err) {
+      setError("An error occurred. Please try again.");
+    }
   }
 
   return (

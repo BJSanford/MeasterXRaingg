@@ -60,7 +60,15 @@ export default function Home() {
                   asChild
                   className="bg-gradient-to-r from-yellow-500 to-amber-500 text-black hover:from-yellow-600 hover:to-amber-600"
                 >
-                  <Link href="/login">Login / Register</Link>
+                  <Link href="/login">Login to Dashboard</Link>
+                </Button>
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button
+                  asChild
+                  className="bg-gradient-to-r from-blue-500 to-blue-700 text-white hover:from-blue-600 hover:to-blue-800"
+                >
+                  <Link href="/register">Register / Verify</Link>
                 </Button>
               </motion.div>
             </div>
