@@ -93,5 +93,3 @@ client.on("messageCreate", async (message) => {
     // Optionally, archive or delete the channel
 });
 client.login(process.env.DISCORD_BOT_TOKEN);
-
-

@@ -1,3 +1,4 @@
+import "@/styles/globals.css"; // or '../styles/globals.css' depending on structure
 import { SessionProvider } from "next-auth/react";
 import type { AppProps } from "next/app";
 
