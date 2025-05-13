@@ -73,23 +73,30 @@ client.on("ready", () => {
 });
 // Listen for mod approval (e.g., via !approve <discordId> command)
 client.on("messageCreate", async (message) => {
-    if (!message.content.startsWith("!approve"))
-        return;
-    if (!message.member?.roles.cache.has(MOD_ROLE_ID))
-        return; // Only mods
+    if (!message.content.startsWith("!approve")) return;
+    if (!message.member?.roles.cache.has(MOD_ROLE_ID)) return; // Only mods
+
     const parts = message.content.split(" ");
     if (parts.length < 2) {
         message.reply("Usage: !approve <discordId>");
         return;
     }
+
     const discordId = parts[1];
     try {
+        // Approve the user via the API
         await axios_1.default.post(`${API_BASE_URL}/api/verification/approve`, { discordId });
+
+        // Notify the user
         message.channel.send(`<@${discordId}> has been verified!`);
+
+        // Delete the verification channel
+        if (message.channel.name.startsWith("verify-")) {
+            await message.channel.delete();
+        }
+    } catch (err) {
+        console.error("Error approving user:", err);
+        message.channel.send("Failed to verify user. Please try again.");
     }
-    catch (err) {
-        message.channel.send("Failed to verify user.");
-    }
-    // Optionally, archive or delete the channel
 });
 client.login(process.env.DISCORD_BOT_TOKEN);
