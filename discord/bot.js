@@ -83,9 +83,12 @@ client.on("messageCreate", async (message) => {
     }
 
     const discordId = parts[1];
+    console.log("🔵 Approving user with Discord ID:", discordId);
+
     try {
         // Approve the user via the API
-        await axios_1.default.post(`${API_BASE_URL}/api/verification/approve`, { discordId });
+        const res = await axios_1.default.post(`${API_BASE_URL}/api/verification/approve`, { discordId });
+        console.log("✅ User approved via API:", res.data);
 
         // Notify the user
         message.channel.send(`<@${discordId}> has been verified!`);
@@ -95,7 +98,7 @@ client.on("messageCreate", async (message) => {
             await message.channel.delete();
         }
     } catch (err) {
-        console.error("Error approving user:", err);
+        console.error("🔴 Error approving user:", err);
         message.channel.send("Failed to verify user. Please try again.");
     }
 });
