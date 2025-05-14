@@ -9,7 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const { discordId } = req.query;
 
   if (!discordId || typeof discordId !== "string") {
-    return res.status(400).json({ error: "Discord ID is required" });
+    return res.status(400).json({ error: "Invalid or missing discordId" });
   }
 
   try {
@@ -18,7 +18,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
 
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ verified: false, error: "User not found" });
     }
 
     res.status(200).json({ verified: user.verified });

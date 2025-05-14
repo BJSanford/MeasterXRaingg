@@ -62,11 +62,13 @@ export default function LinkAccountPage() {
       const data = await res.json();
 
       if (data.verified) {
-        router.push("/dashboard");
+        console.log("✅ User is verified. Redirecting to dashboard...");
+        router.push("/dashboard"); // Redirect to the dashboard if verified
       } else {
         setError("Your account is not verified yet. Please wait for a moderator to approve.");
       }
     } catch (err) {
+      console.error("🔴 Error checking verification status:", err);
       setError("Failed to check verification status. Please try again.");
     } finally {
       setIsChecking(false);
