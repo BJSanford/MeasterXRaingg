@@ -45,20 +45,21 @@ export default function LoginPage() {
   }, [status, session, router]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-black text-white">
-      <div className="text-center">
-        <h1 className="text-2xl font-bold mb-4">Dashboard Login</h1>
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white">
+      <div className="text-center p-8 bg-gray-800 rounded-2xl shadow-2xl max-w-md">
+        <h1 className="text-4xl font-extrabold mb-6">Welcome to Rain.gg</h1>
+        <p className="text-lg mb-4 text-gray-400">Sign in to access your dashboard</p>
         {error && status === "authenticated" && <p className="mb-4 text-red-400">{error}</p>}
         {status !== "authenticated" && (
           <button
-            className="px-6 py-2 bg-blue-600 rounded hover:bg-blue-700 text-white font-semibold"
+            className="w-full px-6 py-3 bg-blue-600 rounded-lg hover:bg-blue-700 text-white font-semibold transition-all"
             onClick={() => signIn("discord")}
             disabled={loading}
           >
             Sign in with Discord
           </button>
         )}
-        {loading && <p>Loading...</p>}
+        {loading && <p className="mt-4 text-gray-400">Loading...</p>}
       </div>
     </div>
   );
