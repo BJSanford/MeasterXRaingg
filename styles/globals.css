@@ -66,7 +66,7 @@ button, a, input {
     box-shadow: 0 0 0 2px hsl(var(--primary));
   }
   .text-center {
-    @apply text-center;
+    text-align: center; /* Directly define the style instead of using @apply */
   }
   .section {
     @apply py-12 px-6;
