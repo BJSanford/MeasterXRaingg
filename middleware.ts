@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
-import { prisma } from "@/lib/prisma"
 
 export async function middleware(request: NextRequest) {
   const discordUsername = request.cookies.get("discordUsername")?.value
   const rainUsername = request.cookies.get("rainUsername")?.value
+  const verified = request.cookies.get("verified")?.value
 
   // If accessing dashboard without being logged in, redirect to login
   if (
@@ -15,16 +15,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url))
   }
 
-  // Check verification status if user is logged in
-  if (request.nextUrl.pathname.startsWith("/dashboard") && discordUsername) {
-    // Fetch user from DB by discordUsername
-    const dbUser = await prisma.userVerification.findFirst({
-      where: { discordUsername },
-    })
-    if (!dbUser || !dbUser.verified) {
-      // Not verified, redirect to a "pending verification" page
-      return NextResponse.redirect(new URL("/verification-pending", request.url))
-    }
+  // If not verified, redirect to pending page
+  if (
+    request.nextUrl.pathname.startsWith("/dashboard") &&
+    verified !== "true"
+  ) {
+    return NextResponse.redirect(new URL("/verification-pending", request.url))
   }
 
   return NextResponse.next()
