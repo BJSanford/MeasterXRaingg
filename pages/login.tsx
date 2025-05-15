@@ -16,31 +16,21 @@ export default function LoginPage() {
     }
     if (session?.user?.id) {
       setLoading(true);
-      // Fetch Rain.gg username associated with this Discord ID
-      fetch("/api/user/dashboard")
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.rainUsername) {
-            // Only store minimal info in localStorage
-            localStorage.setItem("rainUsername", data.rainUsername);
-            localStorage.setItem("discordUsername", data.discordUsername);
-            localStorage.setItem("verified", data.verified ? "true" : "false");
+      const interval = setInterval(() => {
+        fetch("/api/user/verification-status")
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.verified) {
+              clearInterval(interval);
+              router.push("/dashboard");
+            }
+          })
+          .catch(() => {
+            setError("Failed to check verification status.");
+          });
+      }, 15000); // Check every 15 seconds
 
-            // Set cookies for middleware (use discordUsername instead of userId)
-            document.cookie = `discordUsername=${data.discordUsername}; path=/`;
-            document.cookie = `rainUsername=${data.rainUsername}; path=/`;
-            document.cookie = `verified=${data.verified ? "true" : "false"}; path=/`;
-
-            router.push("/dashboard");
-          } else {
-            setError("No Rain.gg account found for this Discord ID. Please register first.");
-            setLoading(false);
-          }
-        })
-        .catch(() => {
-          setError("Failed to fetch user data.");
-          setLoading(false);
-        });
+      return () => clearInterval(interval);
     }
   }, [status, session, router]);
 
