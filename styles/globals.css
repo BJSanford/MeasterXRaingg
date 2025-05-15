@@ -1,14 +1,52 @@
+/* Modernized global styles */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Enhanced global styles for a modern and professional look */
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', sans-serif;
+  line-height: 1.8;
+  background-color: var(--background);
+  color: var(--foreground);
+  margin: 0;
+  padding: 0;
+  scroll-behavior: smooth;
 }
 
+/* Add hover effects and transitions */
+button, a, input {
+  transition: all 0.3s ease-in-out;
+}
+
+/* Modernized utility classes */
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+  .card {
+    @apply bg-card text-card-foreground shadow-lg rounded-2xl p-8;
+  }
+  .btn {
+    @apply px-5 py-3 rounded-lg font-semibold text-white bg-primary hover:bg-primary-foreground shadow-md;
+  }
+  .btn-primary {
+    @apply px-6 py-3 rounded-lg font-semibold text-white bg-primary hover:bg-primary-foreground shadow-lg;
+  }
+  .input {
+    @apply border border-input rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary;
+  }
+  .text-center {
+    @apply text-center;
+  }
+  .section {
+    @apply py-12 px-6;
+  }
+  .heading {
+    @apply text-4xl font-bold mb-6;
+  }
+  .subheading {
+    @apply text-xl font-medium mb-4;
   }
 }
 
