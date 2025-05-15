@@ -25,16 +25,45 @@ button, a, input {
     text-wrap: balance;
   }
   .card {
-    @apply bg-card text-card-foreground shadow-lg rounded-2xl p-8;
+    background-color: hsl(var(--card));
+    color: hsl(var(--card-foreground));
+    box-shadow: var(--shadow-lg);
+    border-radius: 1rem; /* rounded-2xl */
+    padding: 2rem; /* p-8 */
   }
   .btn {
-    @apply px-5 py-3 rounded-lg font-semibold text-white bg-primary hover:bg-primary-foreground shadow-md;
+    padding: 1rem 1.25rem; /* px-5 py-3 */
+    border-radius: 0.75rem; /* rounded-lg */
+    font-weight: 600; /* font-semibold */
+    color: white;
+    background-color: hsl(var(--primary));
+    transition: background-color 0.3s ease-in-out;
+    box-shadow: var(--shadow-md);
+  }
+  .btn:hover {
+    background-color: hsl(var(--primary-foreground));
   }
   .btn-primary {
-    @apply px-6 py-3 rounded-lg font-semibold text-white bg-primary hover:bg-primary-foreground shadow-lg;
+    padding: 1rem 1.5rem; /* px-6 py-3 */
+    border-radius: 0.75rem; /* rounded-lg */
+    font-weight: 600; /* font-semibold */
+    color: white;
+    background-color: hsl(var(--primary));
+    transition: background-color 0.3s ease-in-out;
+    box-shadow: var(--shadow-lg);
+  }
+  .btn-primary:hover {
+    background-color: hsl(var(--primary-foreground));
   }
   .input {
-    @apply border border-input rounded-lg px-4 py-2 focus:ring-2 focus:ring-primary;
+    border: 1px solid hsl(var(--input));
+    border-radius: 0.75rem; /* rounded-lg */
+    padding: 0.5rem 1rem; /* px-4 py-2 */
+    outline: none;
+    transition: box-shadow 0.3s ease-in-out;
+  }
+  .input:focus {
+    box-shadow: 0 0 0 2px hsl(var(--primary));
   }
   .text-center {
     @apply text-center;
