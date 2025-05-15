@@ -9,7 +9,12 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (status === "authenticated" && session?.user?.id) {
+    if (status !== "authenticated") {
+      setError(null); // Clear error if not authenticated
+      setLoading(false);
+      return;
+    }
+    if (session?.user?.id) {
       setLoading(true);
       // Fetch Rain.gg username associated with this Discord ID
       fetch("/api/user/dashboard")
@@ -35,7 +40,7 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-black text-white">
       <div className="text-center">
         <h1 className="text-2xl font-bold mb-4">Dashboard Login</h1>
-        {error && <p className="mb-4 text-red-400">{error}</p>}
+        {error && status === "authenticated" && <p className="mb-4 text-red-400">{error}</p>}
         {status !== "authenticated" && (
           <button
             className="px-6 py-2 bg-blue-600 rounded hover:bg-blue-700 text-white font-semibold"
