@@ -38,8 +38,8 @@ export default function LoginPage() {
         {error && <p className="mb-4 text-red-400">{error}</p>}
         {status !== "authenticated" && (
           <button
+            className="px-6 py-2 bg-blue-600 rounded hover:bg-blue-700 text-white font-semibold"
             onClick={() => signIn("discord")}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
             disabled={loading}
           >
             Sign in with Discord
