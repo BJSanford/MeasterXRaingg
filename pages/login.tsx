@@ -16,40 +16,49 @@ export default function LoginPage() {
     }
     if (session?.user?.id) {
       setLoading(true);
-      const interval = setInterval(() => {
-        fetch("/api/user/verification-status")
-          .then((res) => res.json())
-          .then((data) => {
-            if (data.verified) {
-              clearInterval(interval);
-              router.push("/dashboard");
-            }
-          })
-          .catch(() => {
-            setError("Failed to check verification status.");
-          });
-      }, 15000); // Check every 15 seconds
+      // Fetch Rain.gg username associated with this Discord ID
+      fetch("/api/user/dashboard")
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.rainUsername) {
+            // Only store minimal info in localStorage
+            localStorage.setItem("rainUsername", data.rainUsername);
+            localStorage.setItem("discordUsername", data.discordUsername);
+            localStorage.setItem("verified", data.verified ? "true" : "false");
 
-      return () => clearInterval(interval);
+            // Set cookies for middleware (use discordUsername instead of userId)
+            document.cookie = `discordUsername=${data.discordUsername}; path=/`;
+            document.cookie = `rainUsername=${data.rainUsername}; path=/`;
+            document.cookie = `verified=${data.verified ? "true" : "false"}; path=/`;
+
+            router.push("/dashboard");
+          } else {
+            setError("No Rain.gg account found for this Discord ID. Please register first.");
+            setLoading(false);
+          }
+        })
+        .catch(() => {
+          setError("Failed to fetch user data.");
+          setLoading(false);
+        });
     }
   }, [status, session, router]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white">
-      <div className="text-center p-8 bg-gray-800 rounded-2xl shadow-2xl">
-        <h1 className="text-4xl font-extrabold mb-6">Welcome to Rain.ggXMeasterSkins</h1>
-        <p className="text-lg mb-4 text-gray-400">Sign in to access your dashboard</p>
+    <div className="flex min-h-screen items-center justify-center bg-black text-white">
+      <div className="text-center">
+        <h1 className="text-2xl font-bold mb-4">Dashboard Login</h1>
         {error && status === "authenticated" && <p className="mb-4 text-red-400">{error}</p>}
         {status !== "authenticated" && (
           <button
-            className="btn-primary w-full max-w-sm mx-auto"
+            className="px-6 py-2 bg-blue-600 rounded hover:bg-blue-700 text-white font-semibold"
             onClick={() => signIn("discord")}
             disabled={loading}
           >
             Sign in with Discord
           </button>
         )}
-        {loading && <p className="mt-4 text-gray-400">Loading...</p>}
+        {loading && <p>Loading...</p>}
       </div>
     </div>
   );
