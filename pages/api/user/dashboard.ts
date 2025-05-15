@@ -18,35 +18,27 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    // Try to find by Discord ID first
+    // Always use discordUsername for lookup if user.id is missing
     let user = null;
     if (session.user.id) {
       const discordId = String(session.user.id);
-      console.log("Querying for discordId:", discordId);
       user = await prisma.userVerification.findUnique({
         where: { discordId },
       });
     }
-    // Fallback: Try to find by Discord username if not found by ID
     if (!user && session.user.name) {
       const discordUsername = String(session.user.name);
-      console.log("Fallback: Querying for discordUsername:", discordUsername);
       user = await prisma.userVerification.findFirst({
         where: { discordUsername },
       });
     }
-    console.log("User found:", user);
-
     if (!user) {
       return res.status(404).json({ error: "User not found in UserVerification table for this Discord ID or username." });
     }
-
-    // Return the full user object for frontend use
+    // Always return discordUsername for frontend cookie
     res.status(200).json({
-      id: user.id,
-      discordId: user.discordId,
-      discordUsername: user.discordUsername,
       rainUsername: user.rainUsername,
+      discordUsername: user.discordUsername,
       verified: user.verified,
     });
   } catch (error) {

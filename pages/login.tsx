@@ -24,6 +24,11 @@ export default function LoginPage() {
             // Store full user object for dashboard usage
             localStorage.setItem("rainUsername", data.rainUsername);
             localStorage.setItem("user", JSON.stringify(data));
+
+            // Set cookies for middleware (use discordUsername instead of userId)
+            document.cookie = `discordUsername=${data.discordUsername}; path=/`;
+            document.cookie = `rainUsername=${data.rainUsername}; path=/`;
+
             router.push("/dashboard");
           } else {
             setError("No Rain.gg account found for this Discord ID. Please register first.");
