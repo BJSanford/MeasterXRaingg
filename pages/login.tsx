@@ -24,11 +24,12 @@ export default function LoginPage() {
             // Only store minimal info in localStorage
             localStorage.setItem("rainUsername", data.rainUsername);
             localStorage.setItem("discordUsername", data.discordUsername);
-            localStorage.setItem("verified", JSON.stringify(data.verified));
+            localStorage.setItem("verified", data.verified ? "true" : "false");
 
             // Set cookies for middleware (use discordUsername instead of userId)
             document.cookie = `discordUsername=${data.discordUsername}; path=/`;
             document.cookie = `rainUsername=${data.rainUsername}; path=/`;
+            document.cookie = `verified=${data.verified ? "true" : "false"}; path=/`;
 
             router.push("/dashboard");
           } else {
