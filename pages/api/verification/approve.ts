@@ -21,10 +21,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       data: { verified: true },
     });
 
-    console.log("✅ User verified:", user);
+    console.log("✅ User verified and saved to database:", user);
+
+    // Query the database to confirm the data was saved
+    const savedUser = await prisma.userVerification.findUnique({
+      where: { discordId },
+    });
+    console.log("🔵 Data in database after update:", savedUser);
+
     res.status(200).json({ success: true, rainUsername: user.rainUsername });
   } catch (error: any) {
-    console.error("🔴 Error approving user:", error.message, error.stack);
+    console.error("🔴 Error approving user in database:", error.message, error.stack);
     res.status(500).json({ error: "Database error", details: error.message });
   }
 }
