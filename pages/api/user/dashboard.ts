@@ -41,7 +41,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(404).json({ error: "User not found in UserVerification table for this Discord ID or username." });
     }
 
-    res.status(200).json({ rainUsername: user.rainUsername });
+    // Return the full user object for frontend use
+    res.status(200).json({
+      id: user.id,
+      discordId: user.discordId,
+      discordUsername: user.discordUsername,
+      rainUsername: user.rainUsername,
+      verified: user.verified,
+    });
   } catch (error) {
     console.error("Error fetching user data:", error);
     res.status(500).json({ error: "Internal server error" });

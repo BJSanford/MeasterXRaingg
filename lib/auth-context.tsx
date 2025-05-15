@@ -99,19 +99,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Check if user is logged in
     const checkAuth = async () => {
       try {
-        const rainUsername = localStorage.getItem("rainUsername")
+        // Try to load user from localStorage first
+        const userStr = localStorage.getItem("user");
+        if (userStr) {
+          const userObj = JSON.parse(userStr);
+          setUser({ ...userObj, verified: userObj.verified ?? true });
+          // If not verified, redirect to verification pending
+          if (userObj.verified === false) {
+            router.replace("/verification-pending");
+          }
+          setIsLoading(false);
+          return;
+        }
+        const rainUsername = localStorage.getItem("rainUsername");
         if (rainUsername) {
-          await loadUser(rainUsername)
+          await loadUser(rainUsername);
         } else {
-          setIsLoading(false)
+          setIsLoading(false);
         }
       } catch (error) {
-        console.error("Error checking authentication:", error)
-        setIsLoading(false)
+        console.error("Error checking authentication:", error);
+        setIsLoading(false);
       }
-    }
+    };
 
-    checkAuth()
+    checkAuth();
   }, [])
 
   const loadUser = async (rainUsername: string) => {
@@ -125,7 +137,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         totalWagered = await getUserWageredFromLeaderboard(userProfile.username)
         wagerHistory = await getWeeklyWagerHistory(userProfile.username)
         setUser({
-          id: userProfile.id || userProfile.username,
+          id: userProfile.username, // Use username as fallback if id is missing
           username: userProfile.username,
           avatar: userProfile.avatar,
           totalWagered,
@@ -136,6 +148,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           joinDate: "",
           depositHistory: [],
           wagerHistory,
+          verified: userProfile.verified ?? true, // Default to true if not present
         })
       } else {
         localStorage.removeItem("rainUsername")

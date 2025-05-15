@@ -21,8 +21,9 @@ export default function LoginPage() {
         .then((res) => res.json())
         .then((data) => {
           if (data.rainUsername) {
-            // Store rainUsername for dashboard usage
+            // Store full user object for dashboard usage
             localStorage.setItem("rainUsername", data.rainUsername);
+            localStorage.setItem("user", JSON.stringify(data));
             router.push("/dashboard");
           } else {
             setError("No Rain.gg account found for this Discord ID. Please register first.");
