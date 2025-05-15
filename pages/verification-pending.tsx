@@ -8,6 +8,9 @@ export default function VerificationPendingPage() {
                 <p className="mb-4 text-gray-300">
                     Your account is pending verification by a moderator. Please check Discord for further instructions.
                 </p>
+                <p className="mb-4 text-gray-300">
+                    Make sure you are in the MeasterCS_Skins Discord server and wait to be @ed in a channel. Provide proof of ownership of your Rain.gg account when prompted.
+                </p>
                 <Link href="/login">
                     <a className="text-blue-500 underline">Go back to Login</a>
                 </Link>
