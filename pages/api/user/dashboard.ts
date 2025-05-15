@@ -9,23 +9,36 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const session = await getServerSession(req, res, authOptions);
 
   // Debug logging
+  console.log("Full session object:", session);
   console.log("Session user.id:", session?.user?.id);
+  console.log("Session user.name:", session?.user?.name);
 
-  if (!session?.user?.id) {
-    return res.status(401).json({ error: "Not authenticated" });
+  if (!session?.user?.id && !session?.user?.name) {
+    return res.status(401).json({ error: "Not authenticated: No Discord ID or username in session." });
   }
 
   try {
-    // Ensure discordId is a string
-    const discordId = String(session.user.id);
-    console.log("Querying for discordId:", discordId);
-    const user = await prisma.userVerification.findUnique({
-      where: { discordId },
-    });
+    // Try to find by Discord ID first
+    let user = null;
+    if (session.user.id) {
+      const discordId = String(session.user.id);
+      console.log("Querying for discordId:", discordId);
+      user = await prisma.userVerification.findUnique({
+        where: { discordId },
+      });
+    }
+    // Fallback: Try to find by Discord username if not found by ID
+    if (!user && session.user.name) {
+      const discordUsername = String(session.user.name);
+      console.log("Fallback: Querying for discordUsername:", discordUsername);
+      user = await prisma.userVerification.findFirst({
+        where: { discordUsername },
+      });
+    }
     console.log("User found:", user);
 
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ error: "User not found in UserVerification table for this Discord ID or username." });
     }
 
     res.status(200).json({ rainUsername: user.rainUsername });

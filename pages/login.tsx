@@ -10,23 +10,20 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (status !== "authenticated") {
-      setError(null);
+      setError(null); // Clear error if not authenticated
       setLoading(false);
       return;
     }
-    const discordId = session?.user?.id;
-    const discordUsername = session?.user?.name;
-    if (discordId && discordUsername) {
+    if (session?.user?.id) {
       setLoading(true);
-      fetch(`/api/user/dashboard?discordId=${encodeURIComponent(discordId)}&discordUsername=${encodeURIComponent(discordUsername)}`)
+      // Fetch Rain.gg username associated with this Discord ID
+      fetch("/api/user/dashboard")
         .then((res) => res.json())
         .then((data) => {
-          if (data.verified && data.rainUsername) {
+          if (data.rainUsername) {
+            // Store rainUsername for dashboard usage
             localStorage.setItem("rainUsername", data.rainUsername);
             router.push("/dashboard");
-          } else if (data.rainUsername && !data.verified) {
-            setError("Your account is not verified yet. Please complete the verification process.");
-            setLoading(false);
           } else {
             setError("No Rain.gg account found for this Discord ID. Please register first.");
             setLoading(false);
