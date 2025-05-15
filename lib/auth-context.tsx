@@ -139,10 +139,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         })
       } else {
         localStorage.removeItem("rainUsername")
+        router.replace("/login") // Redirect to login if user not found
       }
     } catch (error) {
       console.error("Error loading user:", error)
       localStorage.removeItem("rainUsername")
+      router.replace("/login") // Redirect to login on error
     } finally {
       setIsLoading(false)
     }

@@ -22,6 +22,7 @@ import {
 import CityOverlay from "../city-overlay"
 import SnowOverlay from "../snow-overlay"
 import { fadeIn, staggerContainer, floatAnimation } from "@/lib/animation-utils"
+import { useRouter } from "next/navigation"
 
 // Rakeback tiers
 const rakebackTiers = [
@@ -43,6 +44,7 @@ const coinImg = "/coin.png" // Add this line near the top, after imports
 
 export default function Dashboard() {
   const { user, logout, isLoading } = useAuth()
+  const router = useRouter()
   const [activeTab, setActiveTab] = useState("overview")
   const [leaderboard, setLeaderboard] = useState<LeaderboardUser[]>([])
   const [races, setRaces] = useState<Race[]>([])
@@ -51,6 +53,14 @@ export default function Dashboard() {
   const [error, setError] = useState<string | null>(null)
   const [usingMockData, setUsingMockData] = useState(false)
   const [userWagered, setUserWagered] = useState<number | null>(null)
+
+  useEffect(() => {
+    if (!isLoading && !user) {
+      router.replace("/login")
+    } else if (!isLoading && user && user.verified === false) {
+      router.replace("/verification-pending")
+    }
+  }, [isLoading, user, router])
 
   useEffect(() => {
     async function loadData() {
