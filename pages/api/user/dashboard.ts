@@ -27,3 +27,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.status(500).json({ error: "Internal server error" });
   }
 }
+
+// This endpoint returns { rainUsername } for the current Discord session

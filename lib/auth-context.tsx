@@ -4,6 +4,7 @@ import type React from "react"
 import { createContext, useContext, useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { verifyUser } from "@/lib/server-api" // Make sure this is imported
+import { useSession } from "next-auth/react"
 
 interface AuthContextType {
   user: UserProfile | null
@@ -93,73 +94,65 @@ const getUserWageredFromLeaderboard = async (username: string): Promise<number> 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserProfile | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const { data: session, status } = useSession()
   const router = useRouter()
 
   useEffect(() => {
-    // Check if user is logged in
-    const checkAuth = async () => {
+    // Only load user if session is ready
+    if (status !== "authenticated") {
+      setIsLoading(false)
+      setUser(null)
+      return
+    }
+    // Fetch rainUsername from /api/user/dashboard (uses Discord ID from session)
+    const loadUserFromDB = async () => {
+      setIsLoading(true)
       try {
-        const rainUsername = localStorage.getItem("rainUsername")
-        if (rainUsername) {
-          await loadUser(rainUsername)
+        const res = await fetch("/api/user/dashboard")
+        const data = await res.json()
+        if (data.rainUsername) {
+          // Now fetch Rain.gg data as before
+          const userProfile = await verifyUser(data.rainUsername)
+          let wagerHistory: { date: string, amount: number }[] = []
+          let totalWagered = 0
+          if (userProfile) {
+            // Fetch correct wagered value from the wagered leaderboard
+            totalWagered = await getUserWageredFromLeaderboard(userProfile.username)
+            wagerHistory = await getWeeklyWagerHistory(userProfile.username)
+            setUser({
+              id: userProfile.id || userProfile.username,
+              username: userProfile.username,
+              avatar: userProfile.avatar,
+              totalWagered,
+              totalDeposited: userProfile.deposited ?? 0,
+              rakebackPercentage: 5,
+              rakebackEarned: Math.round((totalWagered ?? 0) * 0.05),
+              measterCoins: Math.floor((totalWagered ?? 0) / 10),
+              joinDate: "",
+              depositHistory: [],
+              wagerHistory,
+            })
+          } else {
+            setUser(null)
+          }
         } else {
-          setIsLoading(false)
+          setUser(null)
         }
       } catch (error) {
-        console.error("Error checking authentication:", error)
+        setUser(null)
+      } finally {
         setIsLoading(false)
       }
     }
-
-    checkAuth()
-  }, [])
-
-  const loadUser = async (rainUsername: string) => {
-    setIsLoading(true)
-    try {
-      const userProfile = await verifyUser(rainUsername)
-      let wagerHistory: { date: string, amount: number }[] = []
-      let totalWagered = 0
-      if (userProfile) {
-        // Fetch correct wagered value from the wagered leaderboard
-        totalWagered = await getUserWageredFromLeaderboard(userProfile.username)
-        wagerHistory = await getWeeklyWagerHistory(userProfile.username)
-        setUser({
-          id: userProfile.id || userProfile.username,
-          username: userProfile.username,
-          avatar: userProfile.avatar,
-          totalWagered,
-          totalDeposited: userProfile.deposited ?? 0,
-          rakebackPercentage: 5,
-          rakebackEarned: Math.round((totalWagered ?? 0) * 0.05),
-          measterCoins: Math.floor((totalWagered ?? 0) / 10),
-          joinDate: "",
-          depositHistory: [],
-          wagerHistory,
-        })
-      } else {
-        localStorage.removeItem("rainUsername")
-      }
-    } catch (error) {
-      console.error("Error loading user:", error)
-      localStorage.removeItem("rainUsername")
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  const login = async (rainUsername: string) => {
-    localStorage.setItem("rainUsername", rainUsername)
-    await loadUser(rainUsername)
-  }
+    loadUserFromDB()
+  }, [status, session])
 
   const logout = () => {
-    localStorage.removeItem("rainUsername")
     setUser(null)
     router.push("/")
   }
 
-  return <AuthContext.Provider value={{ user, isLoading, login, logout }}>{children}</AuthContext.Provider>
+  return <AuthContext.Provider value={{ user, isLoading, login: async () => {}, logout }}>{children}</AuthContext.Provider>
 }
 
 export function useAuth() {
