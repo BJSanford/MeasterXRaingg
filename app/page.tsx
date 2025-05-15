@@ -108,7 +108,9 @@ export default function Home() {
                   size="lg"
                   className="bg-gradient-to-r from-yellow-500 to-amber-500 text-black hover:from-yellow-600 hover:to-amber-600"
                 >
-                  <Link href="/login">Register with Code MEASTER</Link>
+                  <Link href="https://rain.gg/r/measter" target="_blank" rel="noopener noreferrer">
+                    Register with Code MEASTER
+                  </Link>
                 </Button>
               </motion.div>
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -126,7 +128,7 @@ export default function Home() {
             initial="hidden"
             whileInView="show"
             viewport={{ once: true, amount: 0.25 }}
-            className="mt-16 grid grid-cols-1 gap-6 md:grid-cols-3"
+            className="mt-16 grid grid-cols-1 gap-6 md:grid-cols-3 lg:grid-cols-3"
           >
             <motion.div
               variants={fadeIn("up", 0.1)}
@@ -577,90 +579,14 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-gray-800 bg-black py-12">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="flex items-center gap-2"
-            >
-              <div className="flex h-8 w-auto items-center text-lg font-bold">
-                <span className="bg-gradient-to-r from-yellow-400 to-amber-500 bg-clip-text text-transparent">
-                  RAIN.GG
-                </span>
-              </div>
-              <span className="text-sm text-gray-400">×</span>
-              <span className="text-sm text-gray-400">Code MEASTER</span>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="flex flex-wrap items-center gap-6"
-            >
-              <motion.div whileHover={{ y: -2 }}>
-                <Link
-                  href="https://rain.gg/terms"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-gray-400 hover:text-white"
-                >
-                  Terms of Service
-                </Link>
-              </motion.div>
-              <motion.div whileHover={{ y: -2 }}>
-                <Link
-                  href="https://rain.gg/privacy"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-gray-400 hover:text-white"
-                >
-                  Privacy Policy
-                </Link>
-              </motion.div>
-              <motion.div whileHover={{ y: -2 }}>
-                <Link
-                  href="https://rain.gg/faq"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-gray-400 hover:text-white"
-                >
-                  FAQ
-                </Link>
-              </motion.div>
-              <motion.div whileHover={{ y: -2 }}>
-                <Link
-                  href="https://rain.gg/support"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-gray-400 hover:text-white"
-                >
-                  Support
-                </Link>
-              </motion.div>
-              <motion.div whileHover={{ y: -2 }}>
-                <Link href="/socials" className="text-sm text-gray-400 hover:text-white">
-                  Measter's Socials
-                </Link>
-              </motion.div>
-            </motion.div>
-          </div>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
-            className="mt-8 text-center"
-          >
-            <p className="text-sm text-gray-500">
-              This is a promotional website for Rain.gg affiliate code MEASTER. Rain.gg and its logos are property of
-              their respective owners.
-            </p>
-            <p className="mt-2 text-sm text-gray-500">
-              © {new Date().getFullYear()} MEASTER Affiliate Program. All rights reserved.
-            </p>
-          </motion.div>
+      <footer className="py-6 bg-gray-900 text-gray-400">
+        <div className="container mx-auto flex justify-center space-x-4">
+          <Link href="/terms-of-service" className="hover:text-white">
+            Terms of Service
+          </Link>
+          <Link href="/privacy-policy" className="hover:text-white">
+            Privacy Policy
+          </Link>
         </div>
       </footer>
     </div>
