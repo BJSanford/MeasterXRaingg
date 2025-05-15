@@ -21,9 +21,10 @@ export default function LoginPage() {
         .then((res) => res.json())
         .then((data) => {
           if (data.rainUsername) {
-            // Store full user object for dashboard usage
+            // Only store minimal info in localStorage
             localStorage.setItem("rainUsername", data.rainUsername);
-            localStorage.setItem("user", JSON.stringify(data));
+            localStorage.setItem("discordUsername", data.discordUsername);
+            localStorage.setItem("verified", JSON.stringify(data.verified));
 
             // Set cookies for middleware (use discordUsername instead of userId)
             document.cookie = `discordUsername=${data.discordUsername}; path=/`;
