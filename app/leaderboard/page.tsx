@@ -116,9 +116,9 @@ export default function WeeklyRacePage() {
     return name.slice(0, 2) + "*".repeat(name.length - 4) + name.slice(-2)
   }
 
-  // --- Podium for Top 3 (reworked, more modern, no crown, no color borders) ---
-  const podium = leaderboard.slice(0, 3)
-  const rest = leaderboard.slice(3, 15) // Only show up to 15 players total
+  // Updated Podium for Top 3 with a more professional design
+  const podium = leaderboard.slice(0, 3);
+  const rest = leaderboard.slice(3, 15); // Exclude podium users from the main leaderboard
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -267,7 +267,7 @@ export default function WeeklyRacePage() {
           ))}
         </motion.div>
 
-        {/* Leaderboard Table - up to 15 players, reworked row style */}
+        {/* Leaderboard Table - up to 15 players, excluding podium */}
         <Card className="border-gray-800 bg-gray-900/70 text-white">
           <CardHeader>
             <CardTitle>Current Rankings</CardTitle>
@@ -311,12 +311,12 @@ export default function WeeklyRacePage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {leaderboard.slice(0, 15).map((user, index) => (
+                    {rest.map((user, index) => (
                       <tr
                         key={user.id || user.username}
                         className={`border-b border-gray-800 hover:bg-gray-800/60 transition-colors`}
                       >
-                        <td className="p-4 font-bold text-lg text-gray-300">#{index + 1}</td>
+                        <td className="p-4 font-bold text-lg text-gray-300">#{index + 4}</td>
                         <td className="p-4">
                           <div className="flex items-center gap-3">
                             <div className="h-8 w-8 overflow-hidden rounded-full bg-gray-800 border border-gray-700">
@@ -338,8 +338,8 @@ export default function WeeklyRacePage() {
                           {Math.round(user.wagered).toLocaleString()}
                         </td>
                         <td className="p-4">
-                          <span className={`inline-block rounded px-3 py-1 font-semibold text-sm ${index < payouts.length ? "bg-yellow-900/60 text-yellow-300" : "bg-gray-800 text-gray-400"}`}>
-                            {index < payouts.length && payouts[index] > 0 ? `+${payouts[index]}` : "-"}
+                          <span className={`inline-block rounded px-3 py-1 font-semibold text-sm ${index < payouts.length - 3 ? "bg-yellow-900/60 text-yellow-300" : "bg-gray-800 text-gray-400"}`}>
+                            {index < payouts.length - 3 && payouts[index + 3] > 0 ? `+${payouts[index + 3]}` : "-"}
                           </span>
                         </td>
                       </tr>

@@ -588,10 +588,10 @@ export default function Home() {
             © {new Date().getFullYear()} MEASTER Affiliate Program. All rights reserved.
           </p>
           <div className="flex space-x-4">
-            <Link href="https://rain.gg/help/terms-of-service" className="hover:text-white">
+            <Link href="/terms-of-service" className="hover:text-white">
               Terms of Service
             </Link>
-            <Link href="https://rain.gg/help/terms-of-service" className="hover:text-white">
+            <Link href="/privacy-policy" className="hover:text-white">
               Privacy Policy
             </Link>
           </div>
