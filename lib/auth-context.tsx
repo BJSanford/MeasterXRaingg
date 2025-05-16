@@ -4,6 +4,7 @@ import type React from "react"
 import { createContext, useContext, useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { verifyUser } from "@/lib/server-api" // Make sure this is imported
+import oldApiData from "@/lib/static-data/old-api-data.json"; // Import the static data
 
 interface AuthContextType {
   user: UserProfile | null
@@ -68,8 +69,8 @@ const getUserWageredFromLeaderboard = async (username: string): Promise<number> 
     accept: "application/json",
     "x-api-key": API_KEY,
   }
-  // Use a wide date range for all-time wagered
   const url = `${API_BASE_URL}/affiliates/leaderboard?start_date=2020-01-01T00%3A00%3A00.00Z&end_date=2030-01-01T00%3A00%3A00.00Z&type=wagered`
+
   try {
     const res = await fetch(url, { headers, cache: "no-store" })
     if (!res.ok) return 0
@@ -84,7 +85,15 @@ const getUserWageredFromLeaderboard = async (username: string): Promise<number> 
       typeof u.username === "string" &&
       u.username.trim().toLowerCase() === input
     )
-    return userEntry?.wagered ?? 0
+
+    // Check static data for additional wagered amount
+    const staticUser = oldApiData.results.find(
+      (staticEntry: any) =>
+        staticEntry.username.trim().toLowerCase() === username.trim().toLowerCase()
+    );
+    const staticWagered = staticUser ? staticUser.wagered : 0;
+
+    return (userEntry?.wagered ?? 0) + staticWagered; // Combine API and static data
   } catch {
     return 0
   }

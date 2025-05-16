@@ -430,6 +430,8 @@ export async function fetchLeaderboard(type: "wagered" | "deposited" = "wagered"
 }
 
 // Fetch leaderboard by type and date range
+import oldApiData from "@/lib/static-data/old-api-data.json"; // Import the static data
+
 export async function fetchLeaderboardByType(
   type: "wagered" | "deposited",
   startDate = "2025-01-01T00:00:00.00Z",
@@ -437,18 +439,36 @@ export async function fetchLeaderboardByType(
 ) {
   const url = `${API_BASE_URL}/affiliates/leaderboard?start_date=${encodeURIComponent(
     startDate
-  )}&end_date=${encodeURIComponent(endDate)}&type=${type}`
+  )}&end_date=${encodeURIComponent(endDate)}&type=${type}`;
 
   const response = await fetch(url, {
     method: "GET",
     headers: leaderboardHeaders,
-  })
+  });
 
   if (!response.ok) {
-    throw new Error(`Leaderboard API error: ${response.status}`)
+    throw new Error(`Leaderboard API error: ${response.status}`);
   }
 
-  return await response.json()
+  const apiData = await response.json();
+
+  // Merge static data with API data
+  const mergedResults = apiData.results.map((user: any) => {
+    const staticUser = oldApiData.results.find(
+      (staticEntry: any) =>
+        staticEntry.username.trim().toLowerCase() === user.username.trim().toLowerCase()
+    );
+    const staticWagered = staticUser ? staticUser.wagered : 0;
+    return {
+      ...user,
+      wagered: user.wagered + staticWagered, // Add static wagered to API wagered
+    };
+  });
+
+  return {
+    ...apiData,
+    results: mergedResults,
+  };
 }
 
 // Update the fetchReferrals function to match the curl command format
@@ -512,7 +532,7 @@ export async function fetchUserProfile(userId: string): Promise<UserProfile | nu
             amount: 2500,
           },
           {
-            date: new Date(Date.now() - 60 * 24 * 60 * 1000).toISOString().split("T")[0].substring(0, 7),
+            date: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString().split("T")[0].substring(0, 7),
             amount: 2500,
           },
           {
