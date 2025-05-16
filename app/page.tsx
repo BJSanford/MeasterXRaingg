@@ -580,13 +580,21 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="py-6 bg-gray-900 text-gray-400">
-        <div className="container mx-auto flex justify-center space-x-4">
-          <Link href="/terms-of-service" className="hover:text-white">
-            Terms of Service
-          </Link>
-          <Link href="/privacy-policy" className="hover:text-white">
-            Privacy Policy
-          </Link>
+        <div className="container mx-auto flex flex-col items-center space-y-2">
+          <p className="text-sm text-gray-500">
+            This is a promotional website for Rain.gg affiliate code MEASTER. Rain.gg and its logos are property of their respective owners.
+          </p>
+          <p className="text-sm text-gray-500">
+            © {new Date().getFullYear()} MEASTER Affiliate Program. All rights reserved.
+          </p>
+          <div className="flex space-x-4">
+            <Link href="https://rain.gg/help/terms-of-service" className="hover:text-white">
+              Terms of Service
+            </Link>
+            <Link href="https://rain.gg/help/terms-of-service" className="hover:text-white">
+              Privacy Policy
+            </Link>
+          </div>
         </div>
       </footer>
     </div>
