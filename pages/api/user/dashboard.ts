@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]";
 import { PrismaClient } from "@prisma/client";
+import { verifyUser } from "../../../lib/server-api";
 
 const prisma = new PrismaClient();
 
@@ -36,10 +37,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(404).json({ error: "User not found in UserVerification table for this Discord ID or username." });
     }
     // Always return discordUsername for frontend cookie
+    // Fetch Rain.gg user data to get avatar URLs
+    const rainData = await verifyUser(user.rainUsername);
+    // Choose small avatar URL for client
+    const avatarUrl = rainData?.avatar?.small || "";
     res.status(200).json({
       rainUsername: user.rainUsername,
       discordUsername: user.discordUsername,
       verified: user.verified,
+      avatarUrl,
     });
   } catch (error) {
     console.error("Error fetching user data:", error);

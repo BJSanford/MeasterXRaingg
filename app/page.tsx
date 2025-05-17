@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from "next/link"
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Gift, Trophy, Zap, Users, ArrowRight, Star, DollarSign, Coins } from "lucide-react"
@@ -13,10 +13,13 @@ import { fadeIn, staggerContainer, textVariant, floatAnimation, pulseAnimation }
 
 export default function Home() {
   const [username, setUsername] = useState<string | null>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    const match = document.cookie.match(/(?:^|; )discordUsername=([^;]+)/);
-    if (match) setUsername(decodeURIComponent(match[1]));
+    const userMatch = document.cookie.match(/(?:^|; )rainUsername=([^;]+)/);
+    const avatarMatch = document.cookie.match(/(?:^|; )rainAvatar=([^;]+)/);
+    if (userMatch) setUsername(decodeURIComponent(userMatch[1]));
+    if (avatarMatch) setAvatarUrl(decodeURIComponent(avatarMatch[1]));
   }, []);
 
   return (
@@ -47,7 +50,11 @@ export default function Home() {
               {username ? (
                 <div className="flex items-center gap-2">
                   <Avatar>
-                    <AvatarFallback>{username.charAt(0)}</AvatarFallback>
+                    {avatarUrl ? (
+                      <AvatarImage src={avatarUrl} />
+                    ) : (
+                      <AvatarFallback>{username.charAt(0)}</AvatarFallback>
+                    )}
                   </Avatar>
                   <span className="text-white">{username}</span>
                   <Link href="/dashboard">

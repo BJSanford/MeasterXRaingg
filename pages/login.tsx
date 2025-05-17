@@ -29,6 +29,8 @@ export default function LoginPage() {
             // Set cookies for middleware (use discordUsername instead of userId)
             document.cookie = `discordUsername=${data.discordUsername}; path=/`;
             document.cookie = `rainUsername=${data.rainUsername}; path=/`;
+            // Set rain avatar cookie for homepage display
+            document.cookie = `rainAvatar=${data.avatarUrl}; path=/`;
             document.cookie = `verified=${data.verified ? "true" : "false"}; path=/`;
 
             router.push("/dashboard");
