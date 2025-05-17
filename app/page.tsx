@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import Link from "next/link"
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Gift, Trophy, Zap, Users, ArrowRight, Star, DollarSign, Coins } from "lucide-react"
@@ -25,6 +24,12 @@ export default function Home() {
   const [username, setUsername] = useState<string | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const router = useRouter()
+
+  // Helper to resolve avatar URL for image display
+  const getAvatarUrl = (avatar: string | null) => {
+    if (!avatar) return '/placeholder-user.jpg'
+    return avatar
+  }
 
   useEffect(() => {
     const userMatch = document.cookie.match(/(?:^|; )rainUsername=([^;]+)/);
@@ -64,13 +69,14 @@ export default function Home() {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <button className="flex items-center space-x-2 focus:outline-none">
-                      <Avatar className="h-8 w-8">
-                        {avatarUrl ? (
-                          <AvatarImage src={avatarUrl} alt={username} />
-                        ) : (
-                          <AvatarFallback>{username.charAt(0)}</AvatarFallback>
-                        )}
-                      </Avatar>
+                      {/* Avatar image like in dashboard */}
+                      <div className="h-8 w-8 overflow-hidden rounded-full border-2 border-yellow-500 bg-gray-800">
+                        <img
+                          src={getAvatarUrl(avatarUrl)}
+                          alt={username || 'User'}
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
                       <span className="text-white font-medium">{username}</span>
                     </button>
                   </DropdownMenuTrigger>
