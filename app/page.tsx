@@ -18,17 +18,17 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
-import { Gamepad } from "lucide-react"
+import { Gamepad, ChevronDown } from "lucide-react"
 
 export default function Home() {
   const [username, setUsername] = useState<string | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const router = useRouter()
 
-  // Helper to resolve avatar URL for image display
+  // Helper to resolve avatar URL from cookie
   const getAvatarUrl = (avatar: string | null) => {
-    if (!avatar) return '/placeholder-user.jpg'
-    return avatar
+    if (avatar) return avatar
+    return '/placeholder-user.jpg'
   }
 
   useEffect(() => {
@@ -64,12 +64,11 @@ export default function Home() {
             </div>
             <div className="flex-1"></div>
             <div className="flex items-center space-x-4">
-              {/* If user is logged in (username from cookie), show avatar and menu, else show login button */}
+              {/* If user logged in show menu, else show Register + Login links */}
               {username ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <button className="flex items-center space-x-2 focus:outline-none">
-                      {/* Avatar image like in dashboard */}
+                    <button className="flex items-center space-x-2 focus:outline-none bg-gray-800/60 backdrop-blur-xl rounded-full px-3 py-1 border border-gray-700 hover:bg-gray-800 drop-shadow-md">
                       <div className="h-8 w-8 overflow-hidden rounded-full border-2 border-yellow-500 bg-gray-800">
                         <img
                           src={getAvatarUrl(avatarUrl)}
@@ -78,9 +77,10 @@ export default function Home() {
                         />
                       </div>
                       <span className="text-white font-medium">{username}</span>
+                      <ChevronDown className="h-4 w-4 text-gray-400" />
                     </button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" sideOffset={4} className="bg-gray-800 text-white rounded-md border border-gray-700">
+                  <DropdownMenuContent align="end" sideOffset={4} className="bg-gray-800 text-white rounded-xl border border-gray-700 ring-1 ring-gray-700 drop-shadow-lg">
                     <DropdownMenuItem onSelect={() => router.push('/dashboard')}>Dashboard</DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onSelect={() => signOut({ callbackUrl: '/' })}>Logout</DropdownMenuItem>
@@ -92,12 +92,14 @@ export default function Home() {
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
-                <button
-                  onClick={() => signIn('discord')}
-                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg"
-                >
-                  Login
-                </button>
+                <div className="flex space-x-2">
+                  <Link href="/register">
+                    <button className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg">Register</button>
+                  </Link>
+                  <Link href="/login">
+                    <button className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg">Login</button>
+                  </Link>
+                </div>
               )}
             </div>
           </motion.nav>
