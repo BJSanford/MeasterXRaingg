@@ -10,10 +10,21 @@ import { motion } from "framer-motion"
 import CityOverlay from "./city-overlay"
 import SnowOverlay from "./snow-overlay"
 import { fadeIn, staggerContainer, textVariant, floatAnimation, pulseAnimation } from "@/lib/animation-utils"
+import { signIn, signOut } from "next-auth/react"
+import { useRouter } from "next/navigation"
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu"
+import { Gamepad } from "lucide-react"
 
 export default function Home() {
   const [username, setUsername] = useState<string | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const router = useRouter()
 
   useEffect(() => {
     const userMatch = document.cookie.match(/(?:^|; )rainUsername=([^;]+)/);
@@ -46,30 +57,41 @@ export default function Home() {
                 </span>
               </motion.div>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex-1"></div>
+            <div className="flex items-center space-x-4">
+              {/* If user is logged in (username from cookie), show avatar and menu, else show login button */}
               {username ? (
-                <div className="flex items-center gap-2">
-                  <Avatar>
-                    {avatarUrl ? (
-                      <AvatarImage src={avatarUrl} />
-                    ) : (
-                      <AvatarFallback>{username.charAt(0)}</AvatarFallback>
-                    )}
-                  </Avatar>
-                  <span className="text-white">{username}</span>
-                  <Link href="/dashboard">
-                    <Button variant="default">Dashboard</Button>
-                  </Link>
-                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="flex items-center space-x-2 focus:outline-none">
+                      <Avatar className="h-8 w-8">
+                        {avatarUrl ? (
+                          <AvatarImage src={avatarUrl} alt={username} />
+                        ) : (
+                          <AvatarFallback>{username.charAt(0)}</AvatarFallback>
+                        )}
+                      </Avatar>
+                      <span className="text-white font-medium">{username}</span>
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" sideOffset={4} className="bg-gray-800 text-white rounded-md border border-gray-700">
+                    <DropdownMenuItem onSelect={() => router.push('/dashboard')}>Dashboard</DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onSelect={() => signOut({ callbackUrl: '/' })}>Logout</DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <div className="px-4 py-2 text-xs text-gray-400 flex items-center justify-between">
+                      <span>MEASSTER</span>
+                      <Gamepad className="w-4 h-4" />
+                    </div>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               ) : (
-                <>
-                  <Link href="/register">
-                    <Button variant="default">Register / Verify</Button>
-                  </Link>
-                  <Link href="/login">
-                    <Button variant="default">Login to Dashboard</Button>
-                  </Link>
-                </>
+                <button
+                  onClick={() => signIn('discord')}
+                  className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg"
+                >
+                  Login
+                </button>
               )}
             </div>
           </motion.nav>
