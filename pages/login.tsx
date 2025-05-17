@@ -47,8 +47,12 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white">
       <div className="text-center p-8 bg-gray-800 rounded-2xl shadow-2xl max-w-md">
-        <h1 className="text-4xl font-extrabold mb-6">Welcome to Rain.ggXMeasterSkins</h1>
-        <p className="text-lg mb-4 text-gray-400">Sign in to access your dashboard</p>
+        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold mb-6 break-words">
+          Welcome to Rain.ggXMeasterSkins
+        </h1>
+        <p className="text-lg mb-4 text-gray-400 break-words">
+          Sign in to access your dashboard
+        </p>
         {error && status === "authenticated" && <p className="mb-4 text-red-400">{error}</p>}
         {status !== "authenticated" && (
           <button

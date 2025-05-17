@@ -234,18 +234,19 @@ export default function Dashboard() {
     },
   ]
 
-  // Helper to get avatar URL (string or object)
+  // Helper to get avatar URL
   const getAvatarUrl = (avatar: any) => {
     if (!avatar) return "/placeholder.svg"
     if (typeof avatar === "string") return avatar
-    return avatar.medium || avatar.small || avatar.large || "/placeholder.svg"
+    return avatar.large || avatar.medium || avatar.small || "/placeholder.svg"
   }
 
   // --- Add this block for the welcome message ---
   const WelcomeHeader = () => (
     <div className="mb-8 flex flex-col items-center justify-center">
       <div className="mb-4 flex flex-col items-center">
-        <div className="h-20 w-20 rounded-full overflow-hidden border-4 border-yellow-500 bg-gray-800 mb-2">
+        <div className="h-20 w-20 overflow-hidden rounded-full border-4 border-yellow-500 bg-gray-800 mb-2">
+          {/* Changed from Next/Image to HTML img */}
           <img
             src={getAvatarUrl(user.avatar)}
             alt={user.username}
@@ -286,15 +287,12 @@ export default function Dashboard() {
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <div className="h-8 w-8 overflow-hidden rounded-full bg-purple-900 border-2 border-amber-400 shadow-lg">
-                {user.avatar ? (
-                  <img
-                    src={user.avatar.medium || "/placeholder.svg?height=50&width=50"}
-                    alt={user.username}
-                    className="h-full w-full object-cover"
-                  />
-                ) : (
-                  <div className="h-full w-full bg-gradient-to-br from-purple-500 to-pink-500"></div>
-                )}
+                {/* Changed from Next/Image to HTML img */}
+                <img
+                  src={getAvatarUrl(user.avatar)}
+                  alt={user.username}
+                  className="h-full w-full object-cover"
+                />
               </div>
               <span className="font-semibold">{user.username}</span>
             </div>

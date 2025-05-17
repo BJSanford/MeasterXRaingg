@@ -1,7 +1,9 @@
 "use client"
 
+import { useEffect, useState } from 'react';
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Gift, Trophy, Zap, Users, ArrowRight, Star, DollarSign, Coins } from "lucide-react"
 import { motion } from "framer-motion"
@@ -10,6 +12,13 @@ import SnowOverlay from "./snow-overlay"
 import { fadeIn, staggerContainer, textVariant, floatAnimation, pulseAnimation } from "@/lib/animation-utils"
 
 export default function Home() {
+  const [username, setUsername] = useState<string | null>(null);
+
+  useEffect(() => {
+    const match = document.cookie.match(/(?:^|; )discordUsername=([^;]+)/);
+    if (match) setUsername(decodeURIComponent(match[1]));
+  }, []);
+
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden">
       <CityOverlay />
@@ -35,42 +44,26 @@ export default function Home() {
               </motion.div>
             </div>
             <div className="flex items-center gap-4">
-              <motion.div whileHover={{ y: -2 }}>
-                <Link href="/leaderboard" className="text-sm font-medium text-gray-300 hover:text-white">
-                  Leaderboard
-                </Link>
-              </motion.div>
-              <motion.div whileHover={{ y: -2 }}>
-                <Link href="/socials" className="text-sm font-medium text-gray-300 hover:text-white">
-                  Socials
-                </Link>
-              </motion.div>
-              <motion.div whileHover={{ y: -2 }}>
-                <Link
-                  href="https://rain.gg"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm font-medium text-gray-300 hover:text-white"
-                >
-                  Visit Rain.gg
-                </Link>
-              </motion.div>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button
-                  asChild
-                  className="bg-gradient-to-r from-yellow-500 to-amber-500 text-black hover:from-yellow-600 hover:to-amber-600"
-                >
-                  <Link href="/login">Login to Dashboard</Link>
-                </Button>
-              </motion.div>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button
-                  asChild
-                  className="bg-gradient-to-r from-blue-500 to-blue-700 text-white hover:from-blue-600 hover:to-blue-800"
-                >
-                  <Link href="/register">Register / Verify</Link>
-                </Button>
-              </motion.div>
+              {username ? (
+                <div className="flex items-center gap-2">
+                  <Avatar>
+                    <AvatarFallback>{username.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                  <span className="text-white">{username}</span>
+                  <Link href="/dashboard">
+                    <Button variant="default">Dashboard</Button>
+                  </Link>
+                </div>
+              ) : (
+                <>
+                  <Link href="/register">
+                    <Button variant="default">Register / Verify</Button>
+                  </Link>
+                  <Link href="/login">
+                    <Button variant="default">Login to Dashboard</Button>
+                  </Link>
+                </>
+              )}
             </div>
           </motion.nav>
 
