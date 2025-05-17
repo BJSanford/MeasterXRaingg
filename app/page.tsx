@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from "next/link"
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Gift, Trophy, Zap, Users, ArrowRight, Star, DollarSign, Coins } from "lucide-react"
@@ -9,27 +10,10 @@ import { motion } from "framer-motion"
 import CityOverlay from "./city-overlay"
 import SnowOverlay from "./snow-overlay"
 import { fadeIn, staggerContainer, textVariant, floatAnimation, pulseAnimation } from "@/lib/animation-utils"
-import { signIn, signOut } from "next-auth/react"
-import { useRouter } from "next/navigation"
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu"
-import { Gamepad, ChevronDown } from "lucide-react"
 
 export default function Home() {
   const [username, setUsername] = useState<string | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  const router = useRouter()
-
-  // Helper to resolve avatar URL from cookie
-  const getAvatarUrl = (avatar: string | null) => {
-    if (avatar) return avatar;
-    return '/placeholder-user.jpg';
-  }
 
   useEffect(() => {
     const userMatch = document.cookie.match(/(?:^|; )rainUsername=([^;]+)/);
@@ -62,44 +46,30 @@ export default function Home() {
                 </span>
               </motion.div>
             </div>
-            <div className="flex-1"></div>
-            <div className="flex items-center space-x-4">
-              {/* If user logged in show menu, else show Register + Login links */}
+            <div className="flex items-center gap-4">
               {username ? (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <button className="flex items-center space-x-2 focus:outline-none bg-gray-800/60 backdrop-blur-xl rounded-full px-3 py-1 border border-gray-700 hover:bg-gray-800 drop-shadow-md">
-                      <div className="h-8 w-8 overflow-hidden rounded-full border-2 border-yellow-500 bg-gray-800">
-                        <img
-                          src={getAvatarUrl(avatarUrl)}
-                          alt={username || 'User'}
-                          className="h-full w-full object-cover"
-                        />
-                      </div>
-                      <span className="text-white font-medium">{username}</span>
-                      <ChevronDown className="h-4 w-4 text-gray-400" />
-                    </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" sideOffset={4} className="bg-gray-800 text-white rounded-xl border border-gray-700 ring-1 ring-gray-700 drop-shadow-lg mt-1">
-                    <DropdownMenuItem onSelect={() => router.push('/dashboard')}>Dashboard</DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onSelect={() => signOut({ callbackUrl: '/' })}>Logout</DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <div className="px-4 py-2 text-xs text-gray-400 flex items-center justify-between">
-                      <span>MEASSTER</span>
-                      <Gamepad className="w-4 h-4" />
-                    </div>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              ) : (
-                <div className="flex space-x-2">
-                  <Link href="/register">
-                    <button className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg">Register</button>
-                  </Link>
-                  <Link href="/login">
-                    <button className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg">Login</button>
+                <div className="flex items-center gap-2">
+                  <Avatar>
+                    {avatarUrl ? (
+                      <AvatarImage src={avatarUrl} />
+                    ) : (
+                      <AvatarFallback>{username.charAt(0)}</AvatarFallback>
+                    )}
+                  </Avatar>
+                  <span className="text-white">{username}</span>
+                  <Link href="/dashboard">
+                    <Button variant="default">Dashboard</Button>
                   </Link>
                 </div>
+              ) : (
+                <>
+                  <Link href="/register">
+                    <Button variant="default">Register / Verify</Button>
+                  </Link>
+                  <Link href="/login">
+                    <Button variant="default">Login to Dashboard</Button>
+                  </Link>
+                </>
               )}
             </div>
           </motion.nav>
