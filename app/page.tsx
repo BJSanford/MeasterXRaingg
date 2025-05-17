@@ -10,6 +10,8 @@ import { motion } from "framer-motion"
 import CityOverlay from "./city-overlay"
 import SnowOverlay from "./snow-overlay"
 import { fadeIn, staggerContainer, textVariant, floatAnimation, pulseAnimation } from "@/lib/animation-utils"
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
+import Cookies from 'js-cookie';
 
 export default function Home() {
   const [username, setUsername] = useState<string | null>(null);
@@ -21,6 +23,12 @@ export default function Home() {
     if (userMatch) setUsername(decodeURIComponent(userMatch[1]));
     if (avatarMatch) setAvatarUrl(decodeURIComponent(avatarMatch[1]));
   }, []);
+
+  const handleLogout = () => {
+    Cookies.remove('rainUsername');
+    Cookies.remove('rainAvatar');
+    window.location.reload();
+  };
 
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden">
@@ -48,19 +56,25 @@ export default function Home() {
             </div>
             <div className="flex items-center gap-4">
               {username ? (
-                <div className="flex items-center gap-2">
-                  <Avatar>
-                    {avatarUrl ? (
-                      <AvatarImage src={avatarUrl} />
-                    ) : (
-                      <AvatarFallback>{username.charAt(0)}</AvatarFallback>
-                    )}
-                  </Avatar>
-                  <span className="text-white">{username}</span>
-                  <Link href="/dashboard">
-                    <Button variant="default">Dashboard</Button>
-                  </Link>
-                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <div className="flex items-center gap-2 cursor-pointer">
+                      <Avatar>
+                        {avatarUrl ? (
+                          <AvatarImage src={avatarUrl} />
+                        ) : (
+                          <AvatarFallback>{username.charAt(0)}</AvatarFallback>
+                        )}
+                      </Avatar>
+                      <span className="text-white">{username}</span>
+                    </div>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="bg-gray-800 text-white">
+                    <DropdownMenuItem onClick={handleLogout} className="hover:bg-red-500">
+                      Logout
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               ) : (
                 <>
                   <Link href="/register">
