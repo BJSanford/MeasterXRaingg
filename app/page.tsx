@@ -80,11 +80,7 @@ export default function Home() {
                       <ChevronDown className="h-4 w-4 text-gray-400" />
                     </button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    align="end"
-                    sideOffset={4}
-                    className="bg-gray-800 text-white rounded-xl border border-gray-700 ring-1 ring-gray-700 drop-shadow-lg mt-1"
-                  >
+                  <DropdownMenuContent align="end" sideOffset={4} className="bg-gray-800 text-white rounded-xl border border-gray-700 ring-1 ring-gray-700 drop-shadow-lg mt-1">
                     <DropdownMenuItem onSelect={() => router.push('/dashboard')}>Dashboard</DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onSelect={() => signOut({ callbackUrl: '/' })}>Logout</DropdownMenuItem>
