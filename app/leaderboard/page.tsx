@@ -1,100 +1,17 @@
-"use client"
-
-import { useEffect, useState, useCallback } from "react"
-import { fetchLeaderboard } from "@/lib/server-api"
+import type { Metadata } from "next"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { LeaderboardHeader } from "@/components/leaderboard/leaderboard-header"
 import { TopPlayers } from "@/components/leaderboard/top-players"
 import { LeaderboardTable } from "@/components/leaderboard/leaderboard-table"
 import { LeaderboardCountdown } from "@/components/leaderboard/leaderboard-countdown"
-import { Timer } from "lucide-react"
-import Image from "next/image"
 
-const payouts = [500, 250, 150, 50, 20, 15, 10, 5]
-const prizePool = payouts.reduce((a, b) => a + b, 0)
-const coinImg = "/coin.png"
+export const metadata: Metadata = {
+  title: "Leaderboard | MeasterSkins",
+  description: "View the current MeasterSkins leaderboard and see who's winning the most rewards.",
+}
 
 export default function LeaderboardPage() {
-  const [leaderboard, setLeaderboard] = useState<any[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [raceInfo, setRaceInfo] = useState({
-    startDate: "",
-    endDate: "",
-    timeLeft: "",
-  })
-
-  const updateTimeLeft = useCallback(() => {
-    if (!raceInfo.endDate) return
-    const now = Date.now()
-    const end = new Date(raceInfo.endDate).getTime()
-    if (isNaN(end)) {
-      setRaceInfo((prev) => ({ ...prev, timeLeft: "Invalid date" }))
-      return
-    }
-    const timeLeft = end - now
-    if (timeLeft <= 0) {
-      setRaceInfo((prev) => ({ ...prev, timeLeft: "Race Ended" }))
-      return
-    }
-    const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24))
-    const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60))
-    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000)
-    setRaceInfo((prev) => ({
-      ...prev,
-      timeLeft: `${days}d ${hours}h ${minutes}m ${seconds}s`,
-    }))
-  }, [raceInfo.endDate])
-
-  useEffect(() => {
-    loadLeaderboard()
-    let timer: NodeJS.Timeout | undefined
-    if (raceInfo.endDate) {
-      timer = setInterval(updateTimeLeft, 1000)
-    }
-    return () => {
-      if (timer) clearInterval(timer)
-    }
-  }, [raceInfo.endDate, updateTimeLeft])
-
-  async function loadLeaderboard() {
-    setIsLoading(true)
-    setError(null)
-
-    try {
-      const data = await fetchLeaderboard()
-      if (!data || !data.results) {
-        setError("No data available. Please try again later.")
-        setLeaderboard([])
-        return
-      }
-
-      setLeaderboard(data.results)
-
-      if (data.race) {
-        const startDate = new Date(data.race.starts_at)
-        setRaceInfo({
-          startDate: startDate.toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-            timeZone: "UTC",
-          }),
-          endDate: data.race.ends_at,
-          timeLeft: "",
-        })
-      }
-    } catch (err) {
-      console.error("Error loading race data:", err)
-      setError("Failed to load race data. Please try again later.")
-      setLeaderboard([])
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black text-white overflow-hidden">
       {/* Background particles/stars effect */}
