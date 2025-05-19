@@ -3,22 +3,14 @@
 import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 
-// Define the type for timeLeft
-interface TimeLeft {
-  days: number
-  hours: number
-  minutes: number
-  seconds: number
-}
-
 // Set the end date to 2 days from now for demo purposes
 const endDate = new Date()
 endDate.setDate(endDate.getDate() + 2)
 
 export function LeaderboardCountdown() {
-  const calculateTimeLeft = (): TimeLeft => {
+  const calculateTimeLeft = () => {
     const difference = +endDate - +new Date()
-    let timeLeft: TimeLeft = { days: 0, hours: 0, minutes: 0, seconds: 0 }
+    let timeLeft = {}
 
     if (difference > 0) {
       timeLeft = {
@@ -32,7 +24,7 @@ export function LeaderboardCountdown() {
     return timeLeft
   }
 
-  const [timeLeft, setTimeLeft] = useState<TimeLeft>(calculateTimeLeft())
+  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft())
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -58,17 +50,37 @@ export function LeaderboardCountdown() {
                 strokeLinecap="round"
                 strokeLinejoin="round"
               >
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="6" x2="12" y2="12"></line>
-                <line x1="12" y1="12" x2="16" y2="16"></line>
+                <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
               </svg>
-              <span className="text-lg font-medium text-white">Time Left</span>
+              <h2 className="text-xl font-bold text-white">LEADERBOARD ENDS IN</h2>
             </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-white">
-                {timeLeft.days}d {timeLeft.hours}h {timeLeft.minutes}m {timeLeft.seconds}s
-              </p>
-              <p className="text-sm text-gray-400">Until the leaderboard resets</p>
+            <p className="text-sm text-gray-400 mb-6">Last updated: 3 hours ago</p>
+
+            <div className="grid grid-cols-4 gap-4 w-full max-w-md">
+              <div className="flex flex-col items-center">
+                <div className="bg-gray-800 text-white text-2xl font-bold w-16 h-16 flex items-center justify-center rounded-lg border border-gray-700">
+                  {timeLeft.days || "0"}
+                </div>
+                <span className="text-xs text-gray-400 mt-2">Days</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <div className="bg-gray-800 text-white text-2xl font-bold w-16 h-16 flex items-center justify-center rounded-lg border border-gray-700">
+                  {timeLeft.hours || "0"}
+                </div>
+                <span className="text-xs text-gray-400 mt-2">Hours</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <div className="bg-gray-800 text-white text-2xl font-bold w-16 h-16 flex items-center justify-center rounded-lg border border-gray-700">
+                  {timeLeft.minutes || "0"}
+                </div>
+                <span className="text-xs text-gray-400 mt-2">Minutes</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <div className="bg-gray-800 text-white text-2xl font-bold w-16 h-16 flex items-center justify-center rounded-lg border border-gray-700">
+                  {timeLeft.seconds || "0"}
+                </div>
+                <span className="text-xs text-gray-400 mt-2">Seconds</span>
+              </div>
             </div>
           </div>
         </CardContent>
