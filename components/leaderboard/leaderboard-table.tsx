@@ -196,7 +196,7 @@ export function LeaderboardTable({ leaderboard, isLoading, error, reload }: { le
 													<circle cx="12" cy="12" r="12" fill="#F7931A" />
 												</svg>
 											</div>
-											<span className="text-cyan-400">{player.wagered.toLocaleString()}</span>
+											<span className="text-cyan-400">{player.wagered?.toLocaleString() || "0"}</span>
 										</div>
 									</TableCell>
 									<TableCell className="text-right">
@@ -207,7 +207,7 @@ export function LeaderboardTable({ leaderboard, isLoading, error, reload }: { le
 												</svg>
 											</div>
 											<span className={player.reward > 0 ? "text-yellow-400" : "text-gray-500"}>
-												{player.reward.toLocaleString()}
+												{player.reward?.toLocaleString() || "0"}
 											</span>
 										</div>
 									</TableCell>

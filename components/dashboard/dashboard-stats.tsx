@@ -20,7 +20,7 @@ export function DashboardStats() {
           </div>
           <div>
             <p className="text-xs text-gray-400">Total Wagered</p>
-            <p className="text-xl font-bold">${stats.totalWagered.toLocaleString()}</p>
+            <p className="text-xl font-bold">${(stats.totalWagered || 0).toLocaleString()}</p>
             <p className="text-xs text-gray-500">All time</p>
           </div>
         </CardContent>
