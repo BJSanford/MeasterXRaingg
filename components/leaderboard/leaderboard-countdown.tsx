@@ -3,16 +3,17 @@
 import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 
-// Set the end date to 2 days from now for demo purposes
-const endDate = new Date()
-endDate.setDate(endDate.getDate() + 2)
-
-type TimeLeft = {
+// Define the type for timeLeft
+interface TimeLeft {
   days: number
   hours: number
   minutes: number
   seconds: number
 }
+
+// Set the end date to 2 days from now for demo purposes
+const endDate = new Date()
+endDate.setDate(endDate.getDate() + 2)
 
 export function LeaderboardCountdown() {
   const calculateTimeLeft = (): TimeLeft => {
@@ -61,10 +62,10 @@ export function LeaderboardCountdown() {
                 <line x1="12" y1="6" x2="12" y2="12"></line>
                 <line x1="12" y1="12" x2="16" y2="16"></line>
               </svg>
-              <span className="text-lg font-medium">Time Left</span>
+              <span className="text-lg font-medium text-white">Time Left</span>
             </div>
             <div className="text-center">
-              <p className="text-2xl font-bold">
+              <p className="text-2xl font-bold text-white">
                 {timeLeft.days}d {timeLeft.hours}h {timeLeft.minutes}m {timeLeft.seconds}s
               </p>
               <p className="text-sm text-gray-400">Until the leaderboard resets</p>

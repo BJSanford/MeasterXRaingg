@@ -21,7 +21,7 @@ export function LeaderboardTable() {
 	useEffect(() => {
 		async function fetchLeaderboard() {
 			try {
-				const response = await fetch("https://api.rain.gg/v1/affiliates/races?participant_count=50")
+				const response = await fetch("/api/leaderboard")
 				if (!response.ok) {
 					throw new Error("Failed to fetch leaderboard data")
 				}
