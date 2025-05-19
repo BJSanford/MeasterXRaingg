@@ -52,7 +52,80 @@ export function Footer() {
                   Leaderboard
                 </Link>
               </li>
+              <li>
+                <Link href="/rewards" className="text-gray-400 hover:text-purple-400 transition-colors">
+                  Rewards
+                </Link>
+              </li>
+              <li>
+                <Link href="/giveaways" className="text-gray-400 hover:text-purple-400 transition-colors">
+                  Giveaways
+                </Link>
+              </li>
+              <li>
+                <Link href="/about" className="text-gray-400 hover:text-purple-400 transition-colors">
+                  About
+                </Link>
+              </li>
             </ul>
+          </div>
+
+          <div>
+            <h3 className="font-bold text-lg mb-4">Resources</h3>
+            <ul className="space-y-2">
+              <li>
+                <Link href="/faq" className="text-gray-400 hover:text-purple-400 transition-colors">
+                  FAQ
+                </Link>
+              </li>
+              <li>
+                <Link href="/support" className="text-gray-400 hover:text-purple-400 transition-colors">
+                  Support
+                </Link>
+              </li>
+              <li>
+                <Link href="/terms" className="text-gray-400 hover:text-purple-400 transition-colors">
+                  Terms of Service
+                </Link>
+              </li>
+              <li>
+                <Link href="/privacy" className="text-gray-400 hover:text-purple-400 transition-colors">
+                  Privacy Policy
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="font-bold text-lg mb-4">Newsletter</h3>
+            <p className="text-gray-400 text-sm mb-4">
+              Subscribe to our newsletter for the latest updates, giveaways, and promotions.
+            </p>
+            <div className="flex flex-col space-y-2">
+              <input
+                type="email"
+                placeholder="Your email"
+                className="px-4 py-2 bg-gray-900 border border-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
+              <Button className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white border-0">
+                Subscribe
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        <div className="border-t border-gray-800 mt-12 pt-6 flex flex-col md:flex-row justify-between items-center">
+          <p className="text-gray-400 text-sm">&copy; {new Date().getFullYear()} MeasterSkins. All rights reserved.</p>
+          <div className="flex space-x-4 mt-4 md:mt-0">
+            <Link href="/terms" className="text-gray-400 text-sm hover:text-purple-400 transition-colors">
+              Terms
+            </Link>
+            <Link href="/privacy" className="text-gray-400 text-sm hover:text-purple-400 transition-colors">
+              Privacy
+            </Link>
+            <Link href="/cookies" className="text-gray-400 text-sm hover:text-purple-400 transition-colors">
+              Cookies
+            </Link>
           </div>
         </div>
       </div>

@@ -50,12 +50,15 @@ export function HowItWorks() {
               <CardContent className="p-6">
                 <div className="flex flex-col items-center text-center">
                   <div
-                    className={`h-12 w-12 flex items-center justify-center rounded-full bg-gradient-to-r ${step.color}`}
+                    className={`h-16 w-16 rounded-full bg-gradient-to-r ${step.color} flex items-center justify-center mb-4`}
                   >
-                    <step.icon className="h-6 w-6 text-white" />
+                    <step.icon className="h-8 w-8 text-white" />
                   </div>
-                  <h3 className="text-lg font-bold mt-4">{step.title}</h3>
-                  <p className="text-sm text-gray-400 mt-2">{step.description}</p>
+                  <div className="absolute -top-3 -left-3 h-8 w-8 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-sm font-bold">
+                    {step.id}
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">{step.title}</h3>
+                  <p className="text-gray-400">{step.description}</p>
                 </div>
               </CardContent>
             </Card>

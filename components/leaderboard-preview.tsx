@@ -49,22 +49,57 @@ export function LeaderboardPreview() {
               key={player.id}
               className={`bg-gray-900/50 border-gray-800 overflow-hidden relative ${
                 player.rank === 1
+                  ? "md:transform md:-translate-y-4 border-yellow-500/50"
+                  : player.rank === 2
+                    ? "border-gray-400/50"
+                    : "border-amber-700/50"
               }`}
             >
-              <CardContent>
-                <div className="flex items-center gap-4">
-                  <Avatar className="h-12 w-12">
-                    <AvatarImage src={player.avatar} alt={player.username} />
-                    <AvatarFallback>{player.username[0]}</AvatarFallback>
+              <div className="absolute top-0 right-0 p-2">
+                <div
+                  className={`rounded-full p-2 text-xs font-bold ${
+                    player.rank === 1
+                      ? "bg-yellow-500/20 text-yellow-300"
+                      : player.rank === 2
+                        ? "bg-gray-400/20 text-gray-300"
+                        : "bg-amber-700/20 text-amber-500"
+                  }`}
+                >
+                  #{player.rank}
+                </div>
+              </div>
+              <CardContent className="p-6">
+                <div className="flex flex-col items-center">
+                  <Avatar className="h-20 w-20 mb-4 ring-2 ring-offset-2 ring-offset-black ring-purple-500">
+                    <AvatarImage src={player.avatar || "/placeholder.svg"} alt={player.username} />
+                    <AvatarFallback className="bg-purple-900 text-white">
+                      {player.username.substring(0, 2).toUpperCase()}
+                    </AvatarFallback>
                   </Avatar>
-                  <div>
-                    <p className="text-lg font-bold">{player.username}</p>
-                    <p className="text-sm text-gray-400">Wagered: ${player.wagered.toLocaleString()}</p>
+                  <h3 className="text-xl font-bold mb-1">{player.username}</h3>
+                  <div className="grid grid-cols-2 gap-4 w-full mt-4">
+                    <div className="text-center p-2 bg-black/30 rounded-lg">
+                      <p className="text-xs text-gray-400">Wagered</p>
+                      <p className="font-bold text-cyan-400">${player.wagered.toLocaleString()}</p>
+                    </div>
+                    <div className="text-center p-2 bg-black/30 rounded-lg">
+                      <p className="text-xs text-gray-400">Coins</p>
+                      <p className="font-bold text-purple-400">{player.coins.toLocaleString()}</p>
+                    </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
           ))}
+        </div>
+
+        <div className="mt-10 text-center">
+          <Button variant="outline" className="border-purple-500/30 text-white hover:bg-purple-500/20" asChild>
+            <Link href="/leaderboard">
+              View Full Leaderboard
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
         </div>
       </div>
     </section>
