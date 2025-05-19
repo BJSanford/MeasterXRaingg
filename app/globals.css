@@ -75,3 +75,46 @@
     color: hsl(var(--foreground));
   }
 }
+
+/* Add these animations for the gradient text effect */
+@keyframes twinkle {
+  0% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0.3;
+  }
+}
+
+@keyframes animate-text {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@layer utilities {
+  .animate-text {
+    background-size: 300% 300%;
+    animation: animate-text 4s ease infinite;
+  }
+}
+
+/* Additional utility classes for text gradients if needed */
+.text-gradient {
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.bg-gradient-text {
+  background-image: linear-gradient(to right, #22d3ee, #8b5cf6, #22d3ee);
+}
