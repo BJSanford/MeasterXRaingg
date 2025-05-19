@@ -24,11 +24,6 @@ const payouts = [500, 250, 150, 50, 20, 15, 10, 5]
 const prizePool = payouts.reduce((a, b) => a + b, 0)
 const coinImg = "/coin.png" // Make sure /public/coin.png exists
 
-export const metadata = {
-  title: "Leaderboard | MeasterSkins",
-  description: "View the current MeasterSkins leaderboard and see who's winning the most rewards.",
-}
-
 export default function LeaderboardPage() {
   const [leaderboard, setLeaderboard] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
