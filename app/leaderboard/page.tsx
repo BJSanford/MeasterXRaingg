@@ -1,6 +1,5 @@
 "use client"
 
-import type { Metadata } from "next"
 import { useEffect, useState } from "react"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
@@ -8,11 +7,6 @@ import { LeaderboardHeader } from "@/components/leaderboard/leaderboard-header"
 import { LeaderboardCountdown } from "@/components/leaderboard/leaderboard-countdown"
 import { LeaderboardTable } from "@/components/leaderboard/leaderboard-table"
 import { Podium } from "@/components/leaderboard/podium"
-
-export const metadata: Metadata = {
-  title: "Leaderboard | MeasterSkins",
-  description: "View the current MeasterSkins leaderboard and see who's winning the most rewards.",
-}
 
 export default function LeaderboardPage() {
   const [leaderboardData, setLeaderboardData] = useState(null)
