@@ -1,10 +1,11 @@
 import type { Metadata } from "next"
+import { useEffect, useState } from "react"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { LeaderboardHeader } from "@/components/leaderboard/leaderboard-header"
-import { TopPlayers } from "@/components/leaderboard/top-players"
-import { LeaderboardTable } from "@/components/leaderboard/leaderboard-table"
 import { LeaderboardCountdown } from "@/components/leaderboard/leaderboard-countdown"
+import { LeaderboardTable } from "@/components/leaderboard/leaderboard-table"
+import { Podium } from "@/components/leaderboard/podium"
 
 export const metadata: Metadata = {
   title: "Leaderboard | MeasterSkins",
@@ -12,6 +13,35 @@ export const metadata: Metadata = {
 }
 
 export default function LeaderboardPage() {
+  const [leaderboardData, setLeaderboardData] = useState(null)
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchLeaderboard() {
+      try {
+        const response = await fetch("/api/leaderboard")
+        const data = await response.json()
+        setLeaderboardData(data)
+      } catch (error) {
+        console.error("Failed to fetch leaderboard data:", error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchLeaderboard()
+  }, [])
+
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
+
+  if (!leaderboardData) {
+    return <div>Failed to load leaderboard data.</div>
+  }
+
+  const { startDate, endDate, prizePool, leaderboard } = leaderboardData
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black text-white overflow-hidden">
       {/* Background particles/stars effect */}
@@ -34,14 +64,12 @@ export default function LeaderboardPage() {
       </div>
 
       <Navbar />
-
       <main className="relative z-10 container mx-auto px-4 py-8">
-        <LeaderboardHeader />
-        <LeaderboardCountdown />
-        <TopPlayers />
-        <LeaderboardTable />
+        <LeaderboardHeader startDate={startDate} prizePool={prizePool} />
+        <LeaderboardCountdown startDate={startDate} endDate={endDate} />
+        <Podium topThree={leaderboard.slice(0, 3)} />
+        <LeaderboardTable leaderboard={leaderboard.slice(3, 15)} />
       </main>
-
       <Footer />
     </div>
   )
