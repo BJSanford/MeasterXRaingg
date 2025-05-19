@@ -1,13 +1,17 @@
 "use server"
 
 // API configuration
-const API_BASE_URL = "https://api.rain.gg/v1"
-const API_KEY = process.env.RAIN_API_KEY || "14d2ae5d-cea5-453a-b814-6fd810bda580"
+const API_BASE_URL = "https://api.rain.gg/v1";
+const API_KEY = process.env.RAIN_API_KEY;
+
+if (!API_KEY) {
+  console.error("RAIN_API_KEY is not set. Please check your environment variables.");
+}
 
 // API headers
 const headers = {
   accept: "application/json",
-  "x-api-key": API_KEY,
+  "x-api-key": API_KEY, // Ensure the API key is included
 }
 
 const leaderboardHeaders = {

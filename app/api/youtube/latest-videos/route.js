@@ -1,5 +1,14 @@
 export async function GET() {
   const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
+
+  if (!YOUTUBE_API_KEY) {
+    console.error("YOUTUBE_API_KEY is not set. Please check your environment variables.");
+    return new Response(JSON.stringify({ error: "API key not configured" }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
   const CHANNEL_ID = 'UC3Umf_NrgeT2wA3g8K4rFig';
   // Fetch up to 50 videos to increase the chance of finding 6 non-shorts
   const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&maxResults=50&order=date&type=video&key=${YOUTUBE_API_KEY}`;

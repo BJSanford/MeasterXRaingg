@@ -9,13 +9,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        "x-api-key": process.env.RAIN_API_KEY, // Ensure the API key is passed
       },
     });
 
     if (!response.ok) {
       console.error("Failed to fetch leaderboard data:", response.statusText);
       return res.status(500).json({
-        error: "Failed to fetch leaderboard data",
+        error: "Failed to fetch leaderboard data. Please try again later.",
         leaderboard: [],
         startDate: null,
         endDate: null,
@@ -27,9 +28,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const race = data.results?.[0]; // Safely access the first race
 
     if (!race) {
-      console.error("No race data available");
+      console.error("No race data available in the API response.");
       return res.status(500).json({
-        error: "No race data available",
+        error: "No race data available. Please try again later.",
         leaderboard: [],
         startDate: null,
         endDate: null,
@@ -51,7 +52,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       leaderboard,
     });
   } catch (error) {
-    console.error("Error fetching leaderboard data:", error);
-    res.status(500).json({ error: "Failed to fetch leaderboard data" });
+    console.error("Unexpected error fetching leaderboard data:", error);
+    res.status(500).json({ error: "An unexpected error occurred. Please try again later." });
   }
 }
