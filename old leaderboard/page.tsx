@@ -117,8 +117,8 @@ export default function WeeklyRacePage() {
   }
 
   // Updated Podium for Top 3 with a more professional design
-  const podium = leaderboard.slice(0, 3);
-  const rest = leaderboard.slice(3, 15); // Exclude podium users from the main leaderboard
+  const podium = Array.isArray(leaderboard) ? leaderboard.slice(0, 3) : [];
+  const rest = Array.isArray(leaderboard) ? leaderboard.slice(3, 15) : []; // Exclude podium users from the main leaderboard
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -313,14 +313,14 @@ export default function WeeklyRacePage() {
                   <tbody>
                     {rest.map((user, index) => (
                       <tr
-                        key={user.id || user.username}
+                        key={user?.id || user?.username || index}
                         className={`border-b border-gray-800 hover:bg-gray-800/60 transition-colors`}
                       >
                         <td className="p-4 font-bold text-lg text-gray-300">#{index + 4}</td>
                         <td className="p-4">
                           <div className="flex items-center gap-3">
                             <div className="h-8 w-8 overflow-hidden rounded-full bg-gray-800 border border-gray-700">
-                              {user.avatar ? (
+                              {user?.avatar ? (
                                 <img
                                   src={user.avatar.small || "/placeholder.svg?height=50&width=50"}
                                   alt={user.username}
@@ -330,12 +330,12 @@ export default function WeeklyRacePage() {
                                 <div className="h-full w-full bg-gradient-to-br from-purple-500 to-pink-500"></div>
                               )}
                             </div>
-                            <span className="font-medium">{user.username}</span>
+                            <span className="font-medium">{user?.username || "Unknown"}</span>
                           </div>
                         </td>
                         <td className="p-4 flex items-center gap-1 font-mono text-base text-yellow-300">
                           <img src={coinImg} alt="Coin" width={16} height={16} className="inline-block mr-1" />
-                          {Math.round(user.wagered).toLocaleString()}
+                          {user?.wagered ? Math.round(user.wagered).toLocaleString() : "0"}
                         </td>
                         <td className="p-4">
                           <span className={`inline-block rounded px-3 py-1 font-semibold text-sm ${index < payouts.length - 3 ? "bg-yellow-900/60 text-yellow-300" : "bg-gray-800 text-gray-400"}`}>
