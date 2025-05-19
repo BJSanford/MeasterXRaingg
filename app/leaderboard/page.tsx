@@ -32,11 +32,14 @@ export default function LeaderboardPage() {
     return <div>Loading...</div>
   }
 
-  if (!leaderboardData) {
+  if (!leaderboardData || !Array.isArray(leaderboardData.leaderboard)) {
     return <div>Failed to load leaderboard data.</div>
   }
 
   const { startDate, endDate, prizePool, leaderboard } = leaderboardData
+
+  const topThree = leaderboard.slice(0, 3) || []
+  const rest = leaderboard.slice(3, 15) || []
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black text-white overflow-hidden">
@@ -63,8 +66,8 @@ export default function LeaderboardPage() {
       <main className="relative z-10 container mx-auto px-4 py-8">
         <LeaderboardHeader startDate={startDate} prizePool={prizePool} />
         <LeaderboardCountdown startDate={startDate} endDate={endDate} />
-        <Podium topThree={leaderboard.slice(0, 3)} />
-        <LeaderboardTable leaderboard={leaderboard.slice(3, 15)} />
+        <Podium topThree={topThree} />
+        <LeaderboardTable leaderboard={rest} />
       </main>
       <Footer />
     </div>

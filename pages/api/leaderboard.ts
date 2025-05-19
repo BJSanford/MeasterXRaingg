@@ -13,18 +13,36 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
 
     if (!response.ok) {
-      throw new Error("Failed to fetch leaderboard data");
+      console.error("Failed to fetch leaderboard data:", response.statusText);
+      return res.status(500).json({
+        error: "Failed to fetch leaderboard data",
+        leaderboard: [],
+        startDate: null,
+        endDate: null,
+        prizePool: PRIZE_POOL,
+      });
     }
 
     const data = await response.json();
-    const race = data.results[0]; // Assuming the first race is the active one
+    const race = data.results?.[0]; // Safely access the first race
 
-    const leaderboard = race.participants.map((participant: any, index: number) => ({
+    if (!race) {
+      console.error("No race data available");
+      return res.status(500).json({
+        error: "No race data available",
+        leaderboard: [],
+        startDate: null,
+        endDate: null,
+        prizePool: PRIZE_POOL,
+      });
+    }
+
+    const leaderboard = race.participants?.map((participant: any, index: number) => ({
       username: participant.username,
       avatar: participant.avatar?.medium || "/placeholder.svg",
       wagered: participant.wagered,
       prize: PRIZE_DISTRIBUTION[index] || 0,
-    }));
+    })) || [];
 
     res.status(200).json({
       startDate: race.starts_at,
