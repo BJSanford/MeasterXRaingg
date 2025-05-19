@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { LeaderboardHeader } from "@/components/leaderboard/leaderboard-header"
@@ -9,37 +9,90 @@ import { LeaderboardTable } from "@/components/leaderboard/leaderboard-table"
 import { Podium } from "@/components/leaderboard/podium"
 
 export default function LeaderboardPage() {
-  const [leaderboardData, setLeaderboardData] = useState(null)
+  const [leaderboard, setLeaderboard] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [raceInfo, setRaceInfo] = useState({
+    startDate: "",
+    endDate: "",
+    timeLeft: "",
+    prizePool: 0,
+  })
+
+  const updateTimeLeft = useCallback(() => {
+    if (!raceInfo.endDate) return
+    const now = Date.now()
+    const end = new Date(raceInfo.endDate).getTime()
+    if (isNaN(end)) {
+      setRaceInfo((prev) => ({ ...prev, timeLeft: "Invalid date" }))
+      return
+    }
+    const timeLeft = end - now
+    if (timeLeft <= 0) {
+      setRaceInfo((prev) => ({ ...prev, timeLeft: "Race Ended" }))
+      return
+    }
+    const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24))
+    const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60))
+    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000)
+    setRaceInfo((prev) => ({
+      ...prev,
+      timeLeft: `${days}d ${hours}h ${minutes}m ${seconds}s`,
+    }))
+  }, [raceInfo.endDate])
 
   useEffect(() => {
-    async function fetchLeaderboard() {
-      try {
-        const response = await fetch("/api/leaderboard")
-        const data = await response.json()
-        setLeaderboardData(data)
-      } catch (error) {
-        console.error("Failed to fetch leaderboard data:", error)
-      } finally {
-        setIsLoading(false)
-      }
+    loadLeaderboard()
+    let timer: NodeJS.Timeout | undefined
+    if (raceInfo.endDate) {
+      timer = setInterval(updateTimeLeft, 1000)
     }
+    return () => {
+      if (timer) clearInterval(timer)
+    }
+  }, [raceInfo.endDate, updateTimeLeft])
 
-    fetchLeaderboard()
-  }, [])
+  async function loadLeaderboard() {
+    setIsLoading(true)
+    setError(null)
 
-  if (isLoading) {
-    return <div>Loading...</div>
+    try {
+      const response = await fetch("/api/leaderboard")
+      const data = await response.json()
+
+      if (!data || !data.leaderboard) {
+        setError("No data available. Please try again later.")
+        setLeaderboard([])
+        return
+      }
+
+      setLeaderboard(data.leaderboard)
+
+      if (data.startDate && data.endDate) {
+        setRaceInfo({
+          startDate: new Date(data.startDate).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            timeZone: "UTC",
+          }),
+          endDate: data.endDate,
+          timeLeft: "",
+          prizePool: data.prizePool || 0,
+        })
+      }
+    } catch (err) {
+      console.error("Error loading leaderboard data:", err)
+      setError("Failed to load leaderboard data. Please try again later.")
+      setLeaderboard([])
+    } finally {
+      setIsLoading(false)
+    }
   }
 
-  if (!leaderboardData || !Array.isArray(leaderboardData.leaderboard)) {
-    return <div>Failed to load leaderboard data.</div>
-  }
-
-  const { startDate, endDate, prizePool, leaderboard } = leaderboardData
-
-  const topThree = leaderboard.slice(0, 3) || []
-  const rest = leaderboard.slice(3, 15) || []
+  const topThree = leaderboard.slice(0, 3)
+  const rest = leaderboard.slice(3, 15)
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black text-white overflow-hidden">
@@ -64,10 +117,10 @@ export default function LeaderboardPage() {
 
       <Navbar />
       <main className="relative z-10 container mx-auto px-4 py-8">
-        <LeaderboardHeader startDate={startDate} prizePool={prizePool} />
-        <LeaderboardCountdown startDate={startDate} endDate={endDate} />
+        <LeaderboardHeader startDate={raceInfo.startDate} prizePool={raceInfo.prizePool} />
+        <LeaderboardCountdown timeLeft={raceInfo.timeLeft} />
         <Podium topThree={topThree} />
-        <LeaderboardTable leaderboard={rest} />
+        <LeaderboardTable leaderboard={rest} isLoading={isLoading} error={error} reload={loadLeaderboard} />
       </main>
       <Footer />
     </div>

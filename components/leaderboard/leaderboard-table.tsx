@@ -96,7 +96,7 @@ const leaderboardData = [
 	},
 ]
 
-export function LeaderboardTable() {
+export function LeaderboardTable({ leaderboard, isLoading, error, reload }: { leaderboard: any[], isLoading: boolean, error: string | null, reload: () => void }) {
 	const [searchTerm, setSearchTerm] = useState("")
 	const [sortBy, setSortBy] = useState("wagered")
 	const [sortOrder, setSortOrder] = useState("desc")
@@ -110,7 +110,7 @@ export function LeaderboardTable() {
 		}
 	}
 
-	const filteredData = leaderboardData.filter((player) =>
+	const filteredData = leaderboard.filter((player) =>
 		player.username.toLowerCase().includes(searchTerm.toLowerCase()),
 	)
 
@@ -153,56 +153,69 @@ export function LeaderboardTable() {
 			</div>
 
 			<div className="rounded-lg overflow-hidden border border-gray-800">
-				<Table>
-					<TableHeader className="bg-gray-900/70">
-						<TableRow className="hover:bg-gray-900/90 border-gray-800">
-							<TableHead className="text-gray-400 w-16">Rank</TableHead>
-							<TableHead className="text-gray-400">Player</TableHead>
-							<TableHead className="text-gray-400 text-right">Wagered</TableHead>
-							<TableHead className="text-gray-400 text-right">Reward</TableHead>
-						</TableRow>
-					</TableHeader>
-					<TableBody>
-						{sortedData.map((player) => (
-							<TableRow key={player.id} className="hover:bg-gray-800/50 border-gray-800 bg-gray-900/30">
-								<TableCell className="font-medium">#{player.id}</TableCell>
-								<TableCell>
-									<div className="flex items-center gap-3">
-										<Avatar className="h-8 w-8">
-											<AvatarImage src={player.avatar || "/placeholder.svg"} alt={player.username} />
-											<AvatarFallback className="bg-purple-900/50 text-white text-xs">
-												{player.username.substring(0, 2).toUpperCase()}
-											</AvatarFallback>
-										</Avatar>
-										<span>{player.username}</span>
-									</div>
-								</TableCell>
-								<TableCell className="text-right">
-									<div className="flex items-center justify-end">
-										<div className="w-3 h-3 mr-1">
-											<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-												<circle cx="12" cy="12" r="12" fill="#F7931A" />
-											</svg>
-										</div>
-										<span className="text-cyan-400">{player.wagered.toLocaleString()}</span>
-									</div>
-								</TableCell>
-								<TableCell className="text-right">
-									<div className="flex items-center justify-end">
-										<div className="w-3 h-3 mr-1">
-											<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-												<circle cx="12" cy="12" r="12" fill="#F7931A" />
-											</svg>
-										</div>
-										<span className={player.reward > 0 ? "text-yellow-400" : "text-gray-500"}>
-											{player.reward.toLocaleString()}
-										</span>
-									</div>
-								</TableCell>
+				{isLoading ? (
+					<div className="flex h-[300px] items-center justify-center">
+						<div className="h-8 w-8 rounded-full border-4 border-gray-700 border-t-yellow-500 animate-spin"></div>
+					</div>
+				) : error ? (
+					<div className="flex h-[200px] flex-col items-center justify-center text-center">
+						<p className="mb-4 text-red-400">{error}</p>
+						<Button onClick={reload} variant="outline" className="border-gray-700 text-white hover:bg-gray-800">
+							Try Again
+						</Button>
+					</div>
+				) : (
+					<Table>
+						<TableHeader className="bg-gray-900/70">
+							<TableRow>
+								<TableHead className="text-gray-400 w-16">Rank</TableHead>
+								<TableHead className="text-gray-400">Player</TableHead>
+								<TableHead className="text-gray-400 text-right">Wagered</TableHead>
+								<TableHead className="text-gray-400 text-right">Prize</TableHead>
 							</TableRow>
-						))}
-					</TableBody>
-				</Table>
+						</TableHeader>
+						<TableBody>
+							{leaderboard.map((player, index) => (
+								<TableRow key={player.username}>
+									<TableCell>#{index + 4}</TableCell>
+									<TableCell>
+										<div className="flex items-center gap-3">
+											<Avatar className="h-8 w-8">
+												<AvatarImage src={player.avatar || "/placeholder.svg"} alt={player.username} />
+												<AvatarFallback className="bg-purple-900/50 text-white text-xs">
+													{player.username.substring(0, 2).toUpperCase()}
+												</AvatarFallback>
+											</Avatar>
+											<span>{player.username}</span>
+										</div>
+									</TableCell>
+									<TableCell className="text-right">
+										<div className="flex items-center justify-end">
+											<div className="w-3 h-3 mr-1">
+												<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+													<circle cx="12" cy="12" r="12" fill="#F7931A" />
+												</svg>
+											</div>
+											<span className="text-cyan-400">{player.wagered.toLocaleString()}</span>
+										</div>
+									</TableCell>
+									<TableCell className="text-right">
+										<div className="flex items-center justify-end">
+											<div className="w-3 h-3 mr-1">
+												<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+													<circle cx="12" cy="12" r="12" fill="#F7931A" />
+												</svg>
+											</div>
+											<span className={player.reward > 0 ? "text-yellow-400" : "text-gray-500"}>
+												{player.reward.toLocaleString()}
+											</span>
+										</div>
+									</TableCell>
+								</TableRow>
+							))}
+						</TableBody>
+					</Table>
+				)}
 			</div>
 
 			<div className="mt-6 flex justify-center">
