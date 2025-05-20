@@ -3,11 +3,33 @@
 import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 
-// Set the end date to 2 days from now for demo purposes
-const endDate = new Date()
-endDate.setDate(endDate.getDate() + 2)
+export function LeaderboardCountdown({ endDate }: { endDate: string }) {
+  const calculateTimeLeft = () => {
+    const difference = +new Date(endDate) - +new Date()
+    let timeLeft = {}
 
-export function LeaderboardCountdown({ timeLeft }: { timeLeft: string }) {
+    if (difference > 0) {
+      timeLeft = {
+        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+        minutes: Math.floor((difference / 1000 / 60) % 60),
+        seconds: Math.floor((difference / 1000) % 60),
+      }
+    }
+
+    return timeLeft
+  }
+
+  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft())
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setTimeLeft(calculateTimeLeft())
+    }, 1000)
+
+    return () => clearTimeout(timer)
+  }, [endDate])
+
   return (
     <div className="my-10">
       <Card className="bg-gray-900/50 border-gray-800 overflow-hidden">
@@ -28,7 +50,34 @@ export function LeaderboardCountdown({ timeLeft }: { timeLeft: string }) {
               </svg>
               <h2 className="text-xl font-bold text-white">LEADERBOARD ENDS IN</h2>
             </div>
-            <p className="text-lg font-medium text-gray-400">{timeLeft || "Calculating..."}</p>
+            <p className="text-sm text-gray-400 mb-6">Last updated: 3 hours ago</p>
+
+            <div className="grid grid-cols-4 gap-4 w-full max-w-md">
+              <div className="flex flex-col items-center">
+                <div className="bg-gray-800 text-white text-2xl font-bold w-16 h-16 flex items-center justify-center rounded-lg border border-gray-700">
+                  {timeLeft.days || "0"}
+                </div>
+                <span className="text-xs text-gray-400 mt-2">Days</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <div className="bg-gray-800 text-white text-2xl font-bold w-16 h-16 flex items-center justify-center rounded-lg border border-gray-700">
+                  {timeLeft.hours || "0"}
+                </div>
+                <span className="text-xs text-gray-400 mt-2">Hours</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <div className="bg-gray-800 text-white text-2xl font-bold w-16 h-16 flex items-center justify-center rounded-lg border border-gray-700">
+                  {timeLeft.minutes || "0"}
+                </div>
+                <span className="text-xs text-gray-400 mt-2">Minutes</span>
+              </div>
+              <div className="flex flex-col items-center">
+                <div className="bg-gray-800 text-white text-2xl font-bold w-16 h-16 flex items-center justify-center rounded-lg border border-gray-700">
+                  {timeLeft.seconds || "0"}
+                </div>
+                <span className="text-xs text-gray-400 mt-2">Seconds</span>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>

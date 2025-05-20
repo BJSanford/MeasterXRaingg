@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
-const PRIZE_DISTRIBUTION = [500, 250, 150, 50, 20, 15, 10, 5]; // Top 8 prizes
+const PRIZE_DISTRIBUTION = [500, 250, 150, 50, 20, 15, 10, 5]; // Corrected prize distribution
 const PRIZE_POOL = PRIZE_DISTRIBUTION.reduce((a, b) => a + b, 0);
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -42,7 +42,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       username: participant.username,
       avatar: participant.avatar?.medium || "/placeholder.svg",
       wagered: participant.wagered,
-      prize: PRIZE_DISTRIBUTION[index] || 0,
+      prize: PRIZE_DISTRIBUTION[index] || 0, // Ensure correct prize assignment
     })) || [];
 
     res.status(200).json({

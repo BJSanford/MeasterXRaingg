@@ -7,6 +7,7 @@ import { LeaderboardHeader } from "@/components/leaderboard/leaderboard-header"
 import { LeaderboardCountdown } from "@/components/leaderboard/leaderboard-countdown"
 import { LeaderboardTable } from "@/components/leaderboard/leaderboard-table"
 import { Podium } from "@/components/leaderboard/podium"
+import { TopPlayers } from "@/components/leaderboard/top-players"
 
 export default function LeaderboardPage() {
   const [leaderboard, setLeaderboard] = useState<any[]>([])
@@ -118,7 +119,8 @@ export default function LeaderboardPage() {
       <Navbar />
       <main className="relative z-10 container mx-auto px-4 py-8">
         <LeaderboardHeader startDate={raceInfo.startDate} prizePool={raceInfo.prizePool} />
-        <LeaderboardCountdown timeLeft={raceInfo.timeLeft} />
+        <LeaderboardCountdown endDate={raceInfo.endDate} />
+        <TopPlayers topPlayers={topThree} />
         <Podium topThree={topThree} />
         <LeaderboardTable leaderboard={rest} isLoading={isLoading} error={error} reload={loadLeaderboard} />
       </main>
