@@ -6,7 +6,6 @@ import { Footer } from "@/components/footer"
 import { LeaderboardHeader } from "@/components/leaderboard/leaderboard-header"
 import { LeaderboardCountdown } from "@/components/leaderboard/leaderboard-countdown"
 import { LeaderboardTable } from "@/components/leaderboard/leaderboard-table"
-import { Podium } from "@/components/leaderboard/podium"
 import { TopPlayers } from "@/components/leaderboard/top-players"
 
 export default function LeaderboardPage() {
@@ -121,7 +120,6 @@ export default function LeaderboardPage() {
         <LeaderboardHeader startDate={raceInfo.startDate} prizePool={raceInfo.prizePool} />
         <LeaderboardCountdown endDate={raceInfo.endDate} />
         <TopPlayers topPlayers={topThree} />
-        <Podium topThree={topThree} />
         <LeaderboardTable leaderboard={rest} isLoading={isLoading} error={error} reload={loadLeaderboard} />
       </main>
       <Footer />
