@@ -64,7 +64,7 @@ export function TopPlayers({ topPlayers }: { topPlayers: any[] }) {
 									<div className="bg-black/30 rounded-lg p-3">
 										<p className="text-xs text-gray-400 mb-1">PRIZE</p>
 										<p className="font-bold text-yellow-400">
-											{player.prize}
+											{player.prize > 0 ? player.prize : "0"}
 										</p>
 									</div>
 								</div>

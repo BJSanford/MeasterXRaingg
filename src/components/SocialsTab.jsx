@@ -23,7 +23,10 @@ const SocialsTab = () => {
             style={{ textDecoration: 'none', color: 'inherit' }}
           >
             <img src={video.thumbnail} alt={video.title} style={{ width: 240 }} />
-            <div>{video.title}</div>
+            <div>
+              <img src="/coin.png" alt="coin" style={{ width: 16, marginRight: 4 }} />
+              {video.title}
+            </div>
           </a>
         ))}
       </div>

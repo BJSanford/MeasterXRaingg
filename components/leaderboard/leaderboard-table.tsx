@@ -96,6 +96,8 @@ const leaderboardData = [
 	},
 ]
 
+const PRIZE_DISTRIBUTION = [500, 250, 150, 50, 20, 15, 10, 5]; // Hardcoded prize distribution
+
 export function LeaderboardTable({ leaderboard, isLoading, error, reload }: { leaderboard: any[], isLoading: boolean, error: string | null, reload: () => void }) {
 	const [searchTerm, setSearchTerm] = useState("")
 	const [sortBy, setSortBy] = useState("wagered")
@@ -191,23 +193,14 @@ export function LeaderboardTable({ leaderboard, isLoading, error, reload }: { le
 									</TableCell>
 									<TableCell className="text-right">
 										<div className="flex items-center justify-end">
-											<div className="w-3 h-3 mr-1">
-												<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-													<circle cx="12" cy="12" r="12" fill="#F7931A" />
-												</svg>
-											</div>
+											<img src="/coin.png" alt="coin" className="h-4 w-4 mr-1" />
 											<span className="text-cyan-400">{player.wagered?.toLocaleString() || "0"}</span>
 										</div>
 									</TableCell>
 									<TableCell className="text-right">
 										<div className="flex items-center justify-end">
-											<div className="w-3 h-3 mr-1">
-												<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-													<circle cx="12" cy="12" r="12" fill="#F7931A" />
-												</svg>
-											</div>
-											<span className={player.reward > 0 ? "text-yellow-400" : "text-gray-500"}>
-												{player.reward?.toLocaleString() || "0"}
+											<span className={index < PRIZE_DISTRIBUTION.length ? "text-yellow-400" : "text-gray-500"}>
+												{PRIZE_DISTRIBUTION[index] || "0"}
 											</span>
 										</div>
 									</TableCell>

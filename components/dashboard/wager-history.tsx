@@ -54,7 +54,12 @@ export function WagerHistory() {
 								fontSize={12}
 								tickLine={false}
 								axisLine={false}
-								tickFormatter={(value) => `$${value}`}
+								tickFormatter={(value) => (
+									<>
+										<img src="/coin.png" alt="coin" className="h-4 w-4 inline-block" />
+										{value}
+									</>
+								)}
 							/>
 							<Tooltip
 								contentStyle={{

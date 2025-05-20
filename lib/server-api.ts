@@ -391,6 +391,8 @@ export async function fetchLeaderboard(type: "wagered" | "deposited" = "wagered"
   const url = `${API_BASE_URL}/affiliates/races?participant_count=50`
   console.log(`Request URL: ${url}`)
 
+  const PRIZE_DISTRIBUTION = [500, 250, 150, 50, 20, 15, 10, 5]; // Hardcoded prize distribution
+
   try {
     const response = await fetch(url, {
       method: 'GET',
@@ -415,18 +417,19 @@ export async function fetchLeaderboard(type: "wagered" | "deposited" = "wagered"
         ends_at: activeRace.ends_at,
         prize_pool: activeRace.prize_pool || 500
       },
-      results: activeRace.participants?.map((participant: any) => ({
+      results: activeRace.participants?.map((participant: any, index: number) => ({
         username: participant.username,
         wagered: participant.wagered,
         deposited: participant.wagered_excluding_boost || participant.wagered,
         position: participant.position,
+        prize: PRIZE_DISTRIBUTION[index] || 0, // Assign hardcoded prize
         avatar: participant.avatar || {
           small: "/placeholder.svg?height=50&width=50",
           medium: "/placeholder.svg?height=100&width=100",
           large: "/placeholder.svg?height=200&width=200"
         }
       })).sort((a: any, b: any) => a.position - b.position) || []
-    }
+    };
   } catch (error) {
     console.error('Error fetching leaderboard:', error)
     return mockLeaderboardData

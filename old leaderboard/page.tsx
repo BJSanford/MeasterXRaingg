@@ -244,24 +244,42 @@ export default function WeeklyRacePage() {
           {podium.map((user, idx) => (
             <div
               key={user?.id || user?.username || idx}
-              className={`flex flex-col items-center justify-end z-10 ${idx === 1 ? "scale-105" : "scale-100"}`}
+              className={`flex flex-col items-center justify-end z-10 ${
+                idx === 1 ? "scale-105" : "scale-100"
+              }`}
             >
               <div className="mb-2">
-                <div className={`rounded-full border-4 ${idx === 0 ? "border-yellow-400" : idx === 1 ? "border-gray-400" : "border-orange-400"} bg-[#23263a] shadow-lg w-24 h-24 flex items-center justify-center`}>
-                  <img src={user?.avatar?.medium || "/placeholder.svg"} alt={user?.username} className="w-20 h-20 rounded-full object-cover" />
+                <div
+                  className={`rounded-full border-4 ${
+                    idx === 0
+                      ? "border-yellow-400"
+                      : idx === 1
+                      ? "border-gray-400"
+                      : "border-orange-400"
+                  } bg-gray-800 shadow-lg w-24 h-24 flex items-center justify-center`}
+                >
+                  <img
+                    src={user?.avatar?.medium || "/placeholder.svg"}
+                    alt={user?.username}
+                    className="w-20 h-20 rounded-full object-cover"
+                  />
                 </div>
               </div>
-              <div className="flex items-center gap-2 mt-2">
-                <Award className={`h-5 w-5 ${idx === 0 ? "text-yellow-400" : idx === 1 ? "text-gray-400" : "text-orange-400"}`} />
-                <span className="text-lg font-bold">{user?.username}</span>
-              </div>
-              <div className="text-gray-400 font-semibold mt-1">{["1st Place", "2nd Place", "3rd Place"][idx]}</div>
-              <div className="text-white text-xl font-bold mb-1 flex items-center justify-center">
-                <img src={coinImg} alt="Coin" width={22} height={22} className="inline-block mr-1" />
+              <div className="text-lg font-bold">{user?.username}</div>
+              <div className="text-gray-400">{["1st Place", "2nd Place", "3rd Place"][idx]}</div>
+              <div className="text-cyan-400 text-xl font-bold">
                 {user?.wagered?.toLocaleString(undefined, { maximumFractionDigits: 2 })}
               </div>
-              <div className={`rounded px-4 py-1 text-md font-bold ${idx === 0 ? "bg-yellow-400 text-black" : idx === 1 ? "bg-gray-400 text-black" : "bg-orange-400 text-black"} mb-2`}>
-                {payouts[idx] > 0 ? <>+{payouts[idx]}</> : <>-</>}
+              <div
+                className={`rounded px-4 py-1 text-md font-bold ${
+                  idx === 0
+                    ? "bg-yellow-400 text-black"
+                    : idx === 1
+                    ? "bg-gray-400 text-black"
+                    : "bg-orange-400 text-black"
+                }`}
+              >
+                {payouts[idx] > 0 ? `+${payouts[idx]}` : "-"}
               </div>
             </div>
           ))}

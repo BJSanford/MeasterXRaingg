@@ -85,7 +85,8 @@ export function LeaderboardPreview() {
 										<div className="text-center p-2 bg-black/30 rounded-lg">
 											<p className="text-xs text-gray-400">Wagered</p>
 											<p className="font-bold text-cyan-400">
-												${player.wagered?.toLocaleString() || "0"}
+												<img src="/coin.png" alt="coin" className="h-4 w-4 inline-block" />
+												{player.wagered?.toLocaleString() || "0"}
 											</p>
 										</div>
 										<div className="text-center p-2 bg-black/30 rounded-lg">

@@ -8,6 +8,8 @@ import { LeaderboardCountdown } from "@/components/leaderboard/leaderboard-count
 import { LeaderboardTable } from "@/components/leaderboard/leaderboard-table"
 import { TopPlayers } from "@/components/leaderboard/top-players"
 
+const PRIZE_DISTRIBUTION = [500, 250, 150, 50, 20, 15, 10, 5]; // Hardcoded prize distribution
+
 export default function LeaderboardPage() {
   const [leaderboard, setLeaderboard] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -67,7 +69,10 @@ export default function LeaderboardPage() {
         return
       }
 
-      setLeaderboard(data.leaderboard)
+      setLeaderboard(data.leaderboard.map((participant, index) => ({
+        ...participant,
+        prize: PRIZE_DISTRIBUTION[index] || 0, // Assign hardcoded prize
+      })))
 
       if (data.startDate && data.endDate) {
         setRaceInfo({

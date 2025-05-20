@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
-const PRIZE_DISTRIBUTION = [500, 250, 150, 50, 20, 15, 10, 5]; // Corrected prize distribution
+const PRIZE_DISTRIBUTION = [500, 250, 150, 50, 20, 15, 10, 5]; // Hardcoded prize distribution
 const PRIZE_POOL = PRIZE_DISTRIBUTION.reduce((a, b) => a + b, 0);
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

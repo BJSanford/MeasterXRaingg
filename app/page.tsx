@@ -367,12 +367,18 @@ function LeaderboardCard({ rank, username, wagered, prize, highlight = false }) 
           <div className="w-full mt-6 space-y-4">
             <div className="bg-black/30 rounded-lg p-3">
               <p className="text-xs text-gray-400 mb-1">WAGERED</p>
-              <p className="font-bold text-cyan-400">${wagered?.toLocaleString() || "0"}</p>
+              <div className="flex items-center gap-1">
+                <img src="/coin.png" alt="coin" className="h-4 w-4" />
+                <p className="font-bold">{wagered?.toLocaleString() || "0"}</p>
+              </div>
             </div>
 
             <div className="bg-black/30 rounded-lg p-3">
               <p className="text-xs text-gray-400 mb-1">PRIZE</p>
-              <p className="font-bold text-yellow-400">${prize?.toLocaleString() || "0"}</p>
+              <div className="flex items-center gap-1">
+                <img src="/coin.png" alt="coin" className="h-4 w-4" />
+                <p className="font-bold">{prize?.toLocaleString() || "0"}</p>
+              </div>
             </div>
           </div>
         </div>

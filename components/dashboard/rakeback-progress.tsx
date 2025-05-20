@@ -43,11 +43,26 @@ export function RakebackProgress() {
 
         <div className="mt-4 text-sm text-gray-400">
           <p>
-            Wager ${rakeback.amountToNext?.toLocaleString() || "0"} more to reach {rakeback.nextTier} rakeback
+            Wager{" "}
+            <div className="flex items-center gap-1">
+              <img src="/coin.png" alt="coin" className="h-4 w-4" />
+              <span>{rakeback.amountToNext?.toLocaleString() || "0"}</span>
+            </div>{" "}
+            more to reach {rakeback.nextTier} rakeback
           </p>
           <div className="flex justify-between mt-2 text-xs">
-            <span>${rakeback.currentWagered?.toLocaleString() || "0"}</span>
-            <span>${rakeback.nextTierThreshold?.toLocaleString() || "0"}</span>
+            <span>
+              <div className="flex items-center gap-1">
+                <img src="/coin.png" alt="coin" className="h-4 w-4" />
+                <span>{rakeback.currentWagered?.toLocaleString() || "0"}</span>
+              </div>
+            </span>
+            <span>
+              <div className="flex items-center gap-1">
+                <img src="/coin.png" alt="coin" className="h-4 w-4" />
+                <span>{rakeback.nextTierThreshold?.toLocaleString() || "0"}</span>
+              </div>
+            </span>
           </div>
         </div>
       </CardContent>

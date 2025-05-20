@@ -20,7 +20,10 @@ export function DashboardStats() {
           </div>
           <div>
             <p className="text-xs text-gray-400">Total Wagered</p>
-            <p className="text-xl font-bold">${(stats.totalWagered || 0).toLocaleString()}</p>
+            <div className="flex items-center gap-1">
+              <img src="/coin.png" alt="coin" className="h-4 w-4" />
+              <p className="text-xl font-bold">{(stats.totalWagered || 0).toLocaleString()}</p>
+            </div>
             <p className="text-xs text-gray-500">All time</p>
           </div>
         </CardContent>
@@ -46,7 +49,10 @@ export function DashboardStats() {
           </div>
           <div>
             <p className="text-xs text-gray-400">All Time Deposited</p>
-            <p className="text-xl font-bold">${stats.allTimeDeposited.toLocaleString()}</p>
+            <div className="flex items-center gap-1">
+              <img src="/coin.png" alt="coin" className="h-4 w-4" />
+              <p className="text-xl font-bold">{stats.allTimeDeposited.toLocaleString()}</p>
+            </div>
             <p className="text-xs text-gray-500">Total deposits</p>
           </div>
         </CardContent>
