@@ -6,6 +6,7 @@ import { Footer } from "@/components/footer"
 import { LeaderboardHeader } from "@/components/leaderboard/leaderboard-header"
 import { LeaderboardCountdown } from "@/components/leaderboard/leaderboard-countdown"
 import { LeaderboardTable } from "@/components/leaderboard/leaderboard-table"
+import { TopPlayers } from "@/components/leaderboard/top-players"
 
 const PRIZE_DISTRIBUTION = [500, 250, 150, 50, 20, 15, 10, 5]; // Hardcoded prize distribution
 
@@ -123,53 +124,7 @@ export default function LeaderboardPage() {
       <main className="relative z-10 container mx-auto px-4 py-8">
         <LeaderboardHeader startDate={raceInfo.startDate} prizePool={raceInfo.prizePool} />
         <LeaderboardCountdown endDate={raceInfo.endDate} />
-        {/* Replace the TopPlayers component with the updated layout */}
-        <div className="flex justify-center items-end gap-8 mb-12">
-          {topThree.map((player, index) => (
-            <div
-              key={player.username}
-              className={`flex flex-col items-center ${
-                index === 0 ? "scale-110 z-10" : "scale-100"
-              }`}
-            >
-              <div
-                className={`mb-4 ${
-                  index === 0
-                    ? "border-yellow-500"
-                    : index === 1
-                    ? "border-gray-400"
-                    : "border-amber-700"
-                } bg-gray-800 shadow-lg w-28 h-28 rounded-full flex items-center justify-center border-4`}
-              >
-                <img
-                  src={player.avatar || "/placeholder.svg"}
-                  alt={player.username}
-                  className="w-24 h-24 rounded-full object-cover"
-                />
-              </div>
-              <div className="text-lg font-bold">{player.username}</div>
-              <div className="text-gray-400">
-                {["1st Place", "2nd Place", "3rd Place"][index]}
-              </div>
-              <div className="text-cyan-400 text-xl font-bold">
-                <img src="/coin.png" alt="coin" className="h-4 w-4 inline-block mr-1" />
-                {player.wagered.toLocaleString()}
-              </div>
-              <div
-                className={`rounded px-4 py-1 text-md font-bold ${
-                  index === 0
-                    ? "bg-yellow-400 text-black"
-                    : index === 1
-                    ? "bg-gray-400 text-black"
-                    : "bg-orange-400 text-black"
-                }`}
-              >
-                <img src="/coin.png" alt="coin" className="h-4 w-4 inline-block mr-1" />
-                {player.prize}
-              </div>
-            </div>
-          ))}
-        </div>
+        <TopPlayers topPlayers={topThree} />
         <LeaderboardTable leaderboard={rest} isLoading={isLoading} error={error} reload={loadLeaderboard} />
       </main>
       <Footer />
