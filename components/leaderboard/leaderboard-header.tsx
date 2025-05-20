@@ -43,7 +43,7 @@ export function LeaderboardHeader() {
             </div>
             <div>
               <p className="text-xs text-gray-400">Start Date</p>
-              <p className="font-medium">May 14, 2025</p>
+              <p className="font-medium text-white">May 14, 2025</p>
               <p className="text-xs text-gray-500">Race begins</p>
             </div>
           </CardContent>
@@ -70,7 +70,7 @@ export function LeaderboardHeader() {
                     />
                   </svg>
                 </div>
-                <p className="font-medium">3,000</p>
+                <p className="font-medium text-white">1,000</p>
               </div>
               <p className="text-xs text-gray-500">Total for top 8</p>
             </div>
