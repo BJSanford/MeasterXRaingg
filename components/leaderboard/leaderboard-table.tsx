@@ -201,8 +201,8 @@ export function LeaderboardTable({ leaderboard, isLoading, error, reload }: { le
 									<TableCell className="text-right">
 										<div className="flex items-center justify-end">
 											<Image src="/coin.png" alt="Coin" width={16} height={16} className="mr-1" />
-											<span className={player.reward > 0 ? "text-yellow-400" : "text-gray-500"}>
-												{player.reward?.toLocaleString() || "0"}
+											<span className={player.prize > 0 ? "text-yellow-400" : "text-gray-500"}>
+												{player.prize?.toLocaleString() || "0"}
 											</span>
 										</div>
 									</TableCell>
