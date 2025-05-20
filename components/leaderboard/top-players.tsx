@@ -62,7 +62,7 @@ export function TopPlayers({ topPlayers }: { topPlayers: any[] }) {
 												.toUpperCase()}
 										</AvatarFallback>
 									</Avatar>
-									<h3 className="text-xl font-bold mb-1">
+									<h3 className="text-xl font-bold mb-1 text-white">
 										{player.username}
 									</h3>
 
