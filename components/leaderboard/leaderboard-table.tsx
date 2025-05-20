@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Image from "next/image"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
@@ -193,14 +194,15 @@ export function LeaderboardTable({ leaderboard, isLoading, error, reload }: { le
 									</TableCell>
 									<TableCell className="text-right">
 										<div className="flex items-center justify-end">
-											<img src="/coin.png" alt="coin" className="h-4 w-4 mr-1" />
+											<Image src="/coin.png" alt="Coin" width={16} height={16} className="mr-1" />
 											<span className="text-cyan-400">{player.wagered?.toLocaleString() || "0"}</span>
 										</div>
 									</TableCell>
 									<TableCell className="text-right">
 										<div className="flex items-center justify-end">
-											<span className={index < PRIZE_DISTRIBUTION.length ? "text-yellow-400" : "text-gray-500"}>
-												{PRIZE_DISTRIBUTION[index] || "0"}
+											<Image src="/coin.png" alt="Coin" width={16} height={16} className="mr-1" />
+											<span className={player.reward > 0 ? "text-yellow-400" : "text-gray-500"}>
+												{player.reward?.toLocaleString() || "0"}
 											</span>
 										</div>
 									</TableCell>

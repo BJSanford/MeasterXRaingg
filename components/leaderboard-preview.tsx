@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { ArrowRight } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 
 // Sample data for the leaderboard
 const topPlayers = [
@@ -84,10 +85,18 @@ export function LeaderboardPreview() {
 									<div className="grid grid-cols-2 gap-4 w-full mt-4">
 										<div className="text-center p-2 bg-black/30 rounded-lg">
 											<p className="text-xs text-gray-400">Wagered</p>
-											<p className="font-bold text-cyan-400">
-												<img src="/coin.png" alt="coin" className="h-4 w-4 inline-block" />
-												{player.wagered?.toLocaleString() || "0"}
-											</p>
+											<div className="flex items-center justify-center">
+												<Image
+													src="/coin.png"
+													alt="Coin"
+													width={16}
+													height={16}
+													className="mr-1"
+												/>
+												<p className="font-bold text-cyan-400">
+													{player.wagered?.toLocaleString() || "0"}
+												</p>
+											</div>
 										</div>
 										<div className="text-center p-2 bg-black/30 rounded-lg">
 											<p className="text-xs text-gray-400">Coins</p>

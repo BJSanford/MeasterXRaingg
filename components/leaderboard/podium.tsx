@@ -1,3 +1,5 @@
+import Image from "next/image"
+
 export function Podium({ topThree }: { topThree: any[] }) {
   return (
     <div className="flex justify-center items-end gap-8 mb-12">
@@ -27,8 +29,9 @@ export function Podium({ topThree }: { topThree: any[] }) {
           </div>
           <div className="text-lg font-bold">{user.username}</div>
           <div className="text-gray-400">{["1st Place", "2nd Place", "3rd Place"][idx]}</div>
-          <div className="text-cyan-400 text-xl font-bold">
-            {user.wagered.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+          <div className="text-yellow-400 text-xl font-bold flex items-center">
+            <Image src="/coin.png" alt="Coin" width={20} height={20} className="mr-1" />
+            {user.wagered?.toLocaleString(undefined, { maximumFractionDigits: 2 })}
           </div>
           <div
             className={`rounded px-4 py-1 text-md font-bold ${
