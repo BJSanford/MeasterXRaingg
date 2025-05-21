@@ -130,7 +130,10 @@ export default function LeaderboardPage() {
       <Navbar />
       <main className="relative z-10 container mx-auto px-4 py-8">
         <LeaderboardHeader startDate={raceInfo.startDate} prizePool={raceInfo.prizePool} />
-        <LeaderboardCountdown startDate={raceInfo.startDate} endDate={raceInfo.endDate} />
+        <LeaderboardCountdown 
+          startDate={raceInfo.startDate} 
+          endDate={raceInfo.endDate} 
+        />
         {!isBeforeStart && (
           <>
             <TopPlayers topPlayers={topThree} />

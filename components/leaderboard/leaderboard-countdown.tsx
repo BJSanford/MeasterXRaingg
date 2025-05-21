@@ -25,19 +25,20 @@ export function LeaderboardCountdown({ startDate, endDate }: { startDate: string
 
   useEffect(() => {
     const timer = setInterval(() => {
+      const now = new Date()
       if (isBeforeStart) {
         const timeLeftUntilStart = calculateTimeLeft(startDate)
-        // Adjust timeLeft to subtract 7 days if more than 7 days remain
-        if (timeLeftUntilStart.days > 7) {
-          timeLeftUntilStart.days -= 7
-        }
         setTimeLeft(timeLeftUntilStart)
-        if (new Date() >= new Date(startDate)) {
+        if (now >= new Date(startDate)) {
           setIsBeforeStart(false)
           setTimeLeft(calculateTimeLeft(endDate))
         }
       } else {
-        setTimeLeft(calculateTimeLeft(endDate))
+        const timeLeftUntilEnd = calculateTimeLeft(endDate)
+        setTimeLeft(timeLeftUntilEnd)
+        if (now >= new Date(endDate)) {
+          clearInterval(timer) // Stop the timer when the race ends
+        }
       }
     }, 1000)
 

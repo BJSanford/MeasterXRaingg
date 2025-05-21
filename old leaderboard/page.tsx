@@ -30,26 +30,26 @@ export default function WeeklyRacePage() {
   })
 
   const updateTimeLeft = useCallback(() => {
-    if (!raceInfo.endDate) return
-    const now = Date.now()
-    const end = new Date(raceInfo.endDate).getTime()
+    if (!raceInfo.endDate) return;
+    const now = Date.now();
+    const end = new Date(raceInfo.endDate).getTime();
     if (isNaN(end)) {
-      setRaceInfo(prev => ({ ...prev, timeLeft: 'Invalid date' }))
-      return
+      setRaceInfo((prev) => ({ ...prev, timeLeft: "Invalid date" }));
+      return;
     }
-    const timeLeft = end - now
+    const timeLeft = end - now;
     if (timeLeft <= 0) {
-      setRaceInfo(prev => ({ ...prev, timeLeft: 'Race Ended' }))
-      return
+      setRaceInfo((prev) => ({ ...prev, timeLeft: "Race Ended" }));
+      return;
     }
-    const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24))
-    const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60))
-    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000)
-    setRaceInfo(prev => ({
+    const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+    setRaceInfo((prev) => ({
       ...prev,
-      timeLeft: `${days}d ${hours}h ${minutes}m ${seconds}s`
-    }))
+      timeLeft: `${days}d ${hours}h ${minutes}m ${seconds}s`,
+    }));
   }, [raceInfo.endDate])
 
   useEffect(() => {
