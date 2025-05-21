@@ -26,7 +26,12 @@ export function LeaderboardCountdown({ startDate, endDate }: { startDate: string
   useEffect(() => {
     const timer = setInterval(() => {
       if (isBeforeStart) {
-        setTimeLeft(calculateTimeLeft(startDate))
+        const timeLeftUntilStart = calculateTimeLeft(startDate)
+        // Adjust timeLeft to subtract 7 days if more than 7 days remain
+        if (timeLeftUntilStart.days > 7) {
+          timeLeftUntilStart.days -= 7
+        }
+        setTimeLeft(timeLeftUntilStart)
         if (new Date() >= new Date(startDate)) {
           setIsBeforeStart(false)
           setTimeLeft(calculateTimeLeft(endDate))
