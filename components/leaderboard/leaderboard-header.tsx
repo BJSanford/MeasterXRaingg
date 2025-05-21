@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { ArrowLeft, Trophy, Calendar } from "lucide-react"
 import Link from "next/link"
 
-export function LeaderboardHeader() {
+export function LeaderboardHeader({ startDate }: { startDate: string }) {
   return (
     <div className="mb-10">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
@@ -43,7 +43,7 @@ export function LeaderboardHeader() {
             </div>
             <div>
               <p className="text-xs text-gray-400">Start Date</p>
-              <p className="font-medium text-white">May 14, 2025</p>
+              <p className="font-medium text-white">{startDate}</p>
               <p className="text-xs text-gray-500">Race begins</p>
             </div>
           </CardContent>
