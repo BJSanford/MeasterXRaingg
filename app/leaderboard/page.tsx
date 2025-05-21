@@ -20,6 +20,7 @@ export default function LeaderboardPage() {
     timeLeft: "",
     prizePool: 0,
   })
+  const [isBeforeStart, setIsBeforeStart] = useState(true)
 
   const updateTimeLeft = useCallback(() => {
     if (!raceInfo.endDate) return
@@ -54,6 +55,12 @@ export default function LeaderboardPage() {
       if (timer) clearInterval(timer)
     }
   }, [raceInfo.endDate, updateTimeLeft])
+
+  useEffect(() => {
+    if (raceInfo.startDate) {
+      setIsBeforeStart(new Date() < new Date(raceInfo.startDate))
+    }
+  }, [raceInfo.startDate])
 
   async function loadLeaderboard() {
     setIsLoading(true)
@@ -123,9 +130,13 @@ export default function LeaderboardPage() {
       <Navbar />
       <main className="relative z-10 container mx-auto px-4 py-8">
         <LeaderboardHeader startDate={raceInfo.startDate} prizePool={raceInfo.prizePool} />
-        <LeaderboardCountdown endDate={raceInfo.endDate} />
-        <TopPlayers topPlayers={topThree} />
-        <LeaderboardTable leaderboard={rest} isLoading={isLoading} error={error} reload={loadLeaderboard} />
+        <LeaderboardCountdown startDate={raceInfo.startDate} endDate={raceInfo.endDate} />
+        {!isBeforeStart && (
+          <>
+            <TopPlayers topPlayers={topThree} />
+            <LeaderboardTable leaderboard={rest} isLoading={isLoading} error={error} reload={loadLeaderboard} />
+          </>
+        )}
       </main>
       <Footer />
     </div>

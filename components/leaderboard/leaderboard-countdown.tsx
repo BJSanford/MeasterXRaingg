@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 
-export function LeaderboardCountdown({ endDate }: { endDate: string }) {
-  const calculateTimeLeft = () => {
-    const difference = +new Date(endDate) - +new Date()
+export function LeaderboardCountdown({ startDate, endDate }: { startDate: string; endDate: string }) {
+  const calculateTimeLeft = (targetDate: string) => {
+    const difference = +new Date(targetDate) - +new Date()
     let timeLeft = {}
 
     if (difference > 0) {
@@ -20,15 +20,24 @@ export function LeaderboardCountdown({ endDate }: { endDate: string }) {
     return timeLeft
   }
 
-  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft())
+  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(startDate))
+  const [isBeforeStart, setIsBeforeStart] = useState(new Date() < new Date(startDate))
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setTimeLeft(calculateTimeLeft())
+    const timer = setInterval(() => {
+      if (isBeforeStart) {
+        setTimeLeft(calculateTimeLeft(startDate))
+        if (new Date() >= new Date(startDate)) {
+          setIsBeforeStart(false)
+          setTimeLeft(calculateTimeLeft(endDate))
+        }
+      } else {
+        setTimeLeft(calculateTimeLeft(endDate))
+      }
     }, 1000)
 
-    return () => clearTimeout(timer)
-  }, [endDate])
+    return () => clearInterval(timer)
+  }, [startDate, endDate, isBeforeStart])
 
   return (
     <div className="my-10">
@@ -48,9 +57,10 @@ export function LeaderboardCountdown({ endDate }: { endDate: string }) {
               >
                 <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
               </svg>
-              <h2 className="text-xl font-bold text-white">LEADERBOARD ENDS IN</h2>
+              <h2 className="text-xl font-bold text-white">
+                {isBeforeStart ? "LEADERBOARD STARTS IN" : "LEADERBOARD ENDS IN"}
+              </h2>
             </div>
-            <p className="text-sm text-gray-400 mb-6">Last updated: 3 hours ago</p>
 
             <div className="grid grid-cols-4 gap-4 w-full max-w-md">
               <div className="flex flex-col items-center">
