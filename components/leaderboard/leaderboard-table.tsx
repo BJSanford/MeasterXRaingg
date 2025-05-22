@@ -5,9 +5,8 @@ import Image from "next/image"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { ChevronDown, Search } from "lucide-react"
+import { ChevronDown } from "lucide-react"
 
 // Sample data for the leaderboard
 const leaderboardData = [
@@ -100,7 +99,6 @@ const leaderboardData = [
 const PRIZE_DISTRIBUTION = [500, 250, 150, 50, 20, 15, 10, 5]; // Hardcoded prize distribution
 
 export function LeaderboardTable({ leaderboard, isLoading, error, reload }: { leaderboard: any[], isLoading: boolean, error: string | null, reload: () => void }) {
-	const [searchTerm, setSearchTerm] = useState("")
 	const [sortBy, setSortBy] = useState("wagered")
 	const [sortOrder, setSortOrder] = useState("desc")
 
@@ -113,11 +111,7 @@ export function LeaderboardTable({ leaderboard, isLoading, error, reload }: { le
 		}
 	}
 
-	const filteredData = leaderboard.filter((player) =>
-		player.username.toLowerCase().includes(searchTerm.toLowerCase()),
-	)
-
-	const sortedData = [...filteredData].sort((a, b) => {
+	const sortedData = [...leaderboard].sort((a, b) => {
 		if (sortOrder === "asc") {
 			return a[sortBy] > b[sortBy] ? 1 : -1
 		} else {
@@ -129,30 +123,6 @@ export function LeaderboardTable({ leaderboard, isLoading, error, reload }: { le
 		<div className="mb-10">
 			<div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
 				<h2 className="text-2xl font-bold">Current Rankings</h2>
-				<div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-					<div className="relative w-full sm:w-64">
-						<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-						<Input
-							placeholder="Search player..."
-							className="pl-10 bg-gray-900/50 border-gray-800 text-white"
-							value={searchTerm}
-							onChange={(e) => setSearchTerm(e.target.value)}
-						/>
-					</div>
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<Button variant="outline" className="border-gray-800 bg-gray-900/50 text-white">
-								Sort By
-								<ChevronDown className="ml-2 h-4 w-4" />
-							</Button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end">
-							<DropdownMenuItem onClick={() => handleSort("wagered")}>Wagered Amount</DropdownMenuItem>
-							<DropdownMenuItem onClick={() => handleSort("reward")}>Reward</DropdownMenuItem>
-							<DropdownMenuItem onClick={() => handleSort("username")}>Username</DropdownMenuItem>
-						</DropdownMenuContent>
-					</DropdownMenu>
-				</div>
 			</div>
 
 			<div className="rounded-lg overflow-hidden border border-gray-800">
@@ -211,12 +181,6 @@ export function LeaderboardTable({ leaderboard, isLoading, error, reload }: { le
 						</TableBody>
 					</Table>
 				)}
-			</div>
-
-			<div className="mt-6 flex justify-center">
-				<Button variant="outline" className="border-purple-500/30 text-white hover:bg-purple-500/20">
-					Load More
-				</Button>
 			</div>
 		</div>
 	)
