@@ -27,12 +27,6 @@ export function LeaderboardHeader({ startDate }: { startDate: string }) {
             Compete for prizes using the <span className="text-cyan-400 font-semibold">MEASTER</span> code
           </p>
         </div>
-        <Button
-          className="mt-4 md:mt-0 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white border-0"
-          asChild
-        >
-          <Link href="/previous-winners">View Previous Winners</Link>
-        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
