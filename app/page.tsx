@@ -1,3 +1,5 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -7,8 +9,9 @@ import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { LeaderboardPreview } from "@/components/leaderboard-preview"
 import { HowItWorks } from "@/components/how-it-works"
+import { RakebackTiers } from "@/components/rakeback-tiers"
 
-export default function Home() {
+export default function HomePage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black text-white overflow-hidden">
       {/* Enhanced Background with particles/stars effect and animated gradients */}
@@ -54,97 +57,18 @@ export default function Home() {
 
       <Navbar />
 
-      <main className="relative z-10">
-        {/* Hero Section */}
-        <section className="relative py-20 md:py-32 px-4 overflow-hidden">
-          <div className="container mx-auto max-w-7xl">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-              <div className="space-y-8">
-                <div>
-                  <Badge variant="outline" className="bg-purple-500/10 text-purple-400 border-purple-500/30 mb-4">
-                    RAIN.GG AFFILIATE PROGRAM
-                  </Badge>
-                  <h1 className="text-4xl md:text-6xl font-bold leading-tight bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-purple-500 to-cyan-400 animate-text">
-                    Climb the Leaderboard. Earn Epic Rewards.
-                  </h1>
-                  <p className="mt-6 text-lg text-gray-300 max-w-xl">
-                    Join the ultimate Rain.gg leaderboard competition! Use code{" "}
-                    <span className="text-cyan-400 font-bold">MEASTER</span> to start earning points, climbing ranks,
-                    and winning exclusive rewards.
-                  </p>
-                </div>
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Button
-                    size="lg"
-                    className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white border-0"
-                    asChild
-                  >
-                    <Link href="/leaderboard">
-                      View Leaderboard
-                      <Trophy className="ml-2 h-5 w-5" />
-                    </Link>
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="border-purple-500/50 text-white hover:bg-purple-500/20"
-                    asChild
-                  >
-                    <Link href="/dashboard">Track Progress</Link>
-                  </Button>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-gray-400">
-                  <span className="inline-block w-2 h-2 rounded-full bg-green-500"></span>
-                  <span>
-                    Use code <span className="font-bold text-cyan-400">MEASTER</span> on Rain.gg
-                  </span>
-                </div>
-              </div>
-              <div className="relative">
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-cyan-600 rounded-lg blur opacity-75 animate-pulse-slow"></div>
-                <div className="relative bg-black rounded-lg p-6 shadow-2xl">
-                  <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg p-6 border border-purple-500/20">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="text-xl font-bold text-white">Live Leaderboard</h3>
-                      <Crown className="h-6 w-6 text-yellow-400" />
-                    </div>
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 rounded-lg border border-yellow-500/30">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center text-black font-bold">
-                            1
-                          </div>
-                          <span className="font-semibold">CryptoKing</span>
-                        </div>
-                        <span className="text-yellow-400 font-bold">$125,000</span>
-                      </div>
-                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-gray-500/20 to-gray-600/20 rounded-lg border border-gray-500/30">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center text-black font-bold">
-                            2
-                          </div>
-                          <span className="font-semibold">RainMaster</span>
-                        </div>
-                        <span className="text-gray-300 font-bold">$98,500</span>
-                      </div>
-                      <div className="flex items-center justify-between p-3 bg-gradient-to-r from-orange-500/20 to-orange-600/20 rounded-lg border border-orange-500/30">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-black font-bold">
-                            3
-                          </div>
-                          <span className="font-semibold">LuckyPlayer</span>
-                        </div>
-                        <span className="text-orange-400 font-bold">$87,200</span>
-                      </div>
-                    </div>
-                    <div className="mt-4 text-center">
-                      <span className="text-sm text-gray-400">Updated every 5 minutes</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+      <main className="relative z-10 container mx-auto px-4 py-8">
+        {/* Leaderboard Preview */}
+        <LeaderboardPreview />
+
+        {/* Rakeback Tiers */}
+        <section className="mt-16">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">Rakeback Tiers</h2>
+          <p className="text-gray-400 text-center max-w-2xl mx-auto mb-8">
+            Unlock higher rakeback percentages as you wager more. Check out the tiers below to see how much you can
+            earn!
+          </p>
+          <RakebackTiers />
         </section>
 
         {/* How It Works */}
