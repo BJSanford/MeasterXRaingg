@@ -7,7 +7,6 @@ import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { LeaderboardPreview } from "@/components/leaderboard-preview"
 import { HowItWorks } from "@/components/how-it-works"
-import { DynamicRakeback } from "@/components/dashboard/dynamic-rakeback"
 
 export default function Home() {
   return (
@@ -147,9 +146,6 @@ export default function Home() {
             </div>
           </div>
         </section>
-
-        {/* Dynamic Rakeback Section */}
-        <DynamicRakeback />
 
         {/* How It Works */}
         <HowItWorks />
