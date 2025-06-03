@@ -12,6 +12,12 @@ import { HowItWorks } from "@/components/how-it-works"
 import { RakebackTiers } from "@/components/rakeback-tiers"
 
 export default function HomePage() {
+  const topThree = [
+    { username: "Player1", avatar: "/placeholder.svg", wagered: 10000, prize: 500 },
+    { username: "Player2", avatar: "/placeholder.svg", wagered: 8000, prize: 250 },
+    { username: "Player3", avatar: "/placeholder.svg", wagered: 6000, prize: 150 },
+  ]
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black text-white overflow-hidden">
       {/* Enhanced Background with particles/stars effect and animated gradients */}
@@ -59,7 +65,7 @@ export default function HomePage() {
 
       <main className="relative z-10 container mx-auto px-4 py-8">
         {/* Leaderboard Preview */}
-        <LeaderboardPreview />
+        <LeaderboardPreview topThree={topThree} />
 
         {/* Rakeback Tiers */}
         <section className="mt-16">
