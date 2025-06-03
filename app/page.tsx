@@ -105,9 +105,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Leaderboard Preview */}
-        <LeaderboardPreview />
-
         {/* Rakeback Tiers */}
         <section className="mt-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">Rakeback Tiers</h2>
