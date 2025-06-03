@@ -1,6 +1,8 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
+import { TopPlayers } from "@/components/leaderboard/top-players"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Trophy, Crown, Medal, Users, DollarSign, Gamepad2, Star, Zap, Gift } from "lucide-react"
@@ -12,11 +14,30 @@ import { HowItWorks } from "@/components/how-it-works"
 import { RakebackTiers } from "@/components/rakeback-tiers"
 
 export default function HomePage() {
-  const topThree = [
-    { username: "Player1", avatar: "/placeholder.svg", wagered: 10000, prize: 500 },
-    { username: "Player2", avatar: "/placeholder.svg", wagered: 8000, prize: 250 },
-    { username: "Player3", avatar: "/placeholder.svg", wagered: 6000, prize: 150 },
-  ]
+  const [topPlayers, setTopPlayers] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    async function fetchTopPlayers() {
+      try {
+        const response = await fetch("/api/leaderboard")
+        const data = await response.json()
+        if (data && data.leaderboard) {
+          setTopPlayers(data.leaderboard.slice(0, 3)) // Get top 3 players
+        } else {
+          setError("Failed to load leaderboard data.")
+        }
+      } catch (err) {
+        console.error("Error fetching leaderboard data:", err)
+        setError("An error occurred while loading leaderboard data.")
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchTopPlayers()
+  }, [])
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black text-white overflow-hidden">
@@ -64,8 +85,28 @@ export default function HomePage() {
       <Navbar />
 
       <main className="relative z-10 container mx-auto px-4 py-8">
+        {/* Top Players Section */}
+        <section className="mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">Top 3 Players This Week</h2>
+          {isLoading ? (
+            <p className="text-center text-gray-400">Loading...</p>
+          ) : error ? (
+            <p className="text-center text-red-400">{error}</p>
+          ) : (
+            <TopPlayers topPlayers={topPlayers} />
+          )}
+          <div className="text-center mt-8">
+            <Button
+              className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white border-0"
+              asChild
+            >
+              <Link href="/leaderboard">View Full Leaderboard</Link>
+            </Button>
+          </div>
+        </section>
+
         {/* Leaderboard Preview */}
-        <LeaderboardPreview topThree={topThree} />
+        <LeaderboardPreview />
 
         {/* Rakeback Tiers */}
         <section className="mt-16">
