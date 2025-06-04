@@ -105,20 +105,19 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Rakeback Tiers */}
+        {/* Rakeback Tiers Section */}
         <section className="mt-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">Rakeback Tiers</h2>
           <p className="text-gray-400 text-center max-w-2xl mx-auto mb-8">
-            Unlock higher rakeback percentages as you wager more. Check out the tiers below to see how much you can
-            earn!
+            Unlock higher rakeback percentages as you wager more. Check out the tiers below to see how much you can earn!
           </p>
           <RakebackTiers />
         </section>
 
-        {/* How It Works */}
+        {/* How It Works Section */}
         <HowItWorks />
 
-        {/* Simplified Rewards Section */}
+        {/* Exclusive Rewards Section */}
         <section className="py-20 px-4">
           <div className="container mx-auto max-w-7xl">
             <div className="text-center mb-12">
@@ -127,7 +126,6 @@ export default function HomePage() {
                 Earn Measter Coins and exchange them for premium gaming gear, crypto, and exclusive perks.
               </p>
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <Card className="bg-gray-900/50 border-gray-800 hover:border-purple-500/50 transition-all">
                 <CardContent className="p-6 text-center">
@@ -159,7 +157,6 @@ export default function HomePage() {
                 </CardContent>
               </Card>
             </div>
-
             <div className="text-center mt-8">
               <Button
                 className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white border-0"
@@ -171,7 +168,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* CTA Section */}
+        {/* Call to Action Section */}
         <section className="py-20 px-4">
           <div className="container mx-auto max-w-5xl">
             <Card className="bg-gradient-to-r from-purple-900/40 to-cyan-900/40 border-0 overflow-hidden">
