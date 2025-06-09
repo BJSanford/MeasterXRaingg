@@ -11,18 +11,38 @@ interface UserProfileDropdownProps {
   onSignOut?: () => void;
 }
 
-const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ username, avatarUrl, rainUsername, onSignOut }) => {
+const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
+  username,
+  avatarUrl,
+  rainUsername: propRainUsername,
+  onSignOut,
+}) => {
   const [discordAvatar, setDiscordAvatar] = useState<string | null>(null);
+  const [rainUsername, setRainUsername] = useState<string | null>(null);
+  const [verified, setVerified] = useState<boolean>(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
+  // Load Discord avatar and Rain.gg info from localStorage
   useEffect(() => {
-    // Load Discord avatar from localStorage
     setDiscordAvatar(localStorage.getItem("discordAvatar"));
+    setRainUsername(localStorage.getItem("rainUsername"));
+    setVerified(localStorage.getItem("verified") === "true");
   }, []);
+
+  // Refresh rainUsername/verified when menu opens (in case user just verified)
+  const handleMenuOpen = () => {
+    setMenuOpen(true);
+    setRainUsername(localStorage.getItem("rainUsername"));
+    setVerified(localStorage.getItem("verified") === "true");
+  };
 
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
-        <Menu.Button className="flex items-center space-x-2 focus:outline-none">
+        <Menu.Button
+          className="flex items-center space-x-2 focus:outline-none"
+          onClick={handleMenuOpen}
+        >
           {discordAvatar ? (
             <img
               src={discordAvatar}
@@ -40,50 +60,52 @@ const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({ username, ava
         </Menu.Button>
       </div>
 
-      <Menu.Items className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-        {rainUsername ? (
-          <Menu.Item>
-            {({ active }) => (
-              <a
-                href="/dashboard"
-                className={cn(
-                  "block px-4 py-2 text-sm",
-                  active ? "bg-gray-100 text-gray-900" : "text-gray-700"
-                )}
-              >
-                Rain.gg Dashboard
-              </a>
-            )}
-          </Menu.Item>
-        ) : (
-          <Menu.Item>
-            {({ active }) => (
-              <a
-                href="/auth/link"
-                className={cn(
-                  "block px-4 py-2 text-sm font-semibold text-purple-600",
-                  active ? "bg-purple-50" : ""
-                )}
-              >
-                Link Rain.gg Account
-              </a>
-            )}
-          </Menu.Item>
-        )}
-        <Menu.Item>
-          {({ active }) => (
-            <button
-              onClick={onSignOut}
-              className={cn(
-                "block w-full px-4 py-2 text-left text-sm text-red-600",
-                active ? "bg-gray-100" : ""
+      {menuOpen && (
+        <Menu.Items className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+          {rainUsername && verified ? (
+            <Menu.Item>
+              {({ active }) => (
+                <a
+                  href="/dashboard"
+                  className={cn(
+                    "block px-4 py-2 text-sm",
+                    active ? "bg-gray-100 text-gray-900" : "text-gray-700"
+                  )}
+                >
+                  Rain.gg Dashboard
+                </a>
               )}
-            >
-              Sign Out
-            </button>
+            </Menu.Item>
+          ) : (
+            <Menu.Item>
+              {({ active }) => (
+                <a
+                  href="/auth/link"
+                  className={cn(
+                    "block px-4 py-2 text-sm font-semibold text-purple-600",
+                    active ? "bg-purple-50" : ""
+                  )}
+                >
+                  Link Rain.gg Account
+                </a>
+              )}
+            </Menu.Item>
           )}
-        </Menu.Item>
-      </Menu.Items>
+          <Menu.Item>
+            {({ active }) => (
+              <button
+                onClick={onSignOut}
+                className={cn(
+                  "block w-full px-4 py-2 text-left text-sm text-red-600",
+                  active ? "bg-gray-100" : ""
+                )}
+              >
+                Sign Out
+              </button>
+            )}
+          </Menu.Item>
+        </Menu.Items>
+      )}
     </Menu>
   );
 };
