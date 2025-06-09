@@ -27,6 +27,14 @@ const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
     setDiscordAvatar(localStorage.getItem("discordAvatar"));
     setRainUsername(localStorage.getItem("rainUsername"));
     setVerified(localStorage.getItem("verified") === "true");
+
+    // Listen for localStorage changes (e.g., after verification)
+    const handleStorage = () => {
+      setRainUsername(localStorage.getItem("rainUsername"));
+      setVerified(localStorage.getItem("verified") === "true");
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
   }, []);
 
   // Refresh rainUsername/verified when menu opens (in case user just verified)

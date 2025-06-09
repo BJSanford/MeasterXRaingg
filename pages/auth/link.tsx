@@ -75,6 +75,19 @@ export default function LinkAccountPage() {
       const res = await fetch(`/api/verification/status?discordId=${session?.user?.id}`);
       const data = await res.json();
       if (data.verified) {
+        // Fetch latest user info and update localStorage
+        const dashRes = await fetch("/api/user/dashboard");
+        if (dashRes.ok) {
+          const dashData = await dashRes.json();
+          if (dashData.rainUsername) {
+            localStorage.setItem("rainUsername", dashData.rainUsername);
+            localStorage.setItem("discordUsername", dashData.discordUsername);
+            localStorage.setItem("verified", dashData.verified ? "true" : "false");
+            document.cookie = `discordUsername=${dashData.discordUsername}; path=/`;
+            document.cookie = `rainUsername=${dashData.rainUsername}; path=/`;
+            document.cookie = `verified=${dashData.verified ? "true" : "false"}; path=/`;
+          }
+        }
         router.push("/dashboard");
       } else {
         setError("Your account is not verified yet. Please wait for a moderator to approve.");
