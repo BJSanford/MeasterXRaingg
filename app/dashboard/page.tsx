@@ -38,7 +38,7 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      <Navbar />
+      <Navbar /> {/* Navbar already redirects "Sign in with Discord" to /login */}
 
       <main className="relative z-10 container mx-auto px-4 py-8">
         <DashboardHeader />

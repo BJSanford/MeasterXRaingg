@@ -55,7 +55,7 @@ export default function HomePage() {
         ))}
       </div>
 
-      <Navbar /> {/* Navbar handles session-related logic */}
+      <Navbar /> {/* Navbar already redirects "Sign in with Discord" to /login */}
 
       <main className="relative z-10 container mx-auto px-4 py-8">
         {/* Enhanced Leaderboard Section */}
