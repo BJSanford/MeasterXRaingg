@@ -9,6 +9,7 @@ import { RakebackProgress } from "@/components/dashboard/rakeback-progress"
 import { UpcomingGiveaways } from "@/components/dashboard/upcoming-giveaways"
 import { LeaderboardPosition } from "@/components/dashboard/leaderboard-position"
 import { RecentRewards } from "@/components/dashboard/recent-rewards"
+import { RakebackSystem } from "@/components/dashboard/rakeback-system"
 
 export const metadata: Metadata = {
   title: "Dashboard | MeasterSkins",
@@ -43,13 +44,12 @@ export default function DashboardPage() {
         <DashboardHeader />
         <DashboardStats />
         <DashboardTabs />
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
-          <div className="lg:col-span-2 space-y-6">
-            <WagerHistory />
-            <LeaderboardPosition />
-          </div>
-        </div>
+        <RakebackSystem />
+        <WagerHistory />
+        <RakebackProgress />
+        <UpcomingGiveaways />
+        <LeaderboardPosition />
+        <RecentRewards />
       </main>
 
       <Footer />

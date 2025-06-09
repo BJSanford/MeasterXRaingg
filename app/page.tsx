@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { TopPlayers } from "@/components/leaderboard/top-players"
 import { Card, CardContent } from "@/components/ui/card"
-import { Trophy, DollarSign, Zap, Gift } from "lucide-react"
+import { Trophy } from "lucide-react"
 import Link from "next/link"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
@@ -132,57 +132,6 @@ export default function HomePage() {
 
         {/* How It Works Section */}
         <HowItWorks />
-
-        {/* Exclusive Rewards Section */}
-        <section className="py-20 px-4">
-          <div className="container mx-auto max-w-7xl">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">Exclusive Rewards</h2>
-              <p className="text-gray-400 max-w-2xl mx-auto">
-                Earn Measter Coins and exchange them for premium gaming gear, crypto, and exclusive perks.
-              </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Card className="bg-gray-900/50 border-gray-800 hover:border-purple-500/50 transition-all">
-                <CardContent className="p-6 text-center">
-                  <div className="bg-purple-500/20 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                    <Gift className="h-8 w-8 text-purple-400" />
-                  </div>
-                  <h3 className="text-xl font-bold mb-2">Gaming Gear</h3>
-                  <p className="text-gray-400 text-sm">Premium headsets, keyboards, and gaming accessories</p>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gray-900/50 border-gray-800 hover:border-cyan-500/50 transition-all">
-                <CardContent className="p-6 text-center">
-                  <div className="bg-cyan-500/20 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                    <DollarSign className="h-8 w-8 text-cyan-400" />
-                  </div>
-                  <h3 className="text-xl font-bold mb-2">Crypto Rewards</h3>
-                  <p className="text-gray-400 text-sm">Bitcoin, Ethereum, and other popular cryptocurrencies</p>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gray-900/50 border-gray-800 hover:border-yellow-500/50 transition-all">
-                <CardContent className="p-6 text-center">
-                  <div className="bg-yellow-500/20 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                    <Zap className="h-8 w-8 text-yellow-400" />
-                  </div>
-                  <h3 className="text-xl font-bold mb-2">VIP Perks</h3>
-                  <p className="text-gray-400 text-sm">Exclusive access, higher rakeback, and priority support</p>
-                </CardContent>
-              </Card>
-            </div>
-            <div className="text-center mt-8">
-              <Button
-                className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white border-0"
-                asChild
-              >
-                <Link href="/rewards">Browse All Rewards</Link>
-              </Button>
-            </div>
-          </div>
-        </section>
       </main>
 
       <Footer />
