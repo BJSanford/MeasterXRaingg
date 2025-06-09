@@ -4,12 +4,10 @@ import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { TopPlayers } from "@/components/leaderboard/top-players"
 import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Trophy, Crown, Medal, Users, DollarSign, Gamepad2, Star, Zap, Gift } from "lucide-react"
+import { Trophy, DollarSign, Zap, Gift } from "lucide-react"
 import Link from "next/link"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
-import { LeaderboardPreview } from "@/components/leaderboard-preview"
 import { HowItWorks } from "@/components/how-it-works"
 import { RakebackTiers } from "@/components/rakeback-tiers"
 
@@ -40,43 +38,18 @@ export default function HomePage() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black text-white overflow-hidden">
-      {/* Enhanced Background with particles/stars effect and animated gradients */}
+    <div className="relative min-h-screen bg-gradient-to-b from-black via-gray-900 to-black text-white">
+      {/* Background animations */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute h-full w-full bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-900/20 via-transparent to-transparent animate-pulse-slow"></div>
-        <div className="absolute h-full w-full bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] from-cyan-900/10 via-transparent to-transparent animate-pulse-slower"></div>
-
-        {/* Animated stars */}
-        {Array.from({ length: 100 }).map((_, i) => (
+        {Array.from({ length: 50 }).map((_, i) => (
           <div
             key={i}
-            className="absolute rounded-full bg-white"
+            className="absolute rounded-full bg-white opacity-50 animate-pulse"
             style={{
               top: `${Math.random() * 100}%`,
               left: `${Math.random() * 100}%`,
-              width: `${Math.random() * 3}px`,
-              height: `${Math.random() * 3}px`,
-              opacity: Math.random() * 0.7,
-              animation: `twinkle ${Math.random() * 5 + 3}s infinite`,
-            }}
-          />
-        ))}
-
-        {/* Larger glowing orbs */}
-        {Array.from({ length: 8 }).map((_, i) => (
-          <div
-            key={`orb-${i}`}
-            className="absolute rounded-full blur-xl"
-            style={{
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              width: `${Math.random() * 150 + 50}px`,
-              height: `${Math.random() * 150 + 50}px`,
-              background:
-                i % 2 === 0
-                  ? "radial-gradient(circle, rgba(139,92,246,0.15) 0%, rgba(139,92,246,0) 70%)"
-                  : "radial-gradient(circle, rgba(34,211,238,0.1) 0%, rgba(34,211,238,0) 70%)",
-              animation: `float ${Math.random() * 10 + 20}s infinite ease-in-out`,
+              width: `${Math.random() * 5}px`,
+              height: `${Math.random() * 5}px`,
             }}
           />
         ))}
@@ -85,23 +58,65 @@ export default function HomePage() {
       <Navbar />
 
       <main className="relative z-10 container mx-auto px-4 py-8">
-        {/* Top Players Section */}
-        <section className="mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">Top 3 Players This Week</h2>
-          {isLoading ? (
-            <p className="text-center text-gray-400">Loading...</p>
-          ) : error ? (
-            <p className="text-center text-red-400">{error}</p>
-          ) : (
-            <TopPlayers topPlayers={topPlayers} />
-          )}
-          <div className="text-center mt-8">
-            <Button
-              className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white border-0"
-              asChild
-            >
-              <Link href="/leaderboard">View Full Leaderboard</Link>
-            </Button>
+        {/* Enhanced Leaderboard Section */}
+        <section className="py-20 px-4 bg-gradient-to-r from-purple-900/20 to-cyan-900/20">
+          <div className="container mx-auto max-w-7xl">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl md:text-5xl font-bold mb-4 flex items-center justify-center gap-3">
+                <Trophy className="h-12 w-12 text-yellow-400" />
+                Weekly Champions
+              </h2>
+              <p className="text-gray-300 text-lg max-w-3xl mx-auto">
+                The top 3 players competing in this week's leaderboard race. Competition resets every Monday at 00:00
+                UTC.
+              </p>
+            </div>
+
+            {/* Top Players Component - Keep unchanged */}
+            <div className="mb-16">
+              {isLoading ? (
+                <p className="text-center text-gray-400">Loading...</p>
+              ) : error ? (
+                <p className="text-center text-red-400">{error}</p>
+              ) : (
+                <TopPlayers topPlayers={topPlayers} />
+              )}
+            </div>
+
+            {/* CTA Box from image */}
+            <div className="relative">
+              <Card className="bg-gradient-to-r from-purple-900/60 to-cyan-900/60 border-0 overflow-hidden backdrop-blur-sm">
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-cyan-600/20"></div>
+                <CardContent className="p-12 relative z-10">
+                  <div className="text-center max-w-4xl mx-auto">
+                    <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
+                      Ready to Dominate the Leaderboard?
+                    </h2>
+                    <p className="text-gray-200 text-lg mb-8 max-w-2xl mx-auto">
+                      Join thousands of players competing for the top spot. Use code MEASTER and start your climb to
+                      victory today!
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                      <Button
+                        size="lg"
+                        className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white border-0 text-lg px-8 py-4"
+                        asChild
+                      >
+                        <Link href="/leaderboard">Join Competition</Link>
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="lg"
+                        className="border-white/30 text-white hover:bg-white/10 text-lg px-8 py-4 bg-white/5 backdrop-blur-sm"
+                        asChild
+                      >
+                        <Link href="/about">Learn More</Link>
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </section>
 
@@ -109,7 +124,8 @@ export default function HomePage() {
         <section className="mt-16">
           <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">Rakeback Tiers</h2>
           <p className="text-gray-400 text-center max-w-2xl mx-auto mb-8">
-            Unlock higher rakeback percentages as you wager more. Check out the tiers below to see how much you can earn!
+            Unlock higher rakeback percentages as you wager more. Check out the tiers below to see how much you can
+            earn!
           </p>
           <RakebackTiers />
         </section>
@@ -165,41 +181,6 @@ export default function HomePage() {
                 <Link href="/rewards">Browse All Rewards</Link>
               </Button>
             </div>
-          </div>
-        </section>
-
-        {/* Call to Action Section */}
-        <section className="py-20 px-4">
-          <div className="container mx-auto max-w-5xl">
-            <Card className="bg-gradient-to-r from-purple-900/40 to-cyan-900/40 border-0 overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-cyan-600/10"></div>
-              <CardContent className="p-8 md:p-12 relative z-10">
-                <div className="text-center max-w-3xl mx-auto">
-                  <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Dominate the Leaderboard?</h2>
-                  <p className="text-gray-300 mb-8">
-                    Join thousands of players competing for the top spot. Use code MEASTER and start your climb to
-                    victory today!
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <Button
-                      size="lg"
-                      className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white border-0"
-                      asChild
-                    >
-                      <Link href="/leaderboard">Join Competition</Link>
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      className="border-white/20 text-white hover:bg-white/10"
-                      asChild
-                    >
-                      <Link href="/about">Learn More</Link>
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
           </div>
         </section>
       </main>
