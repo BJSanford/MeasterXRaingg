@@ -77,7 +77,7 @@ export function Navbar() {
             <Button
               variant="ghost"
               className="text-white hover:text-white hover:bg-gray-800"
-              onClick={() => signIn("discord")}
+              onClick={() => window.location.href = "/login"} // Redirect to /login
             >
               Login with Discord
             </Button>
