@@ -12,11 +12,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Menu, X, User, LogOut, Settings } from "lucide-react"
+import { Menu, X } from "lucide-react"
+import { useSession, signIn, signOut } from "next-auth/react"
+import UserProfileDropdown from "@/components/ui/user-profile-dropdown"
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
-  const [isLoggedIn, setIsLoggedIn] = useState(false) // For demo purposes
+  const { data: session, status } = useSession()
+  const isLoggedIn = status === "authenticated"
+  const rainUsername = typeof window !== 'undefined' ? localStorage.getItem("rainUsername") : null
+
+  // No Discord avatar in session, so use undefined (UserProfileDropdown will fallback to initials)
+  const avatarUrl: string | undefined = undefined
 
   const toggleMenu = () => {
     setIsOpen(!isOpen)
@@ -60,51 +67,20 @@ export function Navbar() {
 
         <div className="flex items-center gap-4">
           {isLoggedIn ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                  <Avatar className="h-8 w-8 border border-purple-500/50">
-                    <AvatarImage src="/placeholder.svg" alt="@username" />
-                    <AvatarFallback className="bg-purple-900 text-white">MS</AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="end" forceMount>
-                <DropdownMenuLabel className="font-normal">
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">username</p>
-                    <p className="text-xs leading-none text-muted-foreground">Measter Coins: 250</p>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <User className="mr-2 h-4 w-4" />
-                  <span>Profile</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Settings className="mr-2 h-4 w-4" />
-                  <span>Settings</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => setIsLoggedIn(false)}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Log out</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <UserProfileDropdown
+              username={session.user.name}
+              avatarUrl={avatarUrl}
+              rainUsername={rainUsername}
+              onSignOut={() => signOut()}
+            />
           ) : (
-            <div className="hidden md:flex items-center gap-2">
-              <Button
-                variant="ghost"
-                className="text-white hover:text-white hover:bg-gray-800"
-                onClick={() => setIsLoggedIn(true)}
-              >
-                Login
-              </Button>
-              <Button className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white border-0">
-                Register
-              </Button>
-            </div>
+            <Button
+              variant="ghost"
+              className="text-white hover:text-white hover:bg-gray-800"
+              onClick={() => signIn("discord")}
+            >
+              Login with Discord
+            </Button>
           )}
 
           {/* Mobile menu button */}
@@ -159,14 +135,11 @@ export function Navbar() {
                   variant="outline"
                   className="w-full justify-center"
                   onClick={() => {
-                    setIsLoggedIn(true)
+                    signIn("discord")
                     setIsOpen(false)
                   }}
                 >
-                  Login
-                </Button>
-                <Button className="w-full justify-center bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white border-0">
-                  Register
+                  Login with Discord
                 </Button>
               </div>
             )}
