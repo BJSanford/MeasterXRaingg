@@ -29,6 +29,10 @@ export function Navbar() {
     setIsOpen(!isOpen)
   }
 
+  if (status === "loading") {
+    return null; // Avoid rendering until session is loaded
+  }
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gray-800 bg-black/80 backdrop-blur-md">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">

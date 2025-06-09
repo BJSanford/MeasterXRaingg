@@ -8,6 +8,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (status === "loading") return; // Handle loading state
     if (status === "authenticated") {
       // Store Discord user details in localStorage
       if (session?.user) {

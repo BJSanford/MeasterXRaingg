@@ -5,7 +5,6 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
-  const router = useRouter();
   const [rainUsername, setRainUsername] = useState("");
   const [error, setError] = useState<string | null>(null);
 

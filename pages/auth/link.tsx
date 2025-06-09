@@ -14,7 +14,7 @@ export default function LinkAccountPage() {
   const [isChecking, setIsChecking] = useState(false);
 
   useEffect(() => {
-    if (status === "loading") return;
+    if (status === "loading") return; // Handle loading state
 
     const storedRainUsername = sessionStorage.getItem("pendingRainUsername");
     setRainUsername(storedRainUsername);
