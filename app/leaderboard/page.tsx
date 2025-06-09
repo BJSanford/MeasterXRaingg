@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useState, useCallback } from "react"
-import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { LeaderboardHeader } from "@/components/leaderboard/leaderboard-header"
 import { LeaderboardCountdown } from "@/components/leaderboard/leaderboard-countdown"
@@ -127,7 +126,6 @@ export default function LeaderboardPage() {
         ))}
       </div>
 
-      <Navbar />
       <main className="relative z-10 container mx-auto px-4 py-8">
         <LeaderboardHeader startDate={raceInfo.startDate} prizePool={raceInfo.prizePool} />
         <LeaderboardCountdown 

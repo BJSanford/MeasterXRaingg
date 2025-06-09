@@ -1,5 +1,4 @@
 import type { Metadata } from "next"
-import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { DashboardHeader } from "@/components/dashboard/dashboard-header"
 import { DashboardStats } from "@/components/dashboard/dashboard-stats"
@@ -37,8 +36,6 @@ export default function DashboardPage() {
           />
         ))}
       </div>
-
-      <Navbar /> {/* Navbar already redirects "Sign in with Discord" to /login */}
 
       <main className="relative z-10 container mx-auto px-4 py-8">
         <DashboardHeader />

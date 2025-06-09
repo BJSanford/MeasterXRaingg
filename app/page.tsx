@@ -6,7 +6,6 @@ import { TopPlayers } from "@/components/leaderboard/top-players"
 import { Card, CardContent } from "@/components/ui/card"
 import { Trophy } from "lucide-react"
 import Link from "next/link"
-import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { HowItWorks } from "@/components/how-it-works"
 import { RakebackTiers } from "@/components/rakeback-tiers"
@@ -54,8 +53,6 @@ export default function HomePage() {
           />
         ))}
       </div>
-
-      <Navbar /> {/* Navbar already redirects "Sign in with Discord" to /login */}
 
       <main className="relative z-10 container mx-auto px-4 py-8">
         {/* Enhanced Leaderboard Section */}

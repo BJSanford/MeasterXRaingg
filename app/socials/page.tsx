@@ -10,7 +10,6 @@ import { ArrowLeft, Youtube, Twitter, Play, ExternalLink } from "lucide-react"
 import CityOverlay from "../city-overlay"
 import SnowOverlay from "../snow-overlay"
 import { fadeIn, staggerContainer } from "@/lib/animation-utils"
-import Navbar from "@/components/navbar"
 
 // Social media data
 const socialLinks = [
