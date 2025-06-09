@@ -40,18 +40,43 @@ export default function HomePage() {
   }, [])
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-b from-black via-gray-900 to-black text-white">
-      {/* Background animations */}
+    <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black text-white overflow-hidden">
+      {/* Enhanced Background with particles/stars effect and animated gradients */}
       <div className="absolute inset-0 z-0">
-        {Array.from({ length: 50 }).map((_, i) => (
+        <div className="absolute h-full w-full bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-900/20 via-transparent to-transparent animate-pulse-slow"></div>
+        <div className="absolute h-full w-full bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] from-cyan-900/10 via-transparent to-transparent animate-pulse-slower"></div>
+
+        {/* Animated stars */}
+        {Array.from({ length: 100 }).map((_, i) => (
           <div
             key={i}
-            className="absolute rounded-full bg-white opacity-50 animate-pulse"
+            className="absolute rounded-full bg-white"
             style={{
               top: `${Math.random() * 100}%`,
               left: `${Math.random() * 100}%`,
-              width: `${Math.random() * 5}px`,
-              height: `${Math.random() * 5}px`,
+              width: `${Math.random() * 3}px`,
+              height: `${Math.random() * 3}px`,
+              opacity: Math.random() * 0.7,
+              animation: `twinkle ${Math.random() * 5 + 3}s infinite`,
+            }}
+          />
+        ))}
+
+        {/* Larger glowing orbs */}
+        {Array.from({ length: 8 }).map((_, i) => (
+          <div
+            key={`orb-${i}`}
+            className="absolute rounded-full blur-xl"
+            style={{
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+              width: `${Math.random() * 150 + 50}px`,
+              height: `${Math.random() * 150 + 50}px`,
+              background:
+                i % 2 === 0
+                  ? "radial-gradient(circle, rgba(139,92,246,0.15) 0%, rgba(139,92,246,0) 70%)"
+                  : "radial-gradient(circle, rgba(34,211,238,0.1) 0%, rgba(34,211,238,0) 70%)",
+              animation: `float ${Math.random() * 10 + 20}s infinite ease-in-out`,
             }}
           />
         ))}
@@ -60,17 +85,17 @@ export default function HomePage() {
       <Navbar />
 
       <main className="relative z-10 container mx-auto px-4 py-8">
-        {/* Leaderboard Section */}
-        <section className="mb-12">
-          <h1 className="text-4xl font-bold mb-4">Leaderboard</h1>
-          <p className="text-lg text-gray-400 mb-6">
-            Compete with other players to earn rewards and climb the ranks. The leaderboard showcases the top players based on their wagers and prizes.
-          </p>
-          <div className="grid grid-cols-3 gap-6">
-            {/* Top Players Component */}
+        {/* Top Players Section */}
+        <section className="mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">Top 3 Players This Week</h2>
+          {isLoading ? (
+            <p className="text-center text-gray-400">Loading...</p>
+          ) : error ? (
+            <p className="text-center text-red-400">{error}</p>
+          ) : (
             <TopPlayers topPlayers={topPlayers} />
-          </div>
-          <div className="text-center mt-6">
+          )}
+          <div className="text-center mt-8">
             <Button
               className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white border-0"
               asChild
