@@ -1,24 +1,22 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { useSession, signIn, signOut } from "next-auth/react"
-import UserProfileDropdown from "@/components/ui/user-profile-dropdown"
+import { useState } from "react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import UserProfileDropdown from "@/components/ui/user-profile-dropdown";
 
-export function Navbar() {
-  const [isOpen, setIsOpen] = useState(false)
-  const { data: session, status } = useSession()
-  const isLoggedIn = status === "authenticated"
-  const rainUsername = typeof window !== "undefined" ? localStorage.getItem("rainUsername") : null
+interface NavbarProps {
+  session: any; // Accept session as a prop
+}
+
+export function Navbar({ session }: NavbarProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const isLoggedIn = !!session;
+  const rainUsername = typeof window !== "undefined" ? localStorage.getItem("rainUsername") : null;
 
   const toggleMenu = () => {
-    setIsOpen(!isOpen)
-  }
-
-  if (status === "loading") {
-    return null // Avoid rendering until session is loaded
-  }
+    setIsOpen(!isOpen);
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gray-800 bg-black/80 backdrop-blur-md">
@@ -62,7 +60,7 @@ export function Navbar() {
               username={session.user.name}
               avatarUrl={session.user.image}
               rainUsername={rainUsername}
-              onSignOut={() => signOut()}
+              onSignOut={() => window.location.href = "/api/auth/signout"} // Redirect to signout
             />
           ) : (
             <Button
@@ -126,8 +124,8 @@ export function Navbar() {
                   variant="outline"
                   className="w-full justify-center"
                   onClick={() => {
-                    signIn("discord")
-                    setIsOpen(false)
+                    window.location.href = "/login";
+                    setIsOpen(false);
                   }}
                 >
                   Login with Discord
@@ -138,5 +136,5 @@ export function Navbar() {
         </div>
       )}
     </header>
-  )
+  );
 }
