@@ -3,16 +3,6 @@
 import { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Menu, X } from "lucide-react"
 import { useSession, signIn, signOut } from "next-auth/react"
 import UserProfileDropdown from "@/components/ui/user-profile-dropdown"
 
@@ -20,17 +10,14 @@ export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const { data: session, status } = useSession()
   const isLoggedIn = status === "authenticated"
-  const rainUsername = typeof window !== 'undefined' ? localStorage.getItem("rainUsername") : null
-
-  // No Discord avatar in session, so use undefined (UserProfileDropdown will fallback to initials)
-  const avatarUrl: string | undefined = undefined
+  const rainUsername = typeof window !== "undefined" ? localStorage.getItem("rainUsername") : null
 
   const toggleMenu = () => {
     setIsOpen(!isOpen)
   }
 
   if (status === "loading") {
-    return null; // Avoid rendering until session is loaded
+    return null // Avoid rendering until session is loaded
   }
 
   return (
@@ -73,7 +60,7 @@ export function Navbar() {
           {isLoggedIn ? (
             <UserProfileDropdown
               username={session.user.name}
-              avatarUrl={avatarUrl}
+              avatarUrl={session.user.image}
               rainUsername={rainUsername}
               onSignOut={() => signOut()}
             />
@@ -89,7 +76,7 @@ export function Navbar() {
 
           {/* Mobile menu button */}
           <Button variant="ghost" size="icon" className="md:hidden" onClick={toggleMenu}>
-            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {isOpen ? "X" : "Menu"}
           </Button>
         </div>
       </div>

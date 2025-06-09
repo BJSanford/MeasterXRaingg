@@ -55,7 +55,7 @@ export default function HomePage() {
         ))}
       </div>
 
-      <Navbar />
+      <Navbar /> {/* Navbar handles session-related logic */}
 
       <main className="relative z-10 container mx-auto px-4 py-8">
         {/* Enhanced Leaderboard Section */}
@@ -72,7 +72,7 @@ export default function HomePage() {
               </p>
             </div>
 
-            {/* Top Players Component - Keep unchanged */}
+            {/* Top Players Component */}
             <div className="mb-16">
               {isLoading ? (
                 <p className="text-center text-gray-400">Loading...</p>
@@ -83,7 +83,7 @@ export default function HomePage() {
               )}
             </div>
 
-            {/* CTA Box from image */}
+            {/* CTA Box */}
             <div className="relative">
               <Card className="bg-gradient-to-r from-purple-900/60 to-cyan-900/60 border-0 overflow-hidden backdrop-blur-sm">
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-cyan-600/20"></div>
