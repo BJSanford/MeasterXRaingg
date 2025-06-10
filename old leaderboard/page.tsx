@@ -15,7 +15,7 @@ import Image from "next/image"
 
 // Hardcoded payout distribution for top 8 places
 const payouts = [500, 250, 150, 50, 20, 15, 10, 5]
-const prizePool = payouts.reduce((a, b) => a + b, 0)
+const prizePool = 1250 // Changed from 1000 to 1250
 const coinImg = "/coin.png" // Make sure /public/coin.png exists
 
 export default function WeeklyRacePage() {
