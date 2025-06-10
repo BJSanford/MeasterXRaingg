@@ -69,7 +69,8 @@ const getUserWageredFromLeaderboard = async (username: string): Promise<number> 
     accept: "application/json",
     "x-api-key": API_KEY,
   }
-  const url = `${API_BASE_URL}/affiliates/leaderboard?start_date=2020-01-01T00%3A00%3A00.00Z&end_date=2030-01-01T00%3A00%3A00.00Z&type=wagered`
+  // Use the correct date range and type=wagered as specified
+  const url = `${API_BASE_URL}/affiliates/leaderboard?start_date=2024-01-01T00%3A00%3A00.00Z&end_date=2026-01-01T00%3A00%3A00.00Z&type=wagered`
 
   try {
     const res = await fetch(url, { headers, cache: "no-store" })
