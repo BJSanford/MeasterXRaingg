@@ -70,7 +70,13 @@ export function RakebackSystem() {
 						<span className="font-bold text-purple-400">{currentRank.percentage}% Rakeback</span>
 					</div>
 					<div className="text-sm text-gray-400 mb-4">
-						<p>Wagered: ${wagered.toLocaleString()}</p>
+						<p>
+							Wagered:{" "}
+							<span className="inline-flex items-center">
+								<img src="/coin.png" alt="coin" className="h-4 w-4 mr-1 inline-block" />
+								{wagered.toLocaleString()}
+							</span>
+						</p>
 						<p>Claimable: {currentRank.claimable} coins</p>
 					</div>
 					<Progress

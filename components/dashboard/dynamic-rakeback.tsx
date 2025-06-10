@@ -26,12 +26,24 @@ export function DynamicRakeback() {
           ></div>
         </div>
         <div className="flex justify-between text-xs text-gray-400 mt-2">
-          <span>${currentTier.threshold.toLocaleString()}+</span>
-          {nextTier && <span>${nextTier.threshold.toLocaleString()}+</span>}
+          <span>
+            <img src="/coin.png" alt="coin" className="h-4 w-4 mr-1 inline-block" />
+            {currentTier.threshold.toLocaleString()}+
+          </span>
+          {nextTier && (
+            <span>
+              <img src="/coin.png" alt="coin" className="h-4 w-4 mr-1 inline-block" />
+              {nextTier.threshold.toLocaleString()}+
+            </span>
+          )}
         </div>
         <p className="mt-4 text-sm text-gray-400">
           Earn <span className="font-bold text-cyan-400">{nextTier?.percentage || currentTier.percentage}%</span> rakeback by wagering{" "}
-          <span className="font-bold text-cyan-400">${((nextTier?.threshold || 0) - currentWagered).toLocaleString()}</span> more.
+          <span className="font-bold text-cyan-400 inline-flex items-center">
+            <img src="/coin.png" alt="coin" className="h-4 w-4 mr-1 inline-block" />
+            {((nextTier?.threshold || 0) - currentWagered).toLocaleString()}
+          </span>{" "}
+          more.
         </p>
       </div>
     </section>

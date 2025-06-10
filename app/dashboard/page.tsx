@@ -33,7 +33,9 @@ export default function DashboardPage() {
         <RecentRewards />
       </main>
 
-      <Footer />
+      <div className="relative z-20">
+        <Footer />
+      </div>
     </div>
   )
 }

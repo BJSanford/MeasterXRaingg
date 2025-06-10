@@ -68,7 +68,10 @@ export function DashboardPreview() {
       <div className="mt-4 grid grid-cols-2 gap-2">
         <div className="bg-gray-900/50 border border-gray-800 rounded-lg p-3">
           <p className="text-xs text-gray-400">Total Wagered</p>
-          <p className="text-lg font-bold">$1,166.39</p>
+          <p className="text-lg font-bold flex items-center">
+            <img src="/coin.png" alt="coin" className="h-4 w-4 mr-1 inline-block" />
+            1,166.39
+          </p>
         </div>
         <div className="bg-gray-900/50 border border-gray-800 rounded-lg p-3">
           <p className="text-xs text-gray-400">Current Rakeback</p>

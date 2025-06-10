@@ -201,7 +201,9 @@ export default function HomePage() {
         </section>
       </main>
 
-      <Footer />
+      <div className="relative z-20">
+        <Footer />
+      </div>
 
       <style jsx global>{`
         @keyframes float {

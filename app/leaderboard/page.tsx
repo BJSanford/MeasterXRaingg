@@ -6,8 +6,9 @@ import { LeaderboardHeader } from "@/components/leaderboard/leaderboard-header"
 import { LeaderboardCountdown } from "@/components/leaderboard/leaderboard-countdown"
 import { LeaderboardTable } from "@/components/leaderboard/leaderboard-table"
 import { TopPlayers } from "@/components/leaderboard/top-players"
+import { AnimatedBackground } from "@/components/animated-background"
 
-const PRIZE_DISTRIBUTION = [500, 250, 150, 50, 20, 15, 10, 5]; // Hardcoded prize distribution
+const PRIZE_DISTRIBUTION = [600, 300, 150, 75, 50, 10, 10, 5] // Hardcoded prize distribution
 
 export default function LeaderboardPage() {
   const [leaderboard, setLeaderboard] = useState<any[]>([])
@@ -75,10 +76,12 @@ export default function LeaderboardPage() {
         return
       }
 
-      setLeaderboard(data.leaderboard.map((participant, index) => ({
-        ...participant,
-        prize: PRIZE_DISTRIBUTION[index] || 0, // Assign hardcoded prize
-      })))
+      setLeaderboard(
+        data.leaderboard.map((participant, index) => ({
+          ...participant,
+          prize: PRIZE_DISTRIBUTION[index] || 0, // Assign hardcoded prize
+        })),
+      )
 
       if (data.startDate && data.endDate) {
         setRaceInfo({
@@ -106,32 +109,12 @@ export default function LeaderboardPage() {
   const rest = leaderboard.slice(3, 15)
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black text-white overflow-hidden">
-      {/* Background particles/stars effect */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute h-full w-full bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-900/20 via-transparent to-transparent"></div>
-        {Array.from({ length: 50 }).map((_, i) => (
-          <div
-            key={i}
-            className="absolute rounded-full bg-white"
-            style={{
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-              width: `${Math.random() * 3}px`,
-              height: `${Math.random() * 3}px`,
-              opacity: Math.random() * 0.7,
-              animation: `twinkle ${Math.random() * 5 + 3}s infinite`,
-            }}
-          />
-        ))}
-      </div>
+    <div className="min-h-screen text-white overflow-hidden relative">
+      <AnimatedBackground />
 
       <main className="relative z-10 container mx-auto px-4 py-8">
         <LeaderboardHeader startDate={raceInfo.startDate} prizePool={raceInfo.prizePool} />
-        <LeaderboardCountdown 
-          startDate={raceInfo.startDate} 
-          endDate={raceInfo.endDate} 
-        />
+        <LeaderboardCountdown startDate={raceInfo.startDate} endDate={raceInfo.endDate} />
         {!isBeforeStart && (
           <>
             <TopPlayers topPlayers={topThree} />
@@ -139,7 +122,10 @@ export default function LeaderboardPage() {
           </>
         )}
       </main>
-      <Footer />
+
+      <div className="relative z-20">
+        <Footer />
+      </div>
     </div>
   )
 }
