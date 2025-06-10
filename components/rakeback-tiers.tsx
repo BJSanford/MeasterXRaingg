@@ -72,22 +72,24 @@ export function RakebackTiers() {
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2 gap-1 sm:gap-0">
               <div className="flex items-center gap-2 text-xs sm:text-base">
                 <span className="text-gray-400">Wager Requirement:</span>
+                <img src="/coin.png" alt="coin" className="h-4 w-4 inline-block mr-1" />
                 <span className="text-white">{tier.threshold.toLocaleString()}</span>
               </div>
               <div className="flex items-center gap-2 text-xs sm:text-base">
                 <span className="text-gray-400">Claimable Coins:</span>
+                <img src="/coin.png" alt="coin" className="h-4 w-4 inline-block mr-1" />
                 <span className="text-yellow-400 font-bold">{tier.claimable}</span>
               </div>
             </div>
 
             {index === 0 && (
               <div className="text-xs text-gray-400 mt-2">
-                <p>Wager {tier.threshold} coins to unlock this rank. You will be able to claim <span className="text-yellow-400 font-bold">{tier.claimable}</span> coins as a one-time reward. After reaching this rank, every wager you make earns <span className="font-bold text-green-400">{tier.activeRakeback}%</span> rakeback, redeemable at any time.</p>
+                <p>Wager <img src="/coin.png" alt="coin" className="h-3 w-3 inline-block mr-1" />{tier.threshold} coins to unlock this rank. You will be able to claim <img src="/coin.png" alt="coin" className="h-3 w-3 inline-block mr-1" /><span className="text-yellow-400 font-bold">{tier.claimable}</span> coins as a one-time reward. After reaching this rank, every wager you make earns <span className="font-bold text-green-400">{tier.activeRakeback}%</span> rakeback, redeemable at any time.</p>
               </div>
             )}
             {index !== 0 && (
               <div className="text-xs text-gray-400 mt-2">
-                <p>Wager {tier.threshold} coins to unlock this rank. Claim <span className="text-yellow-400 font-bold">{tier.claimable}</span> coins instantly. Then, earn <span className="font-bold text-green-400">{tier.activeRakeback}%</span> rakeback on all future wagers, redeemable at any time.</p>
+                <p>Wager <img src="/coin.png" alt="coin" className="h-3 w-3 inline-block mr-1" />{tier.threshold} coins to unlock this rank. Claim <img src="/coin.png" alt="coin" className="h-3 w-3 inline-block mr-1" /><span className="text-yellow-400 font-bold">{tier.claimable}</span> coins instantly. Then, earn <span className="font-bold text-green-400">{tier.activeRakeback}%</span> rakeback on all future wagers, redeemable at any time.</p>
               </div>
             )}
           </div>

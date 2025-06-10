@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { MessageCircle, Link, Gamepad2, TrendingUp, Coins, Tv } from "lucide-react"
+import { MessageCircle, Link, Gamepad2, Coins, Tv } from "lucide-react"
 
 export function HowItWorks() {
   const steps = [
@@ -27,7 +27,7 @@ export function HowItWorks() {
     {
       title: "Earn Rakeback Rewards",
       description: "Your rakeback rank determines your percentage - higher ranks mean more Measter Coins per wager!",
-      icon: TrendingUp,
+      icon: Coins,
       color: "bg-[#4CAF50]",
     },
     {
@@ -110,10 +110,6 @@ export function HowItWorks() {
                   Your rakeback percentage is determined by your tier level. The more you wager, the higher your tier,
                   and the more Measter Coins you earn back automatically.
                 </p>
-                <div className="flex items-center space-x-2 text-cyan-400 font-medium">
-                  <TrendingUp className="w-5 h-5" />
-                  <span></span>
-                </div>
               </div>
             </motion.div>
 
