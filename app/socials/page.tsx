@@ -162,7 +162,7 @@ export default function SocialsPage() {
 				</motion.div>
 
 				{/* Social Buttons */}
-				<div className="mb-8 flex gap-4">
+				<div className="mb-8 flex flex-col sm:flex-row gap-3 sm:gap-4">
 					<Button
 						asChild
 						variant="outline"
@@ -211,13 +211,13 @@ export default function SocialsPage() {
 					transition={{ delay: 0.3 }}
 				>
 					<h2 className="mb-6 text-2xl font-bold">Latest YouTube Videos</h2>
-					<div className="rounded-lg border border-gray-800 bg-gray-900/70 p-6">
+					<div className="rounded-lg border border-gray-800 bg-gray-900/70 p-3 sm:p-6">
 						{isLoading ? (
 							<div className="text-gray-400">Loading videos...</div>
 						) : videoError ? (
 							<div className="text-red-400">{videoError}</div>
 						) : recentVideos.length > 0 ? (
-							<div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
+							<div className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
 								{recentVideos.slice(0, 6).map((video, index) => (
 									<motion.div
 										key={video.id}

@@ -163,7 +163,7 @@ export default function WeeklyRacePage() {
         </div>
       </motion.header>
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-2 sm:px-4 py-6 sm:py-8">
         <motion.div
           variants={staggerContainer()}
           initial="hidden"
@@ -236,7 +236,7 @@ export default function WeeklyRacePage() {
 
         {/* Reworked Podium for Top 3 */}
         <motion.div
-          className="flex justify-center items-end gap-8 mb-12"
+          className="flex flex-col sm:flex-row justify-center items-end gap-6 sm:gap-8 mb-10 sm:mb-12"
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -318,8 +318,8 @@ export default function WeeklyRacePage() {
                 </motion.div>
               </motion.div>
             ) : (
-              <div className="overflow-hidden rounded-lg border border-gray-800">
-                <table className="w-full">
+              <div className="overflow-x-auto rounded-lg border border-gray-800">
+                <table className="w-full min-w-[500px]">
                   <thead>
                     <tr className="border-b border-gray-800 bg-gray-900">
                       <th className="p-4 text-left">Rank</th>

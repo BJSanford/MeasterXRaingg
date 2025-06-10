@@ -30,6 +30,15 @@ button, a, input {
     box-shadow: var(--shadow-lg);
     border-radius: 1rem; /* rounded-2xl */
     padding: 2rem; /* p-8 */
+    width: 100%;
+    max-width: 100%;
+    /* Responsive padding */
+    padding: 1.25rem;
+  }
+  @media (min-width: 640px) {
+    .card {
+      padding: 2rem;
+    }
   }
   .btn {
     padding: 1rem 1.25rem; /* px-5 py-3 */
@@ -39,9 +48,13 @@ button, a, input {
     background-color: hsl(var(--primary));
     transition: background-color 0.3s ease-in-out;
     box-shadow: var(--shadow-md);
+    width: 100%;
+    min-width: 0;
   }
-  .btn:hover {
-    background-color: hsl(var(--primary-foreground));
+  @media (min-width: 640px) {
+    .btn {
+      width: auto;
+    }
   }
   .btn-primary {
     padding: 1rem 1.5rem; /* px-6 py-3 */
@@ -51,9 +64,13 @@ button, a, input {
     background-color: hsl(var(--primary));
     transition: background-color 0.3s ease-in-out;
     box-shadow: var(--shadow-lg);
+    width: 100%;
+    min-width: 0;
   }
-  .btn-primary:hover {
-    background-color: hsl(var(--primary-foreground));
+  @media (min-width: 640px) {
+    .btn-primary {
+      width: auto;
+    }
   }
   .input {
     border: 1px solid hsl(var(--input));
@@ -61,6 +78,8 @@ button, a, input {
     padding: 0.5rem 1rem; /* px-4 py-2 */
     outline: none;
     transition: box-shadow 0.3s ease-in-out;
+    width: 100%;
+    min-width: 0;
   }
   .input:focus {
     box-shadow: 0 0 0 2px hsl(var(--primary));

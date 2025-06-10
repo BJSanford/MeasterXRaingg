@@ -20,11 +20,11 @@ export function WagerHistory() {
 	const [timeRange, setTimeRange] = useState("week")
 
 	return (
-		<Card className="bg-gray-900/50 border-gray-800">
-			<CardHeader className="flex flex-row items-center justify-between pb-2">
+		<Card className="bg-gray-900/50 border-gray-800 w-full">
+			<CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-2 gap-2">
 				<CardTitle className="text-lg font-medium">Wager History</CardTitle>
 				<Select value={timeRange} onValueChange={setTimeRange}>
-					<SelectTrigger className="w-[120px] bg-gray-800 border-gray-700">
+					<SelectTrigger className="w-full sm:w-[120px] bg-gray-800 border-gray-700">
 						<SelectValue placeholder="Select range" />
 					</SelectTrigger>
 					<SelectContent className="bg-gray-800 border-gray-700">
@@ -36,7 +36,7 @@ export function WagerHistory() {
 				</Select>
 			</CardHeader>
 			<CardContent>
-				<div className="h-[250px] w-full">
+				<div className="h-[200px] sm:h-[250px] w-full">
 					<ResponsiveContainer width="100%" height="100%">
 						<BarChart
 							data={wagerData}
