@@ -63,38 +63,24 @@ const getWeeklyWagerHistory = async (username: string): Promise<{ date: string, 
 }
 
 const getUserWageredFromLeaderboard = async (username: string): Promise<number> => {
-  const API_BASE_URL = "https://api.rain.gg/v1"
-  const API_KEY = process.env.RAIN_API_KEY || "14d2ae5d-cea5-453a-b814-6fd810bda580"
-  const headers = {
-    accept: "application/json",
-    "x-api-key": API_KEY,
-  }
-  // Use the correct date range and type=wagered as specified
-  const url = `${API_BASE_URL}/affiliates/leaderboard?start_date=2024-01-01T00%3A00%3A00.00Z&end_date=2026-01-01T00%3A00%3A00.00Z&type=wagered`
-
   try {
-    const res = await fetch(url, { headers, cache: "no-store" })
+    // Call your own API route to avoid CORS
+    const res = await fetch(`/api/user/wagered?username=${encodeURIComponent(username)}`)
     if (!res.ok) return 0
     const data = await res.json()
-    const arr = Array.isArray(data.results)
-      ? data.results
-      : Array.isArray(data.leaderboard)
-        ? data.leaderboard
-        : []
-    const input = username.trim().toLowerCase()
-    const userEntry = arr.find((u: any) =>
-      typeof u.username === "string" &&
-      u.username.trim().toLowerCase() === input
-    )
+    return data.wagered ?? 0
+  } catch {
+    return 0
+  }
+}
 
-    // Check static data for additional wagered amount
-    const staticUser = oldApiData.results.find(
-      (staticEntry: any) =>
-        staticEntry.username.trim().toLowerCase() === username.trim().toLowerCase()
-    );
-    const staticWagered = staticUser ? staticUser.wagered : 0;
-
-    return (userEntry?.wagered ?? 0) + staticWagered; // Combine API and static data
+const getUserDepositedFromLeaderboard = async (username: string): Promise<number> => {
+  try {
+    // Call your own API route to avoid CORS
+    const res = await fetch(`/api/user/deposited?username=${encodeURIComponent(username)}`)
+    if (!res.ok) return 0
+    const data = await res.json()
+    return data.deposited ?? 0
   } catch {
     return 0
   }
@@ -143,15 +129,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       let wagerHistory: { date: string, amount: number }[] = []
       let totalWagered = 0
       if (userProfile) {
-        // Fetch correct wagered value from the wagered leaderboard
+        // Fetch correct wagered and deposited values from your API
         totalWagered = await getUserWageredFromLeaderboard(userProfile.username)
+        const totalDeposited = await getUserDepositedFromLeaderboard(userProfile.username)
         wagerHistory = await getWeeklyWagerHistory(userProfile.username)
         setUser({
           id: userProfile.username, // Use username as fallback if id is missing
           username: userProfile.username,
           avatar: userProfile.avatar,
           totalWagered,
-          totalDeposited: userProfile.deposited ?? 0,
+          totalDeposited,
           rakebackPercentage: 5,
           rakebackEarned: Math.round((totalWagered ?? 0) * 0.05),
           measterCoins: Math.floor((totalWagered ?? 0) / 10),

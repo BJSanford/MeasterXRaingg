@@ -5,9 +5,9 @@ import { AuthProvider } from "@/lib/auth-context";
 import "@/styles/globals.css";
 
 export const metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.dev',
+  title: 'MeasterSkins',
+  description: 'MeasterSkins is a rewards dashboard for Rain.gg users, allowing you to track your wagering, claim rakeback, and earn exclusive rewards by connecting your Rain.gg account and participating in community events.',
+  generator: '',
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
