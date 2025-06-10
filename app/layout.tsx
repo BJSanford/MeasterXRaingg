@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { Navbar } from "@/components/navbar";
+import { AuthProvider } from "@/lib/auth-context";
 import "@/styles/globals.css";
 
 export const metadata = {
@@ -16,7 +17,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang="en">
       <body className="bg-black text-white">
         <Navbar session={session} /> {/* Pass session to Navbar */}
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );
