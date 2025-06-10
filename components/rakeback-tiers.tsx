@@ -2,8 +2,10 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import Image from "next/image"
+import { useState } from "react"
 
 export function RakebackTiers() {
+  // Standardized image filenames (all lowercase, hyphens)
   const tiers = [
     { level: "Iron", threshold: "$1,000", coins: 5, color: "gray", image: "/images/tiers/iron.png" },
     { level: "Bronze", threshold: "$2,500", coins: 12.5, color: "amber", image: "/images/tiers/bronze.png" },
@@ -12,17 +14,18 @@ export function RakebackTiers() {
     { level: "Platinum", threshold: "$15,000", coins: 75, color: "purple", image: "/images/tiers/platinum.png" },
     { level: "Emerald", threshold: "$25,000", coins: 125, color: "emerald", image: "/images/tiers/emerald.png" },
     { level: "Diamond", threshold: "$50,000", coins: 250, color: "cyan", image: "/images/tiers/diamond.png" },
-    {
-      level: "Blood Diamond",
-      threshold: "$75,000",
-      coins: 375,
-      color: "rose",
-      image: "/images/tiers/blood-diamond.png",
-    },
+    { level: "Blood Diamond", threshold: "$75,000", coins: 375, color: "rose", image: "/images/tiers/blood-diamond.png" },
     { level: "Obsidian", threshold: "$100,000", coins: 500, color: "slate", image: "/images/tiers/obsidian.png" },
     { level: "Imperial", threshold: "$150,000", coins: 750, color: "amber", image: "/images/tiers/imperial.png" },
     { level: "Ascendent", threshold: "$200,000", coins: 1000, color: "fuchsia", image: "/images/tiers/ascendent.png" },
   ]
+
+  // Helper to handle image error fallback
+  const [erroredImages, setErroredImages] = useState<{ [key: string]: boolean }>({});
+
+  const handleImgError = (level: string) => {
+    setErroredImages((prev) => ({ ...prev, [level]: true }));
+  };
 
   return (
     <div className="space-y-6">
@@ -46,11 +49,17 @@ export function RakebackTiers() {
             <div className="flex justify-between items-center mb-2">
               <div className="flex items-center gap-3">
                 <Image
-                  src={tier.image || "/placeholder.svg"}
+                  src={
+                    erroredImages[tier.level]
+                      ? "/placeholder.svg"
+                      : tier.image
+                  }
                   alt={`${tier.level} tier`}
                   width={24}
                   height={24}
                   className="w-6 h-6"
+                  onError={() => handleImgError(tier.level)}
+                  priority={index < 3}
                 />
                 <span className="font-medium text-lg">{tier.level}</span>
                 {index === 0 && (
