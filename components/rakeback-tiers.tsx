@@ -46,25 +46,27 @@ export function RakebackTiers() {
                 : "bg-gray-900/50 border-gray-800"
             } xs:p-2 xs:rounded-md`}
           >
-            <div className="flex justify-between items-center mb-2 xs:flex-col xs:items-start xs:gap-1 xs:mb-1">
-              <div className="flex items-center gap-3 xs:gap-2">
+            {/* Responsive flex: always stack on mobile, more margin for badge and rakeback */}
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2 gap-2">
+              <div className="flex items-center gap-3 sm:gap-3">
                 <Image
                   src={erroredImages[tier.level] ? "/placeholder.svg" : tier.image}
                   alt={`${tier.level} tier`}
                   width={24}
                   height={24}
-                  className="w-6 h-6 xs:w-5 xs:h-5"
+                  className="w-6 h-6 sm:w-6 sm:h-6"
                   onError={() => handleImgError(tier.level)}
                   priority={index < 3}
                 />
-                <span className="font-medium text-lg xs:text-base">{tier.level}</span>
+                <span className="font-medium text-lg sm:text-lg text-base">{tier.level}</span>
                 {index === 0 && (
-                  <span className="px-2 py-0.5 text-xs bg-gray-500/30 text-gray-300 rounded-full xs:px-1 xs:text-[10px]">Entry Tier</span>
+                  <span className="px-2 py-0.5 text-xs bg-gray-500/30 text-gray-300 rounded-full ml-2 mt-0 sm:ml-2 sm:mt-0">Entry Tier</span>
                 )}
               </div>
-              <div className="flex items-center gap-2 xs:mt-1 xs:text-xs">
-                <span className="text-sm text-gray-400 xs:text-xs">Rakeback:</span>
-                <span className="font-bold text-cyan-400 xs:text-xs">0.5%</span>
+              {/* Rakeback always below on mobile, right on desktop */}
+              <div className="flex items-center gap-2 mt-2 sm:mt-0 text-xs sm:text-base">
+                <span className="text-gray-400">Rakeback:</span>
+                <span className="font-bold text-cyan-400">0.5%</span>
               </div>
             </div>
 
