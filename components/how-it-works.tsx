@@ -49,13 +49,15 @@ export function HowItWorks() {
             <Card key={step.id} className="bg-gray-900/50 border-gray-800 overflow-hidden">
               <CardContent className="p-6">
                 <div className="flex flex-col items-center text-center">
-                  <div
-                    className={`h-16 w-16 rounded-full bg-gradient-to-r ${step.color} flex items-center justify-center mb-4`}
-                  >
-                    <step.icon className="h-8 w-8 text-white" />
-                  </div>
-                  <div className="absolute -top-3 -left-3 h-8 w-8 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center text-sm font-bold">
-                    {step.id}
+                  <div className="relative mb-4">
+                    <div
+                      className={`h-16 w-16 rounded-full bg-gradient-to-r ${step.color} flex items-center justify-center`}
+                    >
+                      <step.icon className="h-8 w-8 text-white" />
+                    </div>
+                    <div className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-gray-900 border border-gray-800 text-white text-xs flex items-center justify-center font-bold">
+                      {step.id}
+                    </div>
                   </div>
                   <h3 className="text-xl font-bold mb-2">{step.title}</h3>
                   <p className="text-gray-400">{step.description}</p>

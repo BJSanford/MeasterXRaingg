@@ -64,8 +64,7 @@ export default function HomePage() {
                 Weekly Champions
               </h2>
               <p className="text-gray-300 text-lg max-w-3xl mx-auto">
-                The top 3 players competing in this week's leaderboard race. Competition resets every Monday at 00:00
-                UTC.
+                The top 3 players competing in this week's leaderboard race. Competition resets every Friday.
               </p>
             </div>
 
