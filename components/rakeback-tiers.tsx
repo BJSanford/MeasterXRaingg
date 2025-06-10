@@ -7,17 +7,17 @@ import { useState } from "react"
 export function RakebackTiers() {
   // Standardized image filenames (all lowercase, hyphens)
   const tiers = [
-    { level: "Iron", threshold: "$1,000", coins: 5, color: "gray", image: "/images/tiers/iron.png" },
-    { level: "Bronze", threshold: "$2,500", coins: 12.5, color: "amber", image: "/images/tiers/bronze.png" },
-    { level: "Silver", threshold: "$5,000", coins: 25, color: "slate", image: "/images/tiers/silver.png" },
-    { level: "Gold", threshold: "$10,000", coins: 50, color: "yellow", image: "/images/tiers/gold.png" },
-    { level: "Platinum", threshold: "$15,000", coins: 75, color: "purple", image: "/images/tiers/platinum.png" },
-    { level: "Emerald", threshold: "$25,000", coins: 125, color: "emerald", image: "/images/tiers/emerald.png" },
-    { level: "Diamond", threshold: "$50,000", coins: 250, color: "cyan", image: "/images/tiers/diamond.png" },
-    { level: "Blood Diamond", threshold: "$75,000", coins: 375, color: "rose", image: "/images/tiers/blood-diamond.png" },
-    { level: "Obsidian", threshold: "$100,000", coins: 500, color: "slate", image: "/images/tiers/obsidian.png" },
-    { level: "Imperial", threshold: "$150,000", coins: 750, color: "amber", image: "/images/tiers/imperial.png" },
-    { level: "Ascendent", threshold: "$200,000", coins: 1000, color: "fuchsia", image: "/images/tiers/ascendent.png" },
+    { level: "Iron", threshold: 1000, claimable: 3.00, rankReward: 0.3, activeRakeback: 0.2 },
+    { level: "Bronze", threshold: 2500, claimable: 7.50, rankReward: 0.3, activeRakeback: 0.25 },
+    { level: "Silver", threshold: 5000, claimable: 15.00, rankReward: 0.3, activeRakeback: 0.3 },
+    { level: "Gold", threshold: 10000, claimable: 30.00, rankReward: 0.3, activeRakeback: 0.35 },
+    { level: "Platinum", threshold: 15000, claimable: 45.00, rankReward: 0.3, activeRakeback: 0.4 },
+    { level: "Emerald", threshold: 25000, claimable: 75.00, rankReward: 0.3, activeRakeback: 0.45 },
+    { level: "Diamond", threshold: 50000, claimable: 150.00, rankReward: 0.3, activeRakeback: 0.5 },
+    { level: "Blood Diamond", threshold: 75000, claimable: 225.00, rankReward: 0.3, activeRakeback: 0.55 },
+    { level: "Obsidian", threshold: 100000, claimable: 300.00, rankReward: 0.3, activeRakeback: 0.6 },
+    { level: "Imperial", threshold: 150000, claimable: 450.00, rankReward: 0.3, activeRakeback: 0.65 },
+    { level: "Ascendent", threshold: 200000, claimable: 600.00, rankReward: 0.3, activeRakeback: 0.7 },
   ]
 
   // Helper to handle image error fallback
@@ -31,8 +31,7 @@ export function RakebackTiers() {
     <div className="space-y-6">
       <div className="bg-gradient-to-r from-purple-900/30 to-cyan-900/30 p-4 rounded-lg mb-6">
         <p className="text-center text-sm text-gray-300 xs:text-xs xs:leading-tight">
-          This is a showcase of our rakeback system. Connect your Rain.gg account to view your personal tier and
-          progress.
+          This is a <span className="font-bold text-cyan-400">showcase</span> of our rakeback system. The tiers below are for demonstration only and are not interactable. Connect your Rain.gg account in your dashboard to view and claim your real rewards.
         </p>
       </div>
 
@@ -40,17 +39,17 @@ export function RakebackTiers() {
         {tiers.map((tier, index) => (
           <div
             key={tier.level}
-            className={`p-4 rounded-lg border transition-all hover:border-${tier.color}-500/50 ${
+            className={`p-4 rounded-lg border transition-all hover:border-cyan-500/50 ${
               index === 0
                 ? "bg-gradient-to-r from-gray-800/70 to-gray-700/50 border-gray-500/50"
                 : "bg-gray-900/50 border-gray-800"
-            } xs:p-2 xs:rounded-md`}
+            } sm:p-2 sm:rounded-md`}
           >
             {/* Responsive flex: always stack on mobile, more margin for badge and rakeback */}
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2 gap-2">
               <div className="flex items-center gap-3 sm:gap-3">
                 <Image
-                  src={erroredImages[tier.level] ? "/placeholder.svg" : tier.image}
+                  src={erroredImages[tier.level] ? "/placeholder.svg" : `/images/tiers/${tier.level.toLowerCase().replace(/ /g, '-')}.png`}
                   alt={`${tier.level} tier`}
                   width={24}
                   height={24}
@@ -64,31 +63,31 @@ export function RakebackTiers() {
                 )}
               </div>
               {/* Rakeback always below on mobile, right on desktop */}
-              <div className="flex items-center gap-2 mt-2 sm:mt-0 text-xs sm:text-base">
-                <span className="text-gray-400">Rakeback:</span>
-                <span className="font-bold text-cyan-400">0.5%</span>
+              <div className="flex flex-col sm:flex-row gap-1 sm:gap-2 mt-2 sm:mt-0 text-xs sm:text-base">
+                <span className="text-gray-400">Rank Reward: <span className="font-bold text-cyan-400">{tier.rankReward}%</span></span>
+                <span className="text-gray-400">Active Rakeback: <span className="font-bold text-green-400">{tier.activeRakeback}%</span></span>
               </div>
             </div>
 
-            <div className="flex justify-between items-center mb-2 xs:flex-col xs:items-start xs:gap-1 xs:mb-1">
-              <div className="flex items-center gap-2 xs:text-xs">
-                <span className="text-sm text-gray-400 xs:text-xs">Wager:</span>
-                <span className="text-white xs:text-xs">{tier.threshold}</span>
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2 gap-1 sm:gap-0">
+              <div className="flex items-center gap-2 text-xs sm:text-base">
+                <span className="text-gray-400">Wager Requirement:</span>
+                <span className="text-white">{tier.threshold.toLocaleString()}</span>
               </div>
-              <div className="flex items-center gap-2 xs:text-xs">
-                <span className="text-sm text-gray-400 xs:text-xs">Coins:</span>
-                <span className="text-yellow-400 font-bold xs:text-xs">{tier.coins}</span>
+              <div className="flex items-center gap-2 text-xs sm:text-base">
+                <span className="text-gray-400">Claimable Coins:</span>
+                <span className="text-yellow-400 font-bold">{tier.claimable}</span>
               </div>
             </div>
 
-            {index < tiers.length - 1 && (
-              <div className="mt-3 xs:mt-2">
-                <div className="h-1 w-full bg-gray-800 rounded-full overflow-hidden">
-                  <div
-                    className={`h-full bg-gradient-to-r from-${tier.color}-600 to-${tier.color}-400`}
-                    style={{ width: "0%" }}
-                  ></div>
-                </div>
+            {index === 0 && (
+              <div className="text-xs text-gray-400 mt-2">
+                <p>Wager {tier.threshold} coins to unlock this rank. You will be able to claim <span className="text-yellow-400 font-bold">{tier.claimable}</span> coins as a one-time reward. After reaching this rank, every wager you make earns <span className="font-bold text-green-400">{tier.activeRakeback}%</span> rakeback, redeemable at any time.</p>
+              </div>
+            )}
+            {index !== 0 && (
+              <div className="text-xs text-gray-400 mt-2">
+                <p>Wager {tier.threshold} coins to unlock this rank. Claim <span className="text-yellow-400 font-bold">{tier.claimable}</span> coins instantly. Then, earn <span className="font-bold text-green-400">{tier.activeRakeback}%</span> rakeback on all future wagers, redeemable at any time.</p>
               </div>
             )}
           </div>
@@ -97,14 +96,14 @@ export function RakebackTiers() {
 
       <div className="flex flex-col space-y-4">
         <div className="text-center text-gray-400 text-sm xs:text-xs">
-          <p>View your current tier and track your personal progress in your dashboard</p>
+          <p>This is a static showcase. To view your current tier and track your personal progress, visit your dashboard.</p>
         </div>
         <Button
           className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white border-0 w-full"
           asChild
         >
           <Link href="/dashboard">
-            View Your Rakeback Progress
+            Go to Dashboard
             <ArrowRight className="ml-2 h-4 w-4" />
           </Link>
         </Button>
