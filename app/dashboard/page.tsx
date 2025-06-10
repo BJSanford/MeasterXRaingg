@@ -1,3 +1,5 @@
+"use client"
+
 import type { Metadata } from "next"
 import { Footer } from "@/components/footer"
 import { DashboardHeader } from "@/components/dashboard/dashboard-header"
