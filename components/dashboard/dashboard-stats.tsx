@@ -1,14 +1,28 @@
+import { useAuth } from "@/lib/auth-context"
 import { Card, CardContent } from "@/components/ui/card"
-import { Coins, DollarSign, Zap } from "lucide-react"
+import { DollarSign, Zap } from "lucide-react"
 
 export function DashboardStats() {
-  // This would normally come from your API
-  const stats = {
-    totalWagered: 1166.39,
-    currentRakeback: 5,
-    rakebackEarned: 0,
-    measterCoins: 0,
-    allTimeDeposited: 2500,
+  const { user } = useAuth()
+  const totalWagered = user?.totalWagered || 0
+  const allTimeDeposited = user?.totalDeposited || 0
+  const currentRakeback = user && user.totalWagered >= 1000
+    ? getRakebackPercent(user.totalWagered)
+    : null
+
+  function getRakebackPercent(wagered: number) {
+    if (wagered >= 200000) return 0.7
+    if (wagered >= 150000) return 0.65
+    if (wagered >= 100000) return 0.6
+    if (wagered >= 75000) return 0.55
+    if (wagered >= 50000) return 0.5
+    if (wagered >= 25000) return 0.45
+    if (wagered >= 15000) return 0.4
+    if (wagered >= 10000) return 0.35
+    if (wagered >= 5000) return 0.3
+    if (wagered >= 2500) return 0.25
+    if (wagered >= 1000) return 0.2
+    return null
   }
 
   return (
@@ -22,7 +36,7 @@ export function DashboardStats() {
             <p className="text-xs text-gray-400">Total Wagered</p>
             <div className="flex items-center gap-1">
               <img src="/coin.png" alt="coin" className="h-4 w-4" />
-              <p className="text-xl font-bold">{(stats.totalWagered || 0).toLocaleString()}</p>
+              <p className="text-xl font-bold text-white">{totalWagered.toLocaleString()}</p>
             </div>
             <p className="text-xs text-gray-500">All time</p>
           </div>
@@ -36,8 +50,12 @@ export function DashboardStats() {
           </div>
           <div>
             <p className="text-xs text-gray-400">Current Rakeback</p>
-            <p className="text-xl font-bold">{stats.currentRakeback}%</p>
-            <p className="text-xs text-gray-500">This month</p>
+            {currentRakeback !== null ? (
+              <p className="text-xl font-bold text-white">{(currentRakeback * 100).toFixed(2)}%</p>
+            ) : (
+              <p className="text-xl font-bold text-white">-</p>
+            )}
+            <p className="text-xs text-gray-500">{currentRakeback !== null ? "Active" : ""}</p>
           </div>
         </CardContent>
       </Card>
@@ -51,7 +69,7 @@ export function DashboardStats() {
             <p className="text-xs text-gray-400">All Time Deposited</p>
             <div className="flex items-center gap-1">
               <img src="/coin.png" alt="coin" className="h-4 w-4" />
-              <p className="text-xl font-bold">{stats.allTimeDeposited.toLocaleString()}</p>
+              <p className="text-xl font-bold text-white">{allTimeDeposited.toLocaleString()}</p>
             </div>
             <p className="text-xs text-gray-500">Total deposits</p>
           </div>

@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useAuth } from "@/lib/auth-context";
 import { Progress } from "@/components/ui/progress";
 import Image from "next/image";
 import axios from "axios";
+import { useEffect, useState } from "react";
 
 // Define types for rank and API response
 interface Rank {
@@ -37,43 +38,46 @@ const ranks: Rank[] = [
 ];
 
 export function RakebackSystem() {
-	const [user, setUser] = useState<UserRakeback | null>(null);
+	const { user } = useAuth();
+	const [rakeback, setRakeback] = useState<null | {
+		claimable: number;
+		active: number;
+		currentRank: number;
+	}>(null);
 	const [loading, setLoading] = useState(true);
 	const [cashoutLoading, setCashoutLoading] = useState(false);
+	const [claimLoading, setClaimLoading] = useState(false);
 
-	// Fetch user rakeback info (mocked for now)
 	useEffect(() => {
-		// Replace with real API call
-		async function fetchUser() {
-			// Simulate API
-			const wagered = 11660; // Example value
-			let currentRank = 0;
-			for (let i = ranks.length - 1; i >= 0; i--) {
-				if (wagered >= ranks[i].threshold) {
-					currentRank = i;
-					break;
-				}
+		if (!user) return;
+		// Calculate current rank
+		let currentRank = -1;
+		for (let i = ranks.length - 1; i >= 0; i--) {
+			if (user.totalWagered >= ranks[i].threshold) {
+				currentRank = i;
+				break;
 			}
-			// Simulate claimable and active
-			setUser({
-				wagered,
-				claimable: ranks[currentRank].claimable,
-				active: 12.5, // Example active rakeback
-				currentRank,
-			});
-			setLoading(false);
 		}
-		fetchUser();
-	}, []);
+		if (currentRank < 0) {
+			setRakeback(null);
+			setLoading(false);
+			return;
+		}
+		// Calculate claimable and active rakeback
+		const claimable = ranks[currentRank].claimable;
+		const percent = ranks[currentRank].activeRakeback;
+		const active = Number(((user.totalWagered - ranks[currentRank].threshold) * percent / 100).toFixed(2));
+		setRakeback({ claimable, active, currentRank });
+		setLoading(false);
+	}, [user]);
 
 	// Cashout handler (calls Discord bot via backend API)
 	const handleCashout = async () => {
-		if (!user || user.active <= 0) return;
+		if (!rakeback || rakeback.active <= 0) return;
 		setCashoutLoading(true);
 		try {
-			// Replace with real API call to trigger Discord bot
-			await axios.post("/api/user/cashout", { amount: user.active });
-			setUser({ ...user, active: 0 });
+			await axios.post("/api/user/cashout", { amount: rakeback.active });
+			setRakeback({ ...rakeback, active: 0 });
 			alert("Cashout successful! A Discord bot has been pinged for your payout.");
 		} catch (e) {
 			alert("Cashout failed. Please try again later.");
@@ -81,28 +85,49 @@ export function RakebackSystem() {
 		setCashoutLoading(false);
 	};
 
-	if (loading || !user) return <div className="text-gray-400">Loading your rakeback information...</div>;
+	// Claim handler (calls Discord bot via backend API)
+	const handleClaim = async () => {
+		if (!rakeback || rakeback.claimable <= 0) return;
+		setClaimLoading(true);
+		try {
+			await axios.post("/api/user/claim", { amount: rakeback.claimable });
+			alert("Claim successful! A Discord bot has been pinged for your claim.");
+		} catch (e) {
+			alert("Claim failed. Please try again later.");
+		}
+		setClaimLoading(false);
+	};
+
+	if (!user || loading) return <div className="text-gray-400">Loading your rakeback information...</div>;
+	if (!rakeback) return (
+		<section className="space-y-8">
+			<div className="bg-gray-900/60 rounded-lg p-4 mb-4">
+				<h2 className="text-xl font-bold mb-2 text-white">Rakeback Tiers & Progress</h2>
+				<p className="text-gray-400">Reach <span className="text-cyan-400 font-bold">Iron</span> rank by wagering at least <span className="text-yellow-400 font-bold">1,000</span> coins to unlock rakeback rewards!</p>
+			</div>
+		</section>
+	);
 
 	return (
 		<section className="space-y-8">
 			{/* User Progress & All Ranks */}
 			<div className="bg-gray-900/60 rounded-lg p-4 mb-4">
-				<h2 className="text-xl font-bold mb-2">Rakeback Tiers & Progress</h2>
+				<h2 className="text-xl font-bold mb-2 text-white">Rakeback Tiers & Progress</h2>
 				<div className="overflow-x-auto">
 					<div className="flex gap-4 min-w-[700px]">
 						{ranks.map((tier, idx) => {
-							const reached = user.wagered >= tier.threshold;
-							const isCurrent = idx === user.currentRank;
+							const reached = user.totalWagered >= tier.threshold;
+							const isCurrent = idx === rakeback.currentRank;
 							return (
 								<div
 									key={tier.level}
-									className={`flex flex-col items-center p-3 rounded-lg border-2 ${
+									className={`flex flex-col items-center p-3 rounded-lg border-2 min-w-[120px] ${
 										isCurrent
 											? "border-cyan-400 bg-cyan-900/30"
 											: reached
 											? "border-green-500 bg-green-900/10"
 											: "border-gray-700 bg-gray-800/40"
-									} min-w-[120px]`}
+									}`}
 								>
 									<Image
 										src={`/images/tiers/${tier.level.toLowerCase().replace(/ /g, '-')}.png`}
@@ -111,7 +136,7 @@ export function RakebackSystem() {
 										height={32}
 										className="mb-1"
 									/>
-									<span className="font-bold text-base mb-1">{tier.level}</span>
+									<span className="font-bold text-base mb-1 text-white">{tier.level}</span>
 									<span className="text-xs text-gray-400 mb-1">{tier.threshold.toLocaleString()} <img src="/coin.png" alt="coin" className="h-4 w-4 inline-block" /></span>
 									<span className="text-xs text-yellow-400 mb-1">+{tier.claimable} <img src="/coin.png" alt="coin" className="h-4 w-4 inline-block" /></span>
 									<span className="text-xs text-cyan-400">{tier.activeRakeback}% RB</span>
@@ -122,12 +147,12 @@ export function RakebackSystem() {
 					</div>
 				</div>
 				{/* Progress bar to next rank */}
-				{user.currentRank < ranks.length - 1 && (
+				{rakeback.currentRank < ranks.length - 1 && (
 					<div className="mt-4">
 						<Progress
 							value={
-								((user.wagered - ranks[user.currentRank].threshold) /
-									(ranks[user.currentRank + 1].threshold - ranks[user.currentRank].threshold)) * 100
+								((user.totalWagered - ranks[rakeback.currentRank].threshold) /
+									(ranks[rakeback.currentRank + 1].threshold - ranks[rakeback.currentRank].threshold)) * 100
 							}
 							className="h-2 bg-gray-800"
 							style={{ background: "linear-gradient(to right, #06b6d4, #a855f7)" }}
@@ -135,11 +160,11 @@ export function RakebackSystem() {
 						<div className="flex justify-between text-xs text-gray-400 mt-1">
 							<span>
 								<img src="/coin.png" alt="coin" className="h-4 w-4 inline-block" />
-								{user.wagered.toLocaleString()}
+								{user.totalWagered.toLocaleString()}
 							</span>
 							<span>
 								Next: <img src="/coin.png" alt="coin" className="h-4 w-4 inline-block" />
-								{ranks[user.currentRank + 1].threshold.toLocaleString()}
+								{ranks[rakeback.currentRank + 1].threshold.toLocaleString()}
 							</span>
 						</div>
 					</div>
@@ -150,31 +175,31 @@ export function RakebackSystem() {
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 				{/* Claimable Rakeback */}
 				<div className="bg-gray-900/60 rounded-lg p-4 flex flex-col items-start">
-					<h3 className="text-lg font-bold mb-2">Claimable Rakeback</h3>
+					<h3 className="text-lg font-bold mb-2 text-white">Claimable Rakeback</h3>
 					<div className="flex items-center gap-2 mb-2">
 						<img src="/coin.png" alt="coin" className="h-5 w-5" />
-						<span className="text-2xl font-bold text-yellow-400">{user.claimable}</span>
+						<span className="text-2xl font-bold text-yellow-400">{rakeback.claimable}</span>
 					</div>
 					<p className="text-xs text-gray-400 mb-2">One-time reward for reaching your current rank.</p>
 					<button
 						className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50"
-						disabled={user.claimable <= 0}
-						onClick={() => alert("Claim logic to be implemented (Discord bot ping)")}
+						disabled={rakeback.claimable <= 0 || claimLoading}
+						onClick={handleClaim}
 					>
-						Claim Now
+						{claimLoading ? "Processing..." : "Claim Now"}
 					</button>
 				</div>
 				{/* Active Rakeback */}
 				<div className="bg-gray-900/60 rounded-lg p-4 flex flex-col items-start">
-					<h3 className="text-lg font-bold mb-2">Active Rakeback</h3>
+					<h3 className="text-lg font-bold mb-2 text-white">Active Rakeback</h3>
 					<div className="flex items-center gap-2 mb-2">
 						<img src="/coin.png" alt="coin" className="h-5 w-5" />
-						<span className="text-2xl font-bold text-green-400">{user.active.toFixed(2)}</span>
+						<span className="text-2xl font-bold text-green-400">{rakeback.active.toFixed(2)}</span>
 					</div>
 					<p className="text-xs text-gray-400 mb-2">Earned from all wagers at your current rank. Updates every 10 minutes.</p>
 					<button
 						className="px-4 py-2 bg-cyan-600 text-white rounded-lg hover:bg-cyan-700 disabled:opacity-50"
-						disabled={user.active <= 0 || cashoutLoading}
+						disabled={rakeback.active <= 0 || cashoutLoading}
 						onClick={handleCashout}
 					>
 						{cashoutLoading ? "Processing..." : "Cashout"}
