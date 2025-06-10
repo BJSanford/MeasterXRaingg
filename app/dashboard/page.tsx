@@ -1,16 +1,10 @@
 "use client"
 
-import type { Metadata } from "next"
 import { Footer } from "@/components/footer"
 import { DashboardHeader } from "@/components/dashboard/dashboard-header"
 import { DashboardStats } from "@/components/dashboard/dashboard-stats"
 import { RakebackSystem } from "@/components/dashboard/rakeback-system"
 import { AnimatedBackground } from "@/components/animated-background"
-
-export const metadata: Metadata = {
-  title: "Dashboard | MeasterSkins",
-  description: "View your MeasterSkins dashboard, stats, and rewards.",
-}
 
 export default function DashboardPage() {
   return (
