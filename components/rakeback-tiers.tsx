@@ -30,13 +30,13 @@ export function RakebackTiers() {
   return (
     <div className="space-y-6">
       <div className="bg-gradient-to-r from-purple-900/30 to-cyan-900/30 p-4 rounded-lg mb-6">
-        <p className="text-center text-sm text-gray-300">
+        <p className="text-center text-sm text-gray-300 xs:text-xs xs:leading-tight">
           This is a showcase of our rakeback system. Connect your Rain.gg account to view your personal tier and
           progress.
         </p>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-4 xs:space-y-2">
         {tiers.map((tier, index) => (
           <div
             key={tier.level}
@@ -44,47 +44,43 @@ export function RakebackTiers() {
               index === 0
                 ? "bg-gradient-to-r from-gray-800/70 to-gray-700/50 border-gray-500/50"
                 : "bg-gray-900/50 border-gray-800"
-            }`}
+            } xs:p-2 xs:rounded-md`}
           >
-            <div className="flex justify-between items-center mb-2">
-              <div className="flex items-center gap-3">
+            <div className="flex justify-between items-center mb-2 xs:flex-col xs:items-start xs:gap-1 xs:mb-1">
+              <div className="flex items-center gap-3 xs:gap-2">
                 <Image
-                  src={
-                    erroredImages[tier.level]
-                      ? "/placeholder.svg"
-                      : tier.image
-                  }
+                  src={erroredImages[tier.level] ? "/placeholder.svg" : tier.image}
                   alt={`${tier.level} tier`}
                   width={24}
                   height={24}
-                  className="w-6 h-6"
+                  className="w-6 h-6 xs:w-5 xs:h-5"
                   onError={() => handleImgError(tier.level)}
                   priority={index < 3}
                 />
-                <span className="font-medium text-lg">{tier.level}</span>
+                <span className="font-medium text-lg xs:text-base">{tier.level}</span>
                 {index === 0 && (
-                  <span className="px-2 py-0.5 text-xs bg-gray-500/30 text-gray-300 rounded-full">Entry Tier</span>
+                  <span className="px-2 py-0.5 text-xs bg-gray-500/30 text-gray-300 rounded-full xs:px-1 xs:text-[10px]">Entry Tier</span>
                 )}
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-400">Rakeback:</span>
-                <span className="font-bold text-cyan-400">0.5%</span>
+              <div className="flex items-center gap-2 xs:mt-1 xs:text-xs">
+                <span className="text-sm text-gray-400 xs:text-xs">Rakeback:</span>
+                <span className="font-bold text-cyan-400 xs:text-xs">0.5%</span>
               </div>
             </div>
 
-            <div className="flex justify-between items-center mb-2">
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-400">Wager:</span>
-                <span className="text-white">{tier.threshold}</span>
+            <div className="flex justify-between items-center mb-2 xs:flex-col xs:items-start xs:gap-1 xs:mb-1">
+              <div className="flex items-center gap-2 xs:text-xs">
+                <span className="text-sm text-gray-400 xs:text-xs">Wager:</span>
+                <span className="text-white xs:text-xs">{tier.threshold}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-400">Coins:</span>
-                <span className="text-yellow-400 font-bold">{tier.coins}</span>
+              <div className="flex items-center gap-2 xs:text-xs">
+                <span className="text-sm text-gray-400 xs:text-xs">Coins:</span>
+                <span className="text-yellow-400 font-bold xs:text-xs">{tier.coins}</span>
               </div>
             </div>
 
             {index < tiers.length - 1 && (
-              <div className="mt-3">
+              <div className="mt-3 xs:mt-2">
                 <div className="h-1 w-full bg-gray-800 rounded-full overflow-hidden">
                   <div
                     className={`h-full bg-gradient-to-r from-${tier.color}-600 to-${tier.color}-400`}
@@ -98,7 +94,7 @@ export function RakebackTiers() {
       </div>
 
       <div className="flex flex-col space-y-4">
-        <div className="text-center text-gray-400 text-sm">
+        <div className="text-center text-gray-400 text-sm xs:text-xs">
           <p>View your current tier and track your personal progress in your dashboard</p>
         </div>
         <Button
