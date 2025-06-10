@@ -5,17 +5,23 @@ import Image from "next/image"
 
 export function RakebackTiers() {
   const tiers = [
-    { level: "Iron", threshold: "1,000", coins: 5, color: "gray", img: "/images/iron.png" },
-    { level: "Bronze", threshold: "2,500", coins: 12.5, color: "amber", img: "/images/bronze.png" },
-    { level: "Silver", threshold: "5,000", coins: 25, color: "slate", img: "/images/silver.png" },
-    { level: "Gold", threshold: "10,000", coins: 50, color: "yellow", img: "/images/gold.png" },
-    { level: "Platinum", threshold: "15,000", coins: 75, color: "purple", img: "/images/platinum.png" },
-    { level: "Emerald", threshold: "25,000", coins: 125, color: "emerald", img: "/images/emerald.png" },
-    { level: "Diamond", threshold: "50,000", coins: 250, color: "cyan", img: "/images/diamond.png" },
-    { level: "Blood Diamond", threshold: "75,000", coins: 375, color: "rose", img: "/images/blood-diamond.png" },
-    { level: "Obsidian", threshold: "100,000", coins: 500, color: "slate", img: "/images/obsidian.png" },
-    { level: "Imperial", threshold: "150,000", coins: 750, color: "amber", img: "/images/imperial.png" },
-    { level: "Ascendent", threshold: "200,000", coins: 1000, color: "fuchsia", img: "/images/ascendent.png" },
+    { level: "Iron", threshold: "$1,000", coins: 5, color: "gray", image: "/images/tiers/iron.png" },
+    { level: "Bronze", threshold: "$2,500", coins: 12.5, color: "amber", image: "/images/tiers/bronze.png" },
+    { level: "Silver", threshold: "$5,000", coins: 25, color: "slate", image: "/images/tiers/silver.png" },
+    { level: "Gold", threshold: "$10,000", coins: 50, color: "yellow", image: "/images/tiers/gold.png" },
+    { level: "Platinum", threshold: "$15,000", coins: 75, color: "purple", image: "/images/tiers/platinum.png" },
+    { level: "Emerald", threshold: "$25,000", coins: 125, color: "emerald", image: "/images/tiers/emerald.png" },
+    { level: "Diamond", threshold: "$50,000", coins: 250, color: "cyan", image: "/images/tiers/diamond.png" },
+    {
+      level: "Blood Diamond",
+      threshold: "$75,000",
+      coins: 375,
+      color: "rose",
+      image: "/images/tiers/blood-diamond.png",
+    },
+    { level: "Obsidian", threshold: "$100,000", coins: 500, color: "slate", image: "/images/tiers/obsidian.png" },
+    { level: "Imperial", threshold: "$150,000", coins: 750, color: "amber", image: "/images/tiers/imperial.png" },
+    { level: "Ascendent", threshold: "$200,000", coins: 1000, color: "fuchsia", image: "/images/tiers/ascendent.png" },
   ]
 
   return (
@@ -39,13 +45,12 @@ export function RakebackTiers() {
           >
             <div className="flex justify-between items-center mb-2">
               <div className="flex items-center gap-3">
-                <div className={`w-3 h-3 rounded-full bg-${tier.color}-500`}></div>
                 <Image
-                  src={tier.img}
-                  alt={tier.level}
-                  width={32}
-                  height={32}
-                  className="inline-block mr-2"
+                  src={tier.image || "/placeholder.svg"}
+                  alt={`${tier.level} tier`}
+                  width={24}
+                  height={24}
+                  className="w-6 h-6"
                 />
                 <span className="font-medium text-lg">{tier.level}</span>
                 {index === 0 && (
@@ -61,10 +66,7 @@ export function RakebackTiers() {
             <div className="flex justify-between items-center mb-2">
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-400">Wager:</span>
-                <span className="text-white flex items-center">
-                  <Image src="/coin.png" alt="coin" width={16} height={16} className="inline-block mr-1" />
-                  {tier.threshold}
-                </span>
+                <span className="text-white">{tier.threshold}</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-400">Coins:</span>
