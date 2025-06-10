@@ -28,7 +28,7 @@ export function TopPlayers({ topPlayers }: { topPlayers: any[] }) {
 	return (
 		<div className="mb-10">
 			<h2 className="text-2xl font-bold mb-6">
-				Top 3 Players This Week
+				
 			</h2>
 			<div className="grid grid-cols-3 gap-6 items-end">
 				{positions.map((position, idx) => {
