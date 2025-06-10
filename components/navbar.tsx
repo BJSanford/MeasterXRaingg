@@ -73,67 +73,39 @@ export function Navbar({ session }: NavbarProps) {
           )}
 
           {/* Mobile menu button */}
-          <Button variant="ghost" size="icon" className="md:hidden" onClick={toggleMenu}>
-            {isOpen ? "X" : "Menu"}
+          <Button variant="ghost" size="icon" className="md:hidden focus:outline-none focus:ring-2 focus:ring-purple-500" onClick={toggleMenu} aria-label="Toggle menu">
+            <span className="sr-only">Toggle menu</span>
+            <svg className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              {isOpen ? (
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+              )}
+            </svg>
           </Button>
         </div>
       </div>
 
       {/* Mobile Navigation */}
       {isOpen && (
-        <div className="md:hidden">
-          <div className="space-y-1 px-4 pb-3 pt-2">
-            <Link
-              href="/"
-              className="block py-2 text-base font-medium text-white hover:text-purple-400"
-              onClick={() => setIsOpen(false)}
-            >
-              Home
-            </Link>
-            <Link
-              href="/leaderboard"
-              className="block py-2 text-base font-medium text-white hover:text-purple-400"
-              onClick={() => setIsOpen(false)}
-            >
-              Leaderboard
-            </Link>
-            <Link
-              href="/rewards"
-              className="block py-2 text-base font-medium text-white hover:text-purple-400"
-              onClick={() => setIsOpen(false)}
-            >
-              Rewards
-            </Link>
-            <Link
-              href="/giveaways"
-              className="block py-2 text-base font-medium text-white hover:text-purple-400"
-              onClick={() => setIsOpen(false)}
-            >
-              Giveaways
-            </Link>
-            <Link
-              href="/about"
-              className="block py-2 text-base font-medium text-white hover:text-purple-400"
-              onClick={() => setIsOpen(false)}
-            >
-              About
-            </Link>
-            {!isLoggedIn && (
-              <div className="flex flex-col gap-2 pt-2">
-                <Button
-                  variant="outline"
-                  className="w-full justify-center"
-                  onClick={() => {
-                    window.location.href = "/login";
-                    setIsOpen(false);
-                  }}
-                >
-                  Login with Discord
-                </Button>
-              </div>
-            )}
-          </div>
-        </div>
+        <nav className="md:hidden bg-black/95 backdrop-blur-lg border-t border-gray-800 px-4 py-4 space-y-2 animate-fade-in-down">
+          <Link href="/" className="block py-2 text-base font-medium text-white hover:text-purple-400 rounded transition-colors" onClick={() => setIsOpen(false)}>
+            Home
+          </Link>
+          <Link href="/leaderboard" className="block py-2 text-base font-medium text-white hover:text-purple-400 rounded transition-colors" onClick={() => setIsOpen(false)}>
+            Leaderboard
+          </Link>
+          <Link href="/rewards" className="block py-2 text-base font-medium text-white hover:text-purple-400 rounded transition-colors" onClick={() => setIsOpen(false)}>
+            Rewards
+          </Link>
+          <Link href="/giveaways" className="block py-2 text-base font-medium text-white hover:text-purple-400 rounded transition-colors" onClick={() => setIsOpen(false)}>
+            Giveaways
+          </Link>
+          <Link href="/about" className="block py-2 text-base font-medium text-white hover:text-purple-400 rounded transition-colors" onClick={() => setIsOpen(false)}>
+            About
+          </Link>
+          {/* Add login/logout button for mobile if needed */}
+        </nav>
       )}
     </header>
   );

@@ -189,6 +189,17 @@ html {
   }
 }
 
+@keyframes fade-in-down {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Utility classes */
 @layer utilities {
   .animate-text {
@@ -215,6 +226,10 @@ html {
 
   .animate-twinkle {
     animation: twinkle 2s ease-in-out infinite;
+  }
+
+  .animate-fade-in-down {
+    animation: fade-in-down 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
   }
 }
 

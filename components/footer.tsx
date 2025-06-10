@@ -6,7 +6,7 @@ export function Footer() {
   return (
     <footer className="border-t border-gray-800 bg-black text-white">
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           <div className="space-y-4">
             <Link href="/" className="flex items-center gap-2">
               <div className="relative h-8 w-8 overflow-hidden">
@@ -101,22 +101,22 @@ export function Footer() {
             <p className="text-gray-400 text-sm mb-4">
               Subscribe to our newsletter for the latest updates, giveaways, and promotions.
             </p>
-            <div className="flex flex-col space-y-2">
+            <form className="flex flex-col sm:flex-row gap-2">
               <input
                 type="email"
                 placeholder="Your email"
-                className="px-4 py-2 bg-gray-900 border border-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="px-4 py-2 bg-gray-900 border border-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 w-full sm:w-auto"
               />
-              <Button className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white border-0">
+              <Button className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white border-0 w-full sm:w-auto">
                 Subscribe
               </Button>
-            </div>
+            </form>
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-12 pt-6 flex flex-col md:flex-row justify-between items-center">
+        <div className="border-t border-gray-800 mt-12 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-gray-400 text-sm">&copy; {new Date().getFullYear()} MeasterSkins. All rights reserved.</p>
-          <div className="flex space-x-4 mt-4 md:mt-0">
+          <div className="flex flex-wrap gap-4 justify-center md:justify-end">
             <Link href="/terms" className="text-gray-400 text-sm hover:text-purple-400 transition-colors">
               Terms
             </Link>
