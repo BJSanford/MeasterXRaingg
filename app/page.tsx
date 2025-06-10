@@ -4,11 +4,12 @@ import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { TopPlayers } from "@/components/leaderboard/top-players"
 import { Card, CardContent } from "@/components/ui/card"
-import { Trophy, Zap, Gift, Users, DollarSign, Gamepad2 } from "lucide-react"
+import { Trophy, Zap } from "lucide-react"
 import Link from "next/link"
 import { Footer } from "@/components/footer"
 import { RakebackTiers } from "@/components/rakeback-tiers"
 import { AnimatedBackground } from "@/components/animated-background"
+import { HowItWorks } from "@/components/how-it-works"
 
 export default function HomePage() {
   const [topPlayers, setTopPlayers] = useState<any[]>([])
@@ -132,73 +133,7 @@ export default function HomePage() {
         </section>
 
         {/* How It Works Section */}
-        <section className="py-16 px-4 relative">
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-900/10 to-transparent"></div>
-          <div className="container mx-auto max-w-7xl relative">
-            <div className="text-center mb-10">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-cyan-400 animate-text">
-                  How It Works
-                </span>
-              </h2>
-              <p className="text-gray-400 text-center max-w-2xl mx-auto mb-8">
-                Earning rewards with MeasterSkins is simple. Follow these steps to start collecting Measter Coins and
-                unlock exclusive rewards.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[
-                {
-                  icon: Users,
-                  title: "Link your Rain.gg and Discord accounts",
-                  description: "to start tracking your progress.",
-                  color: "purple",
-                  step: "1",
-                },
-                {
-                  icon: Gamepad2,
-                  title: "Play games and place wagers",
-                  description: "using code MEASTER for bonus rewards.",
-                  color: "cyan",
-                  step: "2",
-                },
-                {
-                  icon: DollarSign,
-                  title: "Automatically earn coins",
-                  description: "based on your wagered amounts and activities.",
-                  color: "yellow",
-                  step: "3",
-                },
-                {
-                  icon: Gift,
-                  title: "Spend your earned coins",
-                  description: "on exclusive skins, bonuses, and more.",
-                  color: "green",
-                  step: "4",
-                },
-              ].map((step, index) => (
-                <div key={index} className="relative group">
-                  <div
-                    className={`absolute -inset-0.5 bg-gradient-to-r from-${step.color}-600/30 to-${step.color}-400/30 rounded-lg blur opacity-30 group-hover:opacity-70 transition duration-300`}
-                  ></div>
-                  <Card className="relative h-full bg-gray-900/80 border-gray-800 backdrop-blur-sm">
-                    <CardContent className="p-6 flex flex-col items-center text-center">
-                      <div
-                        className={`w-12 h-12 rounded-full bg-${step.color}-500/20 flex items-center justify-center mb-4`}
-                      >
-                        <step.icon className={`h-6 w-6 text-${step.color}-400`} />
-                      </div>
-                      <div className="absolute top-3 right-3 text-xs font-bold text-gray-600">{step.step}</div>
-                      <h3 className="text-lg font-bold mb-2">{step.title}</h3>
-                      <p className="text-gray-400 text-sm">{step.description}</p>
-                    </CardContent>
-                  </Card>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+        <HowItWorks />
       </main>
 
       <div className="relative z-20">
