@@ -6,9 +6,57 @@ import { Settings, Bell, Crown, Zap } from "lucide-react"
 import Link from "next/link"
 import { useAuth } from "@/lib/auth-context"
 import { UserProfile } from "@/lib/api"
+import { useEffect, useState } from "react"
+import axios from "axios"
+
+interface LeaderboardParticipant {
+  username: string;
+  avatar: {
+    medium: string;
+  };
+  totalDeposited: number;
+}
 
 export function DashboardHeader() {
   const { user } = useAuth()
+  const [rainAvatar, setRainAvatar] = useState("/placeholder-user.jpg")
+  const [totalDeposited, setTotalDeposited] = useState(0)
+
+  useEffect(() => {
+    if (user) {
+      // Fetch avatar from Rain.GG leaderboard endpoint
+      axios
+        .get("https://api.rain.gg/v1/affiliates/leaderboard", {
+          params: {
+            start_date: "2024-01-01T00:00:00.00Z",
+            end_date: "2026-01-01T00:00:00.00Z",
+            type: "wagered",
+          },
+        })
+        .then((response) => {
+          const participant = (response.data as LeaderboardParticipant[]).find((p) => p.username === user.username)
+          if (participant) {
+            setRainAvatar(participant.avatar.medium)
+          }
+        })
+
+      // Fetch total deposited from Rain.GG leaderboard endpoint
+      axios
+        .get("https://api.rain.gg/v1/affiliates/leaderboard", {
+          params: {
+            start_date: "2024-01-01T00:00:00.00Z",
+            end_date: "2026-01-01T00:00:00.00Z",
+            type: "deposited",
+          },
+        })
+        .then((response) => {
+          const participant = (response.data as LeaderboardParticipant[]).find((p) => p.username === user.username)
+          if (participant) {
+            setTotalDeposited(participant.totalDeposited)
+          }
+        })
+    }
+  }, [user])
 
   if (!user) {
     return (
@@ -21,7 +69,7 @@ export function DashboardHeader() {
     )
   }
 
-  const progressPercentage = (user?.totalWagered / user?.totalDeposited) * 100
+  const progressPercentage = (user?.totalWagered / totalDeposited) * 100
 
   return (
     <div className="relative">
@@ -33,7 +81,7 @@ export function DashboardHeader() {
           <div className="flex items-center gap-6">
             <div className="relative">
               <Avatar className="h-20 w-20 border-4 border-gradient-to-r from-purple-500 to-cyan-500 shadow-2xl">
-                <AvatarImage src={user?.avatar?.medium || "/placeholder-user.jpg"} alt={user?.username || "User"} />
+                <AvatarImage src={rainAvatar} alt={user?.username || "User"} />
                 <AvatarFallback className="bg-gradient-to-br from-purple-600 to-cyan-600 text-white text-xl font-bold">
                   {user?.username?.slice(0, 2).toUpperCase() || "JE"}
                 </AvatarFallback>
@@ -49,7 +97,9 @@ export function DashboardHeader() {
                   Welcome, {user?.username || "User"}
                 </h1>
                 <div className="px-3 py-1 bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 border border-emerald-500/30 rounded-full">
-                  <span className="text-emerald-400 text-sm font-semibold">{user?.rakebackPercentage || "0.3"}%</span>
+                  <span className="text-emerald-400 text-sm font-semibold">
+                    {user?.rakebackPercentage || "0.3"}%
+                  </span>
                 </div>
               </div>
 
@@ -61,7 +111,7 @@ export function DashboardHeader() {
               <div className="w-64 space-y-1">
                 <div className="flex justify-between text-xs text-gray-400">
                   <span>{user?.totalWagered.toLocaleString()} Wagered</span>
-                  <span>{user?.totalDeposited.toLocaleString()} Deposited</span>
+                  <span>{totalDeposited.toLocaleString()} Deposited</span>
                 </div>
                 <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
                   <div
