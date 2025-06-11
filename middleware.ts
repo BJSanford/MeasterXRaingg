@@ -6,21 +6,18 @@ export async function middleware(request: NextRequest) {
   const rainUsername = request.cookies.get("rainUsername")?.value
   const verified = request.cookies.get("verified")?.value
 
-  // If accessing dashboard without being logged in, redirect to login
+  // Ensure proper redirection to dashboard
   if (
     request.nextUrl.pathname.startsWith("/dashboard") &&
-    !discordUsername &&
-    !rainUsername
+    (!discordUsername || !rainUsername || verified !== "true")
   ) {
-    return NextResponse.redirect(new URL("/login", request.url))
-  }
+    if (!discordUsername || !rainUsername) {
+      return NextResponse.redirect(new URL("/login", request.url))
+    }
 
-  // If not verified, redirect to pending page
-  if (
-    request.nextUrl.pathname.startsWith("/dashboard") &&
-    verified !== "true"
-  ) {
-    return NextResponse.redirect(new URL("/verification-pending", request.url))
+    if (verified !== "true") {
+      return NextResponse.redirect(new URL("/verification-pending", request.url))
+    }
   }
 
   return NextResponse.next()
