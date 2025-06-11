@@ -21,7 +21,6 @@ export function DashboardHeader() {
     )
   }
 
-  // Ensure the user object aligns with the UserProfile type
   const progressPercentage = (user?.totalWagered / user?.totalDeposited) * 100
 
   return (
@@ -34,7 +33,7 @@ export function DashboardHeader() {
           <div className="flex items-center gap-6">
             <div className="relative">
               <Avatar className="h-20 w-20 border-4 border-gradient-to-r from-purple-500 to-cyan-500 shadow-2xl">
-                <AvatarImage src={user?.avatar?.medium || "/placeholder.svg?height=80&width=80"} alt={user?.username || "User"} />
+                <AvatarImage src={user?.avatar?.medium || "/placeholder-user.jpg"} alt={user?.username || "User"} />
                 <AvatarFallback className="bg-gradient-to-br from-purple-600 to-cyan-600 text-white text-xl font-bold">
                   {user?.username?.slice(0, 2).toUpperCase() || "JE"}
                 </AvatarFallback>
@@ -50,12 +49,12 @@ export function DashboardHeader() {
                   Welcome, {user?.username || "User"}
                 </h1>
                 <div className="px-3 py-1 bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 border border-emerald-500/30 rounded-full">
-                  <span className="text-emerald-400 text-sm font-semibold">{user?.rakebackPercentage}%</span>
+                  <span className="text-emerald-400 text-sm font-semibold">{user?.rakebackPercentage || "0.3"}%</span>
                 </div>
               </div>
 
               <p className="text-gray-400 text-sm">
-                Member since {user?.joinDate || "May 2023"} • Rakeback {user?.rakebackPercentage}%
+                Rakeback {user?.rakebackPercentage || "0.3"}%
               </p>
 
               {/* XP Progress Bar */}
@@ -80,9 +79,8 @@ export function DashboardHeader() {
               size="icon"
               className="border-gray-700/50 bg-gray-800/50 backdrop-blur-sm text-white hover:bg-gray-700/50 hover:border-purple-500/50 transition-all duration-300 relative group"
             >
-              <Bell className="h-5 w-5" />
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-              <span className="sr-only">Notifications</span>
+              <Settings className="h-5 w-5" />
+              <span className="sr-only">Settings</span>
             </Button>
 
             <Button
@@ -90,8 +88,9 @@ export function DashboardHeader() {
               size="icon"
               className="border-gray-700/50 bg-gray-800/50 backdrop-blur-sm text-white hover:bg-gray-700/50 hover:border-cyan-500/50 transition-all duration-300"
             >
-              <Settings className="h-5 w-5" />
-              <span className="sr-only">Settings</span>
+              <Bell className="h-5 w-5" />
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+              <span className="sr-only">Notifications</span>
             </Button>
 
             <Button className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white border-0 px-6 shadow-lg hover:shadow-purple-500/25 transition-all duration-300 group">
