@@ -42,6 +42,48 @@ export const authOptions: AuthOptions = {
     signIn: "/login", // Redirect to the login page if not authenticated
   },
   secret: process.env.NEXTAUTH_SECRET,
+  events: {
+    async signIn(message) {
+      // No-op
+    },
+    async signOut(message) {
+      // No-op
+    },
+    async createUser(message) {
+      // No-op
+    },
+    async updateUser(message) {
+      // No-op
+    },
+    async linkAccount(message) {
+      // No-op
+    },
+    async session(message) {
+      // No-op
+    },
+    async error({ error }) {
+      // Log the error and any response headers (including Retry-After if present)
+      console.error("[NextAuth][EVENT][ERROR]", error);
+      if (error?.response?.headers) {
+        console.error("[NextAuth][EVENT][ERROR][HEADERS]", error.response.headers);
+      }
+    },
+  },
+  logger: {
+    error(code, metadata) {
+      console.error("[NextAuth][LOGGER][ERROR]", code, metadata);
+      if (
+        metadata &&
+        typeof metadata === "object" &&
+        "response" in metadata &&
+        metadata.response &&
+        typeof metadata.response === "object" &&
+        "headers" in (metadata.response as any)
+      ) {
+        console.error("[NextAuth][LOGGER][ERROR][HEADERS]", (metadata.response as any).headers);
+      }
+    },
+  },
 };
 
 export default NextAuth(authOptions);
