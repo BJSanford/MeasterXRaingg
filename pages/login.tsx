@@ -6,6 +6,8 @@ export default function LoginPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
+  const [loginAttempted, setLoginAttempted] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (status === "loading") return; // Handle loading state
@@ -13,21 +15,34 @@ export default function LoginPage() {
       // Store Discord user details in localStorage
       if (session?.user) {
         localStorage.setItem("discordUsername", session.user.name || "");
-        localStorage.setItem("discordAvatar", session.user.image || "");
+        const avatar = (session.user as any)?.image;
+        localStorage.setItem("discordAvatar", typeof avatar === "string" ? avatar : "");
       }
       // Redirect to home page after login
       router.push("/");
     } else if (status === "unauthenticated") {
-      // Trigger Discord login
-      signIn("discord");
+      if (!loginAttempted) {
+        setLoginAttempted(true);
+        signIn("discord");
+      } else {
+        setLoading(false);
+        setError(
+          "Failed to log in with Discord. Please try again later or contact support."
+        );
+      }
     }
-  }, [status, session, router]);
+  }, [status, session, router, loginAttempted]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white">
       <div className="text-center p-8 bg-gray-800 rounded-lg shadow-lg">
         <h1 className="text-3xl font-bold mb-6">Logging in...</h1>
-        {loading && <p className="text-gray-400">Please wait while we log you in with Discord.</p>}
+        {loading && (
+          <p className="text-gray-400">
+            Please wait while we log you in with Discord.
+          </p>
+        )}
+        {error && <p className="text-red-400 mt-4">{error}</p>}
       </div>
     </div>
   );
