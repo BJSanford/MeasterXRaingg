@@ -21,10 +21,10 @@ export default function HomePage() {
       try {
         const response = await fetch("/api/leaderboard")
         const data = await response.json()
-        if (data && data.leaderboard) {
+        if (Array.isArray(data.leaderboard)) {
           setTopPlayers(data.leaderboard.slice(0, 3)) // Get top 3 players
         } else {
-          setError("Failed to load leaderboard data.")
+          setError("Leaderboard data is not in the expected format.")
         }
       } catch (err) {
         console.error("Error fetching leaderboard data:", err)

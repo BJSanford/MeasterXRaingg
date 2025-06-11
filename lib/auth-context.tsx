@@ -5,6 +5,7 @@ import { createContext, useContext, useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { verifyUser } from "@/lib/server-api" // Make sure this is imported
 import oldApiData from "@/lib/static-data/old-api-data.json"; // Import the static data
+import { UserProfile } from "@/lib/api";
 
 interface AuthContextType {
   user: UserProfile | null
@@ -16,50 +17,41 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 const getWeeklyWagerHistory = async (username: string): Promise<{ date: string, amount: number }[]> => {
-  const API_BASE_URL = "https://api.rain.gg/v1"
-  const API_KEY = process.env.RAIN_API_KEY || "14d2ae5d-cea5-453a-b814-6fd810bda580"
-  const headers = {
-    accept: "application/json",
-    "x-api-key": API_KEY,
-  }
-  const now = new Date()
-  const weeks: { date: string, amount: number }[] = []
+  const weeks: { date: string, amount: number }[] = [];
+  const now = new Date();
 
   for (let i = 0; i < 4; i++) {
-    // Calculate week start/end
-    const end = new Date(now)
-    end.setDate(now.getDate() - (7 * i))
-    const start = new Date(end)
-    start.setDate(end.getDate() - 6)
-    // Format as ISO string
-    const startStr = start.toISOString().split(".")[0] + ".00Z"
-    const endStr = end.toISOString().split(".")[0] + ".00Z"
-    const url = `${API_BASE_URL}/affiliates/leaderboard?start_date=${encodeURIComponent(startStr)}&end_date=${encodeURIComponent(endStr)}&type=wagered`
+    const end = new Date(now);
+    end.setDate(now.getDate() - 7 * i);
+    const start = new Date(end);
+    start.setDate(end.getDate() - 6);
+
+    const startStr = start.toISOString().split(".")[0] + ".00Z";
+    const endStr = end.toISOString().split(".")[0] + ".00Z";
+
     try {
-      const res = await fetch(url, { headers, cache: "no-store" })
-      if (!res.ok) continue
-      const data = await res.json()
-      const arr = Array.isArray(data.results)
-        ? data.results
-        : Array.isArray(data.leaderboard)
-          ? data.leaderboard
-          : []
-      const userEntry = arr.find((u: any) =>
-        typeof u.username === "string" &&
-        u.username.trim().toLowerCase() === username.trim().toLowerCase()
-      )
+      const res = await fetch(
+        `/api/proxy/leaderboard?start_date=${encodeURIComponent(startStr)}&end_date=${encodeURIComponent(endStr)}&type=wagered`
+      );
+
+      if (!res.ok) continue;
+
+      const data = await res.json();
+      const userEntry = data.results?.find((u: any) => u.username?.toLowerCase() === username.toLowerCase());
+
       weeks.unshift({
-        date: startStr.substring(0, 10), // show week start date
+        date: startStr.substring(0, 10),
         amount: userEntry?.wagered ?? 0,
-      })
+      });
     } catch {
       weeks.unshift({
         date: startStr.substring(0, 10),
         amount: 0,
-      })
+      });
     }
   }
-  return weeks
+
+  return weeks;
 }
 
 const getUserWageredFromLeaderboard = async (username: string): Promise<number> => {
@@ -123,40 +115,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const loadUser = async (rainUsername: string) => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      const userProfile = await verifyUser(rainUsername)
-      let wagerHistory: { date: string, amount: number }[] = []
-      let totalWagered = 0
+      const userProfile: Partial<UserProfile> = await verifyUser(rainUsername);
       if (userProfile) {
-        // Fetch correct wagered and deposited values from your API
-        totalWagered = await getUserWageredFromLeaderboard(userProfile.username)
-        const totalDeposited = await getUserDepositedFromLeaderboard(userProfile.username)
-        wagerHistory = await getWeeklyWagerHistory(userProfile.username)
+        const totalWagered = await getUserWageredFromLeaderboard(userProfile.username || "");
+        const totalDeposited = await getUserDepositedFromLeaderboard(userProfile.username || "");
+        const wagerHistory = await getWeeklyWagerHistory(userProfile.username || "");
+
         setUser({
-          id: userProfile.username, // Use username as fallback if id is missing
-          username: userProfile.username,
-          avatar: userProfile.avatar,
+          id: userProfile.username || "unknown",
+          username: userProfile.username || "unknown",
+          avatar: userProfile.avatar || "placeholder.jpg",
           totalWagered,
           totalDeposited,
           rakebackPercentage: 5,
-          rakebackEarned: Math.round((totalWagered ?? 0) * 0.05),
-          measterCoins: Math.floor((totalWagered ?? 0) / 10),
-          joinDate: "",
-          depositHistory: [],
+          rakebackEarned: Math.round(totalWagered * 0.05),
+          measterCoins: Math.floor(totalWagered / 10),
+          joinDate: userProfile.joinDate || "Unknown",
+          depositHistory: userProfile.depositHistory || [],
           wagerHistory,
-          verified: userProfile.verified ?? true, // Default to true if not present
-        })
+          verified: true,
+        });
       } else {
-        localStorage.removeItem("rainUsername")
-        router.replace("/login") // Redirect to login if user not found
+        console.warn("User profile not found. Retaining current state.");
       }
     } catch (error) {
-      console.error("Error loading user:", error)
-      localStorage.removeItem("rainUsername")
-      router.replace("/login") // Redirect to login on error
+      console.error("Error loading user profile:", error);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   }
 

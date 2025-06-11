@@ -2,17 +2,13 @@
 
 // API configuration
 const API_BASE_URL = "https://api.rain.gg/v1";
-const API_KEY = process.env.RAIN_API_KEY;
-
-if (!API_KEY) {
-  console.error("RAIN_API_KEY is not set. Please check your environment variables.");
-}
+const API_KEY = process.env.RAIN_API_KEY || "default-api-key";
 
 // API headers
 const headers = {
   accept: "application/json",
-  "x-api-key": API_KEY, // Ensure the API key is included
-}
+  "x-api-key": API_KEY,
+};
 
 const leaderboardHeaders = {
   accept: "application/json",
@@ -20,14 +16,14 @@ const leaderboardHeaders = {
 }
 
 // Cache configuration
-let userDataCache: ReferredUser[] | null = null;
+let userDataCache: ReferredUser[] = [];
 let lastCacheTime: number = 0;
 const CACHE_DURATION = 20 * 60 * 1000; // 20 minutes in milliseconds
 
 // Function to fetch and cache user data
 async function getUserData(): Promise<ReferredUser[]> {
   const now = Date.now();
-  if (userDataCache && (now - lastCacheTime) < CACHE_DURATION) {
+  if (userDataCache.length > 0 && (now - lastCacheTime) < CACHE_DURATION) {
     return userDataCache;
   }
 
@@ -37,36 +33,54 @@ async function getUserData(): Promise<ReferredUser[]> {
   });
 
   if (!response.ok) {
-    throw new Error('Failed to fetch user data');
+    console.error("Failed to fetch user data");
+    return [];
   }
 
   const data = await response.json();
-  userDataCache = data.results;
+  userDataCache = data.results || [];
   lastCacheTime = now;
   return userDataCache;
 }
 
 // Function to verify user and get their data
-export async function verifyUser(username: string): Promise<LeaderboardUser | null> {
-  // Use the leaderboard endpoint with deposited type and correct date range
+export async function verifyUser(username: string): Promise<UserProfile | null> {
   const url = `${API_BASE_URL}/affiliates/leaderboard?start_date=2025-01-01T00%3A00%3A00.00Z&end_date=2025-05-09T20%3A00%3A00.00Z&type=deposited`;
   const response = await fetch(url, {
     headers,
     cache: 'no-store'
   });
+
   if (!response.ok) return null;
+
   const data = await response.json();
-  // Prefer data.results, fallback to data.leaderboard
   const arr = Array.isArray(data.results)
     ? data.results
     : Array.isArray(data.leaderboard)
       ? data.leaderboard
       : [];
+
   const input = username.trim().toLowerCase();
-  return arr.find((user: any) =>
+  const leaderboardUser = arr.find((user: any) =>
     typeof user.username === "string" &&
     user.username.trim().toLowerCase() === input
-  ) || null;
+  );
+
+  if (!leaderboardUser) return null;
+
+  return {
+    id: leaderboardUser.username,
+    username: leaderboardUser.username,
+    avatar: leaderboardUser.avatar || "placeholder.jpg",
+    totalWagered: leaderboardUser.wagered || 0,
+    totalDeposited: leaderboardUser.deposited || 0,
+    rakebackPercentage: 5,
+    rakebackEarned: Math.round((leaderboardUser.wagered || 0) * 0.05),
+    measterCoins: Math.floor((leaderboardUser.wagered || 0) / 10),
+    joinDate: "Unknown",
+    depositHistory: [],
+    wagerHistory: [],
+  };
 }
 
 // API date range
@@ -539,7 +553,7 @@ export async function fetchUserProfile(userId: string): Promise<UserProfile | nu
             amount: 2500,
           },
           {
-            date: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString().split("T")[0].substring(0, 7),
+            date: new Date(Date.now() - 60 * 24 * 60 * 1000).toISOString().split("T")[0].substring(0, 7),
             amount: 2500,
           },
           {
