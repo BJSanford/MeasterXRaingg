@@ -196,7 +196,8 @@ export function EnhancedRakebackSystem() {
     return -1
   }
 
-  const currentRankIndex = getCurrentRankIndex(user.totalWagered)
+  // Ensure user and its properties are defined before accessing them
+  const currentRankIndex = user && user.totalWagered ? getCurrentRankIndex(user.totalWagered) : -1
   const currentTier = currentRankIndex >= 0 ? ranks[currentRankIndex] : null
   const nextTier = currentRankIndex < ranks.length - 1 ? ranks[currentRankIndex + 1] : null
 
@@ -223,12 +224,13 @@ export function EnhancedRakebackSystem() {
     )
   }
 
-  const progressToNext = nextTier
-    ? ((user.totalWagered - currentTier.threshold) / (nextTier.threshold - currentTier.threshold)) * 100
-    : 100
+  const progressToNext =
+    nextTier && user && user.totalWagered
+      ? ((user.totalWagered - currentTier.threshold) / (nextTier.threshold - currentTier.threshold)) * 100
+      : 0
 
   // Calculate claimable rakeback based on tier
-  const claimableRakeback = currentTier.claimable
+  const claimableRakeback = currentTier ? currentTier.claimable : 0
 
   return (
     <div className="space-y-8">
@@ -498,7 +500,7 @@ export function EnhancedRakebackSystem() {
 
               <Button
                 className="w-full bg-gradient-to-r from-cyan-600 to-green-600 hover:from-cyan-700 hover:to-green-700 text-white border-0 shadow-lg hover:shadow-cyan-500/25 transition-all duration-300 py-3"
-                disabled={user.rakebackEarned <= 0 || cashoutLoading}
+                disabled={!user || user.rakebackEarned <= 0 || cashoutLoading}
                 onClick={handleCashout}
               >
                 {cashoutLoading ? (
@@ -509,7 +511,7 @@ export function EnhancedRakebackSystem() {
                 ) : (
                   <div className="flex items-center gap-2">
                     <Zap className="h-5 w-5" />
-                    Cashout <CoinIcon size={16} className="mx-0.5" /> {user.rakebackEarned.toFixed(2)}
+                    Cashout <CoinIcon size={16} className="mx-0.5" /> {user ? user.rakebackEarned.toFixed(2) : "0.00"}
                   </div>
                 )}
               </Button>
