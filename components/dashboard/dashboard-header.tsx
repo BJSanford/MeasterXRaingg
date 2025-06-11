@@ -18,29 +18,14 @@ interface LeaderboardParticipant {
 }
 
 export function DashboardHeader() {
-  const { user } = useAuth()
-  const [rainAvatar, setRainAvatar] = useState("/placeholder-user.jpg")
-  const [totalDeposited, setTotalDeposited] = useState(0)
+  const { user } = useAuth();
+  const [rainAvatar, setRainAvatar] = useState("/placeholder-user.jpg");
+  const [totalDeposited, setTotalDeposited] = useState(0);
+  const [rakebackPercentage, setRakebackPercentage] = useState(0);
 
   useEffect(() => {
     if (user) {
-      // Fetch avatar from Rain.GG leaderboard endpoint
-      axios
-        .get("https://api.rain.gg/v1/affiliates/leaderboard", {
-          params: {
-            start_date: "2024-01-01T00:00:00.00Z",
-            end_date: "2026-01-01T00:00:00.00Z",
-            type: "wagered",
-          },
-        })
-        .then((response) => {
-          const participant = (response.data as LeaderboardParticipant[]).find((p) => p.username === user.username)
-          if (participant) {
-            setRainAvatar(participant.avatar.medium)
-          }
-        })
-
-      // Fetch total deposited from Rain.GG leaderboard endpoint
+      // Fetch Rain.gg avatar and total deposited
       axios
         .get("https://api.rain.gg/v1/affiliates/leaderboard", {
           params: {
@@ -50,13 +35,31 @@ export function DashboardHeader() {
           },
         })
         .then((response) => {
-          const participant = (response.data as LeaderboardParticipant[]).find((p) => p.username === user.username)
+          const participant = response.data.results.find((p) => p.username === user.username);
           if (participant) {
-            setTotalDeposited(participant.totalDeposited)
+            setRainAvatar(participant.avatar);
+            setTotalDeposited(participant.deposited);
           }
-        })
+        });
+
+      // Calculate rakeback percentage based on rank
+      const ranks = [
+        { threshold: 1000, rakeback: 0.2 },
+        { threshold: 2500, rakeback: 0.25 },
+        { threshold: 5000, rakeback: 0.3 },
+        { threshold: 10000, rakeback: 0.35 },
+        { threshold: 15000, rakeback: 0.4 },
+        { threshold: 25000, rakeback: 0.45 },
+        { threshold: 50000, rakeback: 0.5 },
+        { threshold: 75000, rakeback: 0.55 },
+        { threshold: 100000, rakeback: 0.6 },
+        { threshold: 150000, rakeback: 0.65 },
+        { threshold: 200000, rakeback: 0.7 },
+      ];
+      const rank = ranks.find((r) => user.totalWagered >= r.threshold);
+      setRakebackPercentage(rank ? rank.rakeback : 0);
     }
-  }, [user])
+  }, [user]);
 
   if (!user) {
     return (
@@ -97,9 +100,7 @@ export function DashboardHeader() {
                   Welcome, {user?.username || "User"}
                 </h1>
                 <div className="px-3 py-1 bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 border border-emerald-500/30 rounded-full">
-                  <span className="text-emerald-400 text-sm font-semibold">
-                    {user?.rakebackPercentage || "0.3"}%
-                  </span>
+                  <span className="text-emerald-400 text-sm font-semibold">{rakebackPercentage}%</span>
                 </div>
               </div>
 

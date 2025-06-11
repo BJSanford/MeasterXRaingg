@@ -8,6 +8,24 @@ import { CoinIcon } from "@/components/ui/coin-icon"
 export function DashboardStats() {
   const { user, isLoading } = useAuth()
 
+  const calculateRakebackPercentage = (wagered: number) => {
+    const ranks = [
+      { threshold: 1000, rakeback: 0.2 },
+      { threshold: 2500, rakeback: 0.25 },
+      { threshold: 5000, rakeback: 0.3 },
+      { threshold: 10000, rakeback: 0.35 },
+      { threshold: 15000, rakeback: 0.4 },
+      { threshold: 25000, rakeback: 0.45 },
+      { threshold: 50000, rakeback: 0.5 },
+      { threshold: 75000, rakeback: 0.55 },
+      { threshold: 100000, rakeback: 0.6 },
+      { threshold: 150000, rakeback: 0.65 },
+      { threshold: 200000, rakeback: 0.7 },
+    ]
+    const rank = ranks.find((r) => wagered >= r.threshold)
+    return rank ? rank.rakeback : 0
+  }
+
   if (isLoading || !user) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -39,6 +57,7 @@ export function DashboardStats() {
   }
 
   const level = getUserLevel(user.totalWagered)
+  const rakebackPercentage = calculateRakebackPercentage(user.totalWagered)
 
   const stats = [
     {
@@ -54,7 +73,7 @@ export function DashboardStats() {
     },
     {
       title: "Current Rakeback",
-      value: `${user.rakebackPercentage}%`,
+      value: `${rakebackPercentage}%`,
       change: "Active",
       changeType: "neutral" as const,
       icon: Zap,
