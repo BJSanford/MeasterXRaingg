@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import Image from "next/image"
 import { useState } from "react"
-import { Crown, Zap, Gift, TrendingUp, Sparkles, Star, Trophy, Coins } from "lucide-react"
+import { Crown, Zap, Gift, TrendingUp, Sparkles, Star, Trophy } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
+import { CoinIcon } from "@/components/ui/coin-icon"
 
 // Define types for rank
 interface Rank {
@@ -147,13 +148,13 @@ const ranks: Rank[] = [
 ]
 
 export function EnhancedRakebackSystem() {
-  const { user } = useAuth()
+  const { user, isLoading } = useAuth()
   const [cashoutLoading, setCashoutLoading] = useState(false)
   const [claimLoading, setClaimLoading] = useState(false)
 
   // Cashout handler (demo version)
   const handleCashout = async () => {
-    if (!user || user.activeRakeback <= 0) return
+    if (!user || user.rakebackEarned <= 0) return
     setCashoutLoading(true)
 
     // Simulate API call
@@ -165,7 +166,7 @@ export function EnhancedRakebackSystem() {
 
   // Claim handler (demo version)
   const handleClaim = async () => {
-    if (!user || user.claimableRakeback <= 0) return
+    if (!user) return
     setClaimLoading(true)
 
     // Simulate API call
@@ -174,7 +175,7 @@ export function EnhancedRakebackSystem() {
     }, 1500)
   }
 
-  if (!user) {
+  if (isLoading || !user) {
     return (
       <div className="space-y-6">
         <div className="bg-gray-900/40 backdrop-blur-md border border-gray-800/50 rounded-2xl p-8 animate-pulse">
@@ -185,12 +186,49 @@ export function EnhancedRakebackSystem() {
     )
   }
 
-  const currentRank = user.currentRank
-  const currentTier = ranks[currentRank]
-  const nextTier = currentRank < ranks.length - 1 ? ranks[currentRank + 1] : null
+  // Calculate current rank based on total wagered
+  const getCurrentRankIndex = (wagered: number) => {
+    for (let i = ranks.length - 1; i >= 0; i--) {
+      if (wagered >= ranks[i].threshold) {
+        return i
+      }
+    }
+    return -1
+  }
+
+  const currentRankIndex = getCurrentRankIndex(user.totalWagered)
+  const currentTier = currentRankIndex >= 0 ? ranks[currentRankIndex] : null
+  const nextTier = currentRankIndex < ranks.length - 1 ? ranks[currentRankIndex + 1] : null
+
+  // If user hasn't reached Iron tier yet
+  if (!currentTier) {
+    return (
+      <Card className="bg-gray-900/40 backdrop-blur-md border border-gray-800/50 overflow-hidden">
+        <CardContent className="p-8 text-center">
+          <div className="mb-6">
+            <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Crown className="h-8 w-8 text-white" />
+            </div>
+            <h3 className="text-2xl font-bold text-white mb-2">Start Your Rakeback Journey</h3>
+            <p className="text-gray-400">
+              Reach <span className="text-cyan-400 font-bold">Iron</span> rank by wagering at least{" "}
+              <span className="text-yellow-400 font-bold">1,000</span> coins to unlock rakeback rewards!
+            </p>
+          </div>
+          <Button className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white border-0 px-8 py-3">
+            Start Wagering
+          </Button>
+        </CardContent>
+      </Card>
+    )
+  }
+
   const progressToNext = nextTier
     ? ((user.totalWagered - currentTier.threshold) / (nextTier.threshold - currentTier.threshold)) * 100
     : 100
+
+  // Calculate claimable rakeback based on tier
+  const claimableRakeback = currentTier.claimable
 
   return (
     <div className="space-y-8">
@@ -224,8 +262,9 @@ export function EnhancedRakebackSystem() {
                     <span className="text-cyan-400 text-sm font-semibold">{currentTier.activeRakeback}% Rakeback</span>
                   </div>
                 </div>
-                <p className="text-gray-400">
-                  {user.totalWagered.toLocaleString()} / {currentTier.threshold.toLocaleString()} coins wagered
+                <p className="text-gray-400 flex items-center gap-1">
+                  <CoinIcon className="mb-0.5" />
+                  {user.totalWagered.toLocaleString()} / {currentTier.threshold.toLocaleString()} wagered
                 </p>
 
                 {nextTier && (
@@ -235,8 +274,9 @@ export function EnhancedRakebackSystem() {
                       <span className="text-white font-semibold">{progressToNext.toFixed(1)}%</span>
                     </div>
                     <Progress value={progressToNext} className="h-2 bg-gray-800" />
-                    <p className="text-xs text-gray-500">
-                      {(nextTier.threshold - user.totalWagered).toLocaleString()} coins to next tier
+                    <p className="text-xs text-gray-500 flex items-center gap-1">
+                      <CoinIcon size={12} className="mb-0.5" />
+                      {(nextTier.threshold - user.totalWagered).toLocaleString()} to next tier
                     </p>
                   </div>
                 )}
@@ -263,7 +303,7 @@ export function EnhancedRakebackSystem() {
             <div className="flex gap-4 min-w-[1200px] pb-4">
               {ranks.map((tier, idx) => {
                 const reached = user.totalWagered >= tier.threshold
-                const isCurrent = idx === currentRank
+                const isCurrent = idx === currentRankIndex
                 return (
                   <div
                     key={tier.level}
@@ -302,9 +342,12 @@ export function EnhancedRakebackSystem() {
                     <div className="text-center space-y-2">
                       <h4 className={`font-bold text-lg ${tier.color}`}>{tier.level}</h4>
                       <div className="space-y-1">
-                        <p className="text-xs text-gray-400">{tier.threshold.toLocaleString()} coins</p>
+                        <p className="text-xs text-gray-400 flex items-center justify-center gap-1">
+                          <CoinIcon size={12} className="mb-0.5" />
+                          {tier.threshold.toLocaleString()}
+                        </p>
                         <div className="flex items-center justify-center gap-1">
-                          <Coins className="h-3 w-3 text-yellow-400" />
+                          <CoinIcon size={12} className="text-yellow-400" />
                           <span className="text-sm font-bold text-yellow-400">+{tier.claimable}</span>
                         </div>
                         <div className="px-2 py-1 bg-cyan-900/30 rounded-full border border-cyan-500/30">
@@ -370,9 +413,8 @@ export function EnhancedRakebackSystem() {
 
             <div className="space-y-2">
               <div className="flex items-center justify-center gap-2">
-                <Coins className="h-6 w-6 text-yellow-400" />
-                <span className="text-4xl font-bold text-yellow-400">{user.claimableRakeback}</span>
-                <span className="text-lg text-gray-400">coins</span>
+                <CoinIcon size={24} className="text-yellow-400" />
+                <span className="text-4xl font-bold text-yellow-400">{claimableRakeback}</span>
               </div>
               <div className="flex items-center justify-center gap-1">
                 <Sparkles className="h-4 w-4 text-yellow-400 animate-pulse" />
@@ -383,7 +425,7 @@ export function EnhancedRakebackSystem() {
 
           <Button
             className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white border-0 shadow-lg hover:shadow-purple-500/25 transition-all duration-300 py-3"
-            disabled={user.claimableRakeback <= 0 || claimLoading}
+            disabled={claimLoading}
             onClick={handleClaim}
           >
             {claimLoading ? (
@@ -425,8 +467,8 @@ export function EnhancedRakebackSystem() {
               <div className="text-center space-y-2">
                 <div className="flex items-center justify-center gap-2">
                   <TrendingUp className="h-6 w-6 text-green-400" />
-                  <span className="text-4xl font-bold text-green-400">{user.activeRakeback.toFixed(2)}</span>
-                  <span className="text-lg text-gray-400">coins</span>
+                  <CoinIcon size={24} className="text-green-400" />
+                  <span className="text-4xl font-bold text-green-400">{user.rakebackEarned.toFixed(2)}</span>
                 </div>
                 <div className="flex items-center justify-center gap-2">
                   <span className="text-sm text-gray-400">From {currentTier.activeRakeback}% rakeback rate</span>
@@ -440,17 +482,23 @@ export function EnhancedRakebackSystem() {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-400">Total Wagered:</span>
-                  <span className="text-white font-semibold">{user.totalWagered.toLocaleString()}</span>
+                  <span className="text-white font-semibold flex items-center gap-1">
+                    <CoinIcon size={14} className="mb-0.5" />
+                    {user.totalWagered.toLocaleString()}
+                  </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-400">Available:</span>
-                  <span className="text-green-400 font-semibold">{user.activeRakeback.toFixed(2)} coins</span>
+                  <span className="text-green-400 font-semibold flex items-center gap-1">
+                    <CoinIcon size={14} className="mb-0.5" />
+                    {user.rakebackEarned.toFixed(2)}
+                  </span>
                 </div>
               </div>
 
               <Button
                 className="w-full bg-gradient-to-r from-cyan-600 to-green-600 hover:from-cyan-700 hover:to-green-700 text-white border-0 shadow-lg hover:shadow-cyan-500/25 transition-all duration-300 py-3"
-                disabled={user.activeRakeback <= 0 || cashoutLoading}
+                disabled={user.rakebackEarned <= 0 || cashoutLoading}
                 onClick={handleCashout}
               >
                 {cashoutLoading ? (
@@ -461,7 +509,7 @@ export function EnhancedRakebackSystem() {
                 ) : (
                   <div className="flex items-center gap-2">
                     <Zap className="h-5 w-5" />
-                    Cashout {user.activeRakeback.toFixed(2)} Coins
+                    Cashout <CoinIcon size={16} className="mx-0.5" /> {user.rakebackEarned.toFixed(2)}
                   </div>
                 )}
               </Button>

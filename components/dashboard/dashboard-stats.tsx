@@ -1,13 +1,14 @@
 "use client"
 
 import { Card, CardContent } from "@/components/ui/card"
-import { Coins, DollarSign, Zap, TrendingUp } from "lucide-react"
+import { Coins, Zap, TrendingUp } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
+import { CoinIcon } from "@/components/ui/coin-icon"
 
 export function DashboardStats() {
-  const { user } = useAuth()
+  const { user, isLoading } = useAuth()
 
-  if (!user) {
+  if (isLoading || !user) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {[...Array(4)].map((_, i) => (
@@ -21,36 +22,57 @@ export function DashboardStats() {
     )
   }
 
+  // Calculate user level based on total wagered
+  const getUserLevel = (wagered: number) => {
+    if (wagered >= 200000) return "Ascendent"
+    if (wagered >= 150000) return "Imperial"
+    if (wagered >= 100000) return "Obsidian"
+    if (wagered >= 75000) return "Blood Diamond"
+    if (wagered >= 50000) return "Diamond"
+    if (wagered >= 25000) return "Emerald"
+    if (wagered >= 15000) return "Platinum"
+    if (wagered >= 10000) return "Gold"
+    if (wagered >= 5000) return "Silver"
+    if (wagered >= 2500) return "Bronze"
+    if (wagered >= 1000) return "Iron"
+    return "Unranked"
+  }
+
+  const level = getUserLevel(user.totalWagered)
+
   const stats = [
     {
       title: "Total Wagered",
-      value: `$${user.totalWagered.toLocaleString()}`,
+      value: user.totalWagered.toLocaleString(),
       change: "+12.5%",
       changeType: "positive" as const,
-      icon: DollarSign,
+      icon: Coins,
       gradient: "from-purple-500 to-purple-600",
       bgGradient: "from-purple-500/10 to-purple-600/5",
       description: "All time wagering",
+      isCoin: true,
     },
     {
       title: "Current Rakeback",
-      value: `${user.rakebackRate}%`,
+      value: `${user.rakebackPercentage}%`,
       change: "Active",
       changeType: "neutral" as const,
       icon: Zap,
       gradient: "from-cyan-500 to-cyan-600",
       bgGradient: "from-cyan-500/10 to-cyan-600/5",
-      description: `${user.level} tier rate`,
+      description: `${level} tier rate`,
+      isCoin: false,
     },
     {
       title: "Total Deposited",
-      value: `$${user.totalDeposited.toLocaleString()}`,
+      value: user.totalDeposited.toLocaleString(),
       change: "+8.2%",
       changeType: "positive" as const,
       icon: TrendingUp,
       gradient: "from-yellow-500 to-orange-500",
       bgGradient: "from-yellow-500/10 to-orange-500/5",
       description: "Lifetime deposits",
+      isCoin: true,
     },
     {
       title: "Measter Coins",
@@ -61,6 +83,7 @@ export function DashboardStats() {
       gradient: "from-green-500 to-emerald-500",
       bgGradient: "from-green-500/10 to-emerald-500/5",
       description: "Available to spend",
+      isCoin: true,
     },
   ]
 
@@ -99,7 +122,8 @@ export function DashboardStats() {
 
               <div className="space-y-1">
                 <p className="text-sm text-gray-400 font-medium">{stat.title}</p>
-                <p className="text-2xl font-bold text-white group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-gray-300 group-hover:bg-clip-text transition-all duration-300">
+                <p className="text-2xl font-bold text-white group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-gray-300 group-hover:bg-clip-text transition-all duration-300 flex items-center gap-1">
+                  {stat.isCoin && <CoinIcon size={20} className="mb-1" />}
                   {stat.value}
                 </p>
                 <p className="text-xs text-gray-500">{stat.description}</p>
