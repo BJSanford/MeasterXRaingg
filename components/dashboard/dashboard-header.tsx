@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Settings, Bell, Crown, Zap } from "lucide-react"
 import Link from "next/link"
 import { useAuth } from "@/lib/auth-context"
+import { UserProfile } from "@/lib/api"
 
 export function DashboardHeader() {
   const { user } = useAuth()
@@ -20,7 +21,8 @@ export function DashboardHeader() {
     )
   }
 
-  const progressPercentage = (user.xp / user.nextLevelXp) * 100
+  // Ensure the user object aligns with the UserProfile type
+  const progressPercentage = (user?.totalWagered / user?.totalDeposited) * 100
 
   return (
     <div className="relative">
@@ -32,9 +34,9 @@ export function DashboardHeader() {
           <div className="flex items-center gap-6">
             <div className="relative">
               <Avatar className="h-20 w-20 border-4 border-gradient-to-r from-purple-500 to-cyan-500 shadow-2xl">
-                <AvatarImage src={user?.avatar || "/placeholder.svg?height=80&width=80"} alt={user?.name || "User"} />
+                <AvatarImage src={user?.avatar?.medium || "/placeholder.svg?height=80&width=80"} alt={user?.username || "User"} />
                 <AvatarFallback className="bg-gradient-to-br from-purple-600 to-cyan-600 text-white text-xl font-bold">
-                  {user.name.slice(0, 2).toUpperCase() || "JE"}
+                  {user?.username?.slice(0, 2).toUpperCase() || "JE"}
                 </AvatarFallback>
               </Avatar>
               <div className="absolute -bottom-2 -right-2 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full p-2 shadow-lg">
@@ -45,22 +47,22 @@ export function DashboardHeader() {
             <div className="space-y-2">
               <div className="flex items-center gap-3">
                 <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-white via-cyan-200 to-purple-200 bg-clip-text text-transparent">
-                  Welcome, {user?.name || "User"}
+                  Welcome, {user?.username || "User"}
                 </h1>
                 <div className="px-3 py-1 bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 border border-emerald-500/30 rounded-full">
-                  <span className="text-emerald-400 text-sm font-semibold">{user.level}</span>
+                  <span className="text-emerald-400 text-sm font-semibold">{user?.rakebackPercentage}%</span>
                 </div>
               </div>
 
               <p className="text-gray-400 text-sm">
-                Member since {user?.joinDate || "May 2023"} • Level {user.level}
+                Member since {user?.joinDate || "May 2023"} • Rakeback {user?.rakebackPercentage}%
               </p>
 
               {/* XP Progress Bar */}
               <div className="w-64 space-y-1">
                 <div className="flex justify-between text-xs text-gray-400">
-                  <span>{user.xp.toLocaleString()} XP</span>
-                  <span>{user.nextLevelXp.toLocaleString()} XP</span>
+                  <span>{user?.totalWagered.toLocaleString()} Wagered</span>
+                  <span>{user?.totalDeposited.toLocaleString()} Deposited</span>
                 </div>
                 <div className="h-2 bg-gray-800 rounded-full overflow-hidden">
                   <div

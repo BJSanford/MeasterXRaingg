@@ -89,10 +89,12 @@ export interface UserProfile {
   username: string
   avatar: UserAvatar
   totalWagered: number
+  totalDeposited: number // Added this property
   rakebackPercentage: number
   rakebackEarned: number
   measterCoins: number
   joinDate: string
+  verified: boolean // Added this property
   depositHistory: {
     date: string
     amount: number
@@ -233,12 +235,14 @@ export async function fetchUserProfile(userId: string): Promise<UserProfile | nu
       username: user.username,
       avatar: user.avatar,
       totalWagered: user.wagered,
+      totalDeposited: 0, // Mocked value, as we don't have this data
       rakebackPercentage,
       rakebackEarned,
       measterCoins,
       joinDate: joinDate.toISOString().split("T")[0],
       depositHistory,
       wagerHistory,
+      verified: true, // Mocked as true, since we don't have this data
     }
   } catch (error) {
     console.error("Error fetching user profile:", error)

@@ -216,7 +216,7 @@ export default function SocialsPage() {
 							<div className="text-gray-400">Loading videos...</div>
 						) : videoError ? (
 							<div className="text-red-400">{videoError}</div>
-						) : recentVideos.length > 0 ? (
+						) : Array.isArray(recentVideos) && recentVideos.length > 0 ? (
 							<div className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
 								{recentVideos.slice(0, 6).map((video, index) => (
 									<motion.div

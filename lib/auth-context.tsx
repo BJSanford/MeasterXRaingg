@@ -117,23 +117,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const loadUser = async (rainUsername: string) => {
     setIsLoading(true);
     try {
-      const userProfile: Partial<UserProfile> = await verifyUser(rainUsername);
+      const userProfile: Partial<UserProfile> = await verifyUser(rainUsername) || {}; // Handle null case
       if (userProfile) {
-        const totalWagered = await getUserWageredFromLeaderboard(userProfile.username || "");
-        const totalDeposited = await getUserDepositedFromLeaderboard(userProfile.username || "");
+        // Ensure `totalWagered` and `totalDeposited` are included in the user object
+        const userWithStats = {
+          ...userProfile,
+          totalWagered: await getUserWageredFromLeaderboard(userProfile.username || ""),
+          totalDeposited: await getUserDepositedFromLeaderboard(userProfile.username || ""),
+        };
+
         const wagerHistory = await getWeeklyWagerHistory(userProfile.username || "");
 
         setUser({
-          id: userProfile.username || "unknown",
-          username: userProfile.username || "unknown",
-          avatar: userProfile.avatar || "placeholder.jpg",
-          totalWagered,
-          totalDeposited,
+          id: userWithStats.username || "unknown",
+          username: userWithStats.username || "unknown",
+          avatar: userWithStats.avatar || { large: "placeholder.jpg", medium: "placeholder.jpg", small: "placeholder.jpg" }, // Ensure placeholder conforms to UserAvatar type
+          totalWagered: userWithStats.totalWagered,
+          totalDeposited: userWithStats.totalDeposited,
           rakebackPercentage: 5,
-          rakebackEarned: Math.round(totalWagered * 0.05),
-          measterCoins: Math.floor(totalWagered / 10),
-          joinDate: userProfile.joinDate || "Unknown",
-          depositHistory: userProfile.depositHistory || [],
+          rakebackEarned: Math.round(userWithStats.totalWagered * 0.05),
+          measterCoins: Math.floor(userWithStats.totalWagered / 10),
+          joinDate: userWithStats.joinDate || "Unknown",
+          depositHistory: userWithStats.depositHistory || [],
           wagerHistory,
           verified: true,
         });
