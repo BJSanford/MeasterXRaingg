@@ -1,80 +1,113 @@
-import { useAuth } from "@/lib/auth-context"
+"use client"
+
 import { Card, CardContent } from "@/components/ui/card"
-import { DollarSign, Zap } from "lucide-react"
+import { Coins, DollarSign, Zap, TrendingUp } from "lucide-react"
+import { useAuth } from "@/lib/auth-context"
 
 export function DashboardStats() {
   const { user } = useAuth()
-  const totalWagered = user?.totalWagered || 0
-  const allTimeDeposited = user?.totalDeposited || 0
-  const currentRakeback = user && user.totalWagered >= 1000
-    ? getRakebackPercent(user.totalWagered)
-    : null
 
-  function getRakebackPercent(wagered: number) {
-    if (wagered >= 200000) return 0.7
-    if (wagered >= 150000) return 0.65
-    if (wagered >= 100000) return 0.6
-    if (wagered >= 75000) return 0.55
-    if (wagered >= 50000) return 0.5
-    if (wagered >= 25000) return 0.45
-    if (wagered >= 15000) return 0.4
-    if (wagered >= 10000) return 0.35
-    if (wagered >= 5000) return 0.3
-    if (wagered >= 2500) return 0.25
-    if (wagered >= 1000) return 0.2
-    return null
+  if (!user) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        {[...Array(4)].map((_, i) => (
+          <Card key={i} className="bg-gray-900/40 backdrop-blur-md border border-gray-800/50">
+            <CardContent className="p-6">
+              <div className="h-24 animate-pulse bg-gray-800/50 rounded-lg"></div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    )
   }
 
+  const stats = [
+    {
+      title: "Total Wagered",
+      value: `$${user.totalWagered.toLocaleString()}`,
+      change: "+12.5%",
+      changeType: "positive" as const,
+      icon: DollarSign,
+      gradient: "from-purple-500 to-purple-600",
+      bgGradient: "from-purple-500/10 to-purple-600/5",
+      description: "All time wagering",
+    },
+    {
+      title: "Current Rakeback",
+      value: `${user.rakebackRate}%`,
+      change: "Active",
+      changeType: "neutral" as const,
+      icon: Zap,
+      gradient: "from-cyan-500 to-cyan-600",
+      bgGradient: "from-cyan-500/10 to-cyan-600/5",
+      description: `${user.level} tier rate`,
+    },
+    {
+      title: "Total Deposited",
+      value: `$${user.totalDeposited.toLocaleString()}`,
+      change: "+8.2%",
+      changeType: "positive" as const,
+      icon: TrendingUp,
+      gradient: "from-yellow-500 to-orange-500",
+      bgGradient: "from-yellow-500/10 to-orange-500/5",
+      description: "Lifetime deposits",
+    },
+    {
+      title: "Measter Coins",
+      value: user.measterCoins.toLocaleString(),
+      change: "+156",
+      changeType: "positive" as const,
+      icon: Coins,
+      gradient: "from-green-500 to-emerald-500",
+      bgGradient: "from-green-500/10 to-emerald-500/5",
+      description: "Available to spend",
+    },
+  ]
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-      <Card className="bg-gray-900/50 border-gray-800 hover:border-purple-500/50 transition-all">
-        <CardContent className="p-4 flex items-center gap-4">
-          <div className="bg-purple-500/20 p-3 rounded-lg">
-            <DollarSign className="h-5 w-5 text-purple-400" />
-          </div>
-          <div>
-            <p className="text-xs text-gray-400">Total Wagered</p>
-            <div className="flex items-center gap-1">
-              <img src="/coin.png" alt="coin" className="h-4 w-4" />
-              <p className="text-xl font-bold text-white">{totalWagered.toLocaleString()}</p>
-            </div>
-            <p className="text-xs text-gray-500">All time</p>
-          </div>
-        </CardContent>
-      </Card>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      {stats.map((stat, index) => {
+        const Icon = stat.icon
+        return (
+          <Card
+            key={stat.title}
+            className="bg-gray-900/40 backdrop-blur-md border border-gray-800/50 hover:border-gray-700/50 transition-all duration-500 group hover:scale-105 relative overflow-hidden"
+            style={{ animationDelay: `${index * 100}ms` }}
+          >
+            {/* Background gradient effect */}
+            <div
+              className={`absolute inset-0 bg-gradient-to-br ${stat.bgGradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
+            ></div>
 
-      <Card className="bg-gray-900/50 border-gray-800 hover:border-cyan-500/50 transition-all">
-        <CardContent className="p-4 flex items-center gap-4">
-          <div className="bg-cyan-500/20 p-3 rounded-lg">
-            <Zap className="h-5 w-5 text-cyan-400" />
-          </div>
-          <div>
-            <p className="text-xs text-gray-400">Current Rakeback</p>
-            {currentRakeback !== null ? (
-              <p className="text-xl font-bold text-white">{(currentRakeback * 100).toFixed(2)}%</p>
-            ) : (
-              <p className="text-xl font-bold text-white">-</p>
-            )}
-            <p className="text-xs text-gray-500">{currentRakeback !== null ? "Active" : ""}</p>
-          </div>
-        </CardContent>
-      </Card>
+            <CardContent className="p-6 relative">
+              <div className="flex items-start justify-between mb-4">
+                <div className={`p-3 rounded-xl bg-gradient-to-br ${stat.gradient} shadow-lg`}>
+                  <Icon className="h-6 w-6 text-white" />
+                </div>
+                <div
+                  className={`text-xs px-2 py-1 rounded-full ${
+                    stat.changeType === "positive"
+                      ? "bg-green-500/20 text-green-400"
+                      : stat.changeType === "negative"
+                        ? "bg-red-500/20 text-red-400"
+                        : "bg-blue-500/20 text-blue-400"
+                  }`}
+                >
+                  {stat.change}
+                </div>
+              </div>
 
-      <Card className="bg-gray-900/50 border-gray-800 hover:border-yellow-500/50 transition-all">
-        <CardContent className="p-4 flex items-center gap-4">
-          <div className="bg-yellow-500/20 p-3 rounded-lg">
-            <DollarSign className="h-5 w-5 text-yellow-400" />
-          </div>
-          <div>
-            <p className="text-xs text-gray-400">All Time Deposited</p>
-            <div className="flex items-center gap-1">
-              <img src="/coin.png" alt="coin" className="h-4 w-4" />
-              <p className="text-xl font-bold text-white">{allTimeDeposited.toLocaleString()}</p>
-            </div>
-            <p className="text-xs text-gray-500">Total deposits</p>
-          </div>
-        </CardContent>
-      </Card>
+              <div className="space-y-1">
+                <p className="text-sm text-gray-400 font-medium">{stat.title}</p>
+                <p className="text-2xl font-bold text-white group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-gray-300 group-hover:bg-clip-text transition-all duration-300">
+                  {stat.value}
+                </p>
+                <p className="text-xs text-gray-500">{stat.description}</p>
+              </div>
+            </CardContent>
+          </Card>
+        )
+      })}
     </div>
   )
 }
