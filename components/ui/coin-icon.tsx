@@ -8,7 +8,7 @@ interface CoinIconProps {
 export function CoinIcon({ className, size = 16 }: CoinIconProps) {
   return (
     <Image
-      src="/images/coin.png"
+      src="/coin.png" // Updated to look directly in the public directory
       alt="Rain.GG Coin"
       width={size}
       height={size}
