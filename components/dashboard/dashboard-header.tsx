@@ -27,20 +27,17 @@ export function DashboardHeader() {
     if (user) {
       // Fetch Rain.gg avatar and total deposited
       axios
-        .get("https://api.rain.gg/v1/affiliates/leaderboard", {
-          params: {
-            start_date: "2024-01-01T00:00:00.00Z",
-            end_date: "2026-01-01T00:00:00.00Z",
-            type: "deposited",
-          },
+        .get("https://api.rain.gg/v1/affiliates/user", {
+          params: { username: user.username },
         })
         .then((response) => {
-          const participant = response.data.results.find((p) => p.username === user.username);
+          const participant = response.data;
           if (participant) {
-            setRainAvatar(participant.avatar);
-            setTotalDeposited(participant.deposited);
+            setRainAvatar(participant.avatar.medium || "/placeholder-user.jpg");
+            setTotalDeposited(participant.totalDeposited || 0); // Correct endpoint for lifetime deposits
           }
-        });
+        })
+        .catch((err) => console.error("Error fetching Rain.gg user data:", err));
 
       // Calculate rakeback percentage based on rank
       const ranks = [

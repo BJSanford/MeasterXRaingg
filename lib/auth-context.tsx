@@ -123,7 +123,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const userWithStats = {
           ...userProfile,
           totalWagered: await getUserWageredFromLeaderboard(userProfile.username || ""),
-          totalDeposited: await getUserDepositedFromLeaderboard(userProfile.username || ""),
+          totalDeposited: await getUserDepositedFromLeaderboard(userProfile.username || ""), // Correct endpoint for lifetime deposits
         };
 
         const wagerHistory = await getWeeklyWagerHistory(userProfile.username || "");
