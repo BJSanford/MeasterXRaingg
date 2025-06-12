@@ -6,7 +6,6 @@ import { Settings, Bell, Crown, Zap } from "lucide-react"
 import Link from "next/link"
 import { useAuth } from "@/lib/auth-context"
 import { useEffect, useState } from "react"
-import axios from "axios"
 
 export function DashboardHeader() {
   const { user } = useAuth()
@@ -15,52 +14,33 @@ export function DashboardHeader() {
 
   useEffect(() => {
     if (user) {
-      // Fetch user info (wagered and avatar) from Rain.GG leaderboard endpoint
-      axios
-        .get("https://api.rain.gg/v1/affiliates/leaderboard", {
-          params: {
-            start_date: "2024-01-01T00:00:00.00Z",
-            end_date: "2026-01-01T00:00:00.00Z",
-            type: "wagered",
-          },
-        })
-        .then((response) => {
-          console.log("Rain.gg leaderboard response (wagered):", response.data); // Debugging log
-          const participant = response.data.results.find((p: any) => p.username === user.username)
-          if (participant) {
-            console.log("Found participant:", participant); // Debugging log
-            setRainAvatar(participant.avatar?.medium || participant.avatar?.small || participant.avatar?.large || "/placeholder-user.jpg")
-          } else {
-            console.warn("Participant not found in wagered leaderboard for username:", user.username); // Debugging log
+      const fetchLeaderboardData = async (type: string) => {
+        try {
+          const response = await fetch(`/api/proxy/leaderboard?type=${type}`);
+          if (!response.ok) {
+            throw new Error(`Failed to fetch ${type} leaderboard: ${response.statusText}`);
           }
-        })
-        .catch((error) => {
-          console.error("Error fetching Rain.gg leaderboard (wagered):", error); // Debugging log
-        });
+          const data = await response.json();
+          console.log(`Proxy leaderboard response (${type}):`, data);
+          const participant = data.results.find((p: any) => p.username === user.username);
+          if (participant) {
+            if (type === "wagered") {
+              setRainAvatar(participant.avatar?.medium || participant.avatar?.small || participant.avatar?.large || "/placeholder-user.jpg");
+            } else if (type === "deposited") {
+              setTotalDeposited(participant.totalDeposited);
+            }
+          } else {
+            console.warn(`Participant not found in ${type} leaderboard for username:`, user.username);
+          }
+        } catch (error) {
+          console.error(`Error fetching proxy leaderboard (${type}):`, error);
+        }
+      };
 
-      // Fetch total deposited from Rain.GG leaderboard endpoint
-      axios
-        .get("https://api.rain.gg/v1/affiliates/leaderboard", {
-          params: {
-            start_date: "2024-01-01T00:00:00.00Z",
-            end_date: "2026-01-01T00:00:00.00Z",
-            type: "deposited",
-          },
-        })
-        .then((response) => {
-          console.log("Rain.gg leaderboard response (deposited):", response.data); // Debugging log
-          const participant = response.data.results.find((p: any) => p.username === user.username)
-          if (participant) {
-            setTotalDeposited(participant.totalDeposited)
-          } else {
-            console.warn("Participant not found in deposited leaderboard for username:", user.username); // Debugging log
-          }
-        })
-        .catch((error) => {
-          console.error("Error fetching Rain.gg leaderboard (deposited):", error); // Debugging log
-        });
+      fetchLeaderboardData("wagered");
+      fetchLeaderboardData("deposited");
     }
-  }, [user]);
+  }, [user])
 
   if (!user) {
     return (
