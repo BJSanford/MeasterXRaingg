@@ -34,12 +34,17 @@ export function DashboardHeader() {
           },
         })
         .then((response) => {
-          const participant = response.data.results.find((p: any) => p.username === user.username)
+          console.log("Leaderboard response:", response.data);
+          const participant = response.data.results.find((p: any) => p.username === user.username);
+          console.log("Matched participant:", participant);
           if (participant) {
             // Use the avatar as a direct string URL from the leaderboard endpoint only
-            setRainAvatar(typeof participant.avatar === "string" ? participant.avatar : "/placeholder-user.jpg")
+            setRainAvatar(typeof participant.avatar === "string" ? participant.avatar : "/placeholder-user.jpg");
           }
         })
+        .catch((error) => {
+          console.error("Error fetching leaderboard data:", error);
+        });
 
       // Fetch total deposited from Rain.GG leaderboard endpoint
       axios
@@ -51,11 +56,16 @@ export function DashboardHeader() {
           },
         })
         .then((response) => {
-          const participant = response.data.results.find((p: any) => p.username === user.username)
+          console.log("Deposited response:", response.data);
+          const participant = response.data.results.find((p: any) => p.username === user.username);
+          console.log("Matched participant for deposited:", participant);
           if (participant) {
-            setTotalDeposited(participant.totalDeposited)
+            setTotalDeposited(participant.totalDeposited);
           }
         })
+        .catch((error) => {
+          console.error("Error fetching deposited data:", error);
+        });
     }
   }, [user])
 

@@ -14,8 +14,8 @@ import { fetchLeaderboard } from "@/lib/server-api"
 import Image from "next/image"
 
 // Hardcoded payout distribution for top 8 places
-const payouts = [500, 250, 150, 50, 20, 15, 10, 5]
-const prizePool = 1250 // Changed from 1000 to 1250
+const payouts = [700, 350, 200, 100, 75, 50, 15, 10]
+const prizePool = 1500 
 const coinImg = "/coin.png" // Make sure /public/coin.png exists
 
 export default function WeeklyRacePage() {
