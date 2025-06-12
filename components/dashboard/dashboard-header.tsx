@@ -70,7 +70,23 @@ export function DashboardHeader() {
   }
 
   const progressPercentage = (user?.totalWagered / totalDeposited) * 100
-  const rakebackPercentage = user?.rakebackPercentage || 0.3
+
+  const getRakebackPercentage = (wagered: number) => {
+    if (wagered >= 200000) return 0.7;
+    if (wagered >= 150000) return 0.65;
+    if (wagered >= 100000) return 0.6;
+    if (wagered >= 75000) return 0.55;
+    if (wagered >= 50000) return 0.5;
+    if (wagered >= 25000) return 0.45;
+    if (wagered >= 15000) return 0.4;
+    if (wagered >= 10000) return 0.35;
+    if (wagered >= 5000) return 0.3;
+    if (wagered >= 2500) return 0.25;
+    if (wagered >= 1000) return 0.2;
+    return 0;
+  };
+
+  const rakebackPercentage = getRakebackPercentage(user?.totalWagered || 0)
 
   return (
     <div className="relative">
