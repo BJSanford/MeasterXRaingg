@@ -119,26 +119,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const userProfile: Partial<UserProfile> = await verifyUser(rainUsername) || {}; // Handle null case
       if (userProfile) {
-        // Ensure `totalWagered` and `totalDeposited` are included in the user object
-        const userWithStats = {
-          ...userProfile,
-          totalWagered: await getUserWageredFromLeaderboard(userProfile.username || ""),
-          totalDeposited: await getUserDepositedFromLeaderboard(userProfile.username || ""),
-        };
-
+        // Get wagered from API
+        let apiWagered = await getUserWageredFromLeaderboard(userProfile.username || "");
+        // Check old-api-data.json for extra wagered
+        let oldWagered = 0;
+        if (userProfile.username) {
+          const oldEntry = oldApiData.results.find((u: any) => u.username === userProfile.username);
+          if (oldEntry) {
+            oldWagered = oldEntry.wagered || 0;
+          }
+        }
+        // Add both
+        const totalWagered = apiWagered + oldWagered;
+        const totalDeposited = await getUserDepositedFromLeaderboard(userProfile.username || "");
         const wagerHistory = await getWeeklyWagerHistory(userProfile.username || "");
 
         setUser({
-          id: userWithStats.username || "unknown",
-          username: userWithStats.username || "unknown",
-          avatar: userWithStats.avatar || { large: "placeholder.jpg", medium: "placeholder.jpg", small: "placeholder.jpg" }, // Ensure placeholder conforms to UserAvatar type
-          totalWagered: userWithStats.totalWagered,
-          totalDeposited: userWithStats.totalDeposited,
+          id: userProfile.username || "unknown",
+          username: userProfile.username || "unknown",
+          avatar: userProfile.avatar || { large: "placeholder.jpg", medium: "placeholder.jpg", small: "placeholder.jpg" },
+          totalWagered,
+          totalDeposited,
           rakebackPercentage: 5,
-          rakebackEarned: Math.round(userWithStats.totalWagered * 0.05),
-          measterCoins: Math.floor(userWithStats.totalWagered / 10),
-          joinDate: userWithStats.joinDate || "Unknown",
-          depositHistory: userWithStats.depositHistory || [],
+          rakebackEarned: Math.round(totalWagered * 0.05),
+          measterCoins: Math.floor(totalWagered / 10),
+          joinDate: userProfile.joinDate || "Unknown",
+          depositHistory: userProfile.depositHistory || [],
           wagerHistory,
           verified: true,
         });

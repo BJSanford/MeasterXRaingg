@@ -34,20 +34,11 @@ export function DashboardHeader() {
           },
         })
         .then((response) => {
-          // Rain.gg returns { results: [...] }
-          const arr = Array.isArray(response.data.results)
-            ? response.data.results
-            : Array.isArray(response.data.leaderboard)
-            ? response.data.leaderboard
-            : [];
-          const participant = arr.find((p) => p.username?.toLowerCase() === user.username?.toLowerCase());
-          if (participant && participant.avatar && participant.avatar.medium) {
-            setRainAvatar(participant.avatar.medium);
-          } else {
-            setRainAvatar("/placeholder-user.jpg");
+          const participant = (response.data as LeaderboardParticipant[]).find((p) => p.username === user.username)
+          if (participant) {
+            setRainAvatar(participant.avatar.medium)
           }
         })
-        .catch(() => setRainAvatar("/placeholder-user.jpg"));
 
       // Fetch total deposited from Rain.GG leaderboard endpoint
       axios
@@ -59,19 +50,11 @@ export function DashboardHeader() {
           },
         })
         .then((response) => {
-          const arr = Array.isArray(response.data.results)
-            ? response.data.results
-            : Array.isArray(response.data.leaderboard)
-            ? response.data.leaderboard
-            : [];
-          const participant = arr.find((p) => p.username?.toLowerCase() === user.username?.toLowerCase());
-          if (participant && typeof participant.deposited === "number") {
-            setTotalDeposited(participant.deposited);
-          } else {
-            setTotalDeposited(0);
+          const participant = (response.data as LeaderboardParticipant[]).find((p) => p.username === user.username)
+          if (participant) {
+            setTotalDeposited(participant.totalDeposited)
           }
         })
-        .catch(() => setTotalDeposited(0));
     }
   }, [user])
 
