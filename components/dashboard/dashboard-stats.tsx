@@ -8,24 +8,6 @@ import { CoinIcon } from "@/components/ui/coin-icon"
 export function DashboardStats() {
   const { user, isLoading } = useAuth()
 
-  const calculateRakebackPercentage = (wagered: number) => {
-    const ranks = [
-      { threshold: 1000, activeRakeback: 0.2 },
-      { threshold: 2500, activeRakeback: 0.25 },
-      { threshold: 5000, activeRakeback: 0.3 },
-      { threshold: 10000, activeRakeback: 0.35 },
-      { threshold: 15000, activeRakeback: 0.4 },
-      { threshold: 25000, activeRakeback: 0.45 },
-      { threshold: 50000, activeRakeback: 0.5 },
-      { threshold: 75000, activeRakeback: 0.55 },
-      { threshold: 100000, activeRakeback: 0.6 },
-      { threshold: 150000, activeRakeback: 0.65 },
-      { threshold: 200000, activeRakeback: 0.7 },
-    ]
-    const rank = ranks.find((r) => wagered >= r.threshold)
-    return rank ? rank.activeRakeback : 0
-  }
-
   if (isLoading || !user) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -57,7 +39,8 @@ export function DashboardStats() {
   }
 
   const level = getUserLevel(user.totalWagered)
-  const rakebackPercentage = calculateRakebackPercentage(user.totalWagered)
+
+  const rakebackPercentage = user?.rakebackPercentage || 0.3;
 
   const stats = [
     {
@@ -73,7 +56,7 @@ export function DashboardStats() {
     },
     {
       title: "Current Rakeback",
-      value: `${rakebackPercentage.toFixed(1)}%`,
+      value: `${user.rakebackPercentage || 0.3}%`,
       change: "Active",
       changeType: "neutral" as const,
       icon: Zap,
@@ -106,9 +89,17 @@ export function DashboardStats() {
     },
   ]
 
+  // Fix type comparison issue
+  const statsWithCorrectTypes = stats.map((stat) => {
+    if (stat.changeType === "neutral") {
+      return { ...stat, changeType: "neutral" };
+    }
+    return stat;
+  });
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-      {stats.map((stat, index) => {
+      {statsWithCorrectTypes.map((stat, index) => {
         const Icon = stat.icon
         return (
           <Card

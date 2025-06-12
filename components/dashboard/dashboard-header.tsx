@@ -18,45 +18,45 @@ interface LeaderboardParticipant {
 }
 
 export function DashboardHeader() {
-  const { user } = useAuth();
-  const [rainAvatar, setRainAvatar] = useState("/placeholder-user.jpg");
-  const [totalDeposited, setTotalDeposited] = useState(0);
-  const [rakebackPercentage, setRakebackPercentage] = useState(0);
+  const { user } = useAuth()
+  const [rainAvatar, setRainAvatar] = useState("/placeholder-user.jpg")
+  const [totalDeposited, setTotalDeposited] = useState(0)
 
   useEffect(() => {
     if (user) {
-      // Fetch Rain.gg avatar and total deposited
+      // Fetch avatar from Rain.GG leaderboard endpoint
       axios
-        .get("https://api.rain.gg/v1/affiliates/user", {
-          params: { username: user.username },
+        .get("https://api.rain.gg/v1/affiliates/leaderboard", {
+          params: {
+            start_date: "2024-01-01T00:00:00.00Z",
+            end_date: "2026-01-01T00:00:00.00Z",
+            type: "wagered",
+          },
         })
         .then((response) => {
-          const participant = response.data;
+          const participant = (response.data as LeaderboardParticipant[]).find((p) => p.username === user.username)
           if (participant) {
-            setRainAvatar(participant.avatar.medium || "/placeholder-user.jpg");
-            setTotalDeposited(participant.totalDeposited || 0); // Correct endpoint for lifetime deposits
+            setRainAvatar(participant.avatar.medium)
           }
         })
-        .catch((err) => console.error("Error fetching Rain.gg user data:", err));
 
-      // Calculate rakeback percentage based on rank
-      const ranks = [
-        { threshold: 1000, activeRakeback: 0.2 },
-        { threshold: 2500, activeRakeback: 0.25 },
-        { threshold: 5000, activeRakeback: 0.3 },
-        { threshold: 10000, activeRakeback: 0.35 },
-        { threshold: 15000, activeRakeback: 0.4 },
-        { threshold: 25000, activeRakeback: 0.45 },
-        { threshold: 50000, activeRakeback: 0.5 },
-        { threshold: 75000, activeRakeback: 0.55 },
-        { threshold: 100000, activeRakeback: 0.6 },
-        { threshold: 150000, activeRakeback: 0.65 },
-        { threshold: 200000, activeRakeback: 0.7 },
-      ];
-      const rank = ranks.find((r) => user.totalWagered >= r.threshold);
-      setRakebackPercentage(rank ? rank.activeRakeback : 0);
+      // Fetch total deposited from Rain.GG leaderboard endpoint
+      axios
+        .get("https://api.rain.gg/v1/affiliates/leaderboard", {
+          params: {
+            start_date: "2024-01-01T00:00:00.00Z",
+            end_date: "2026-01-01T00:00:00.00Z",
+            type: "deposited",
+          },
+        })
+        .then((response) => {
+          const participant = (response.data as LeaderboardParticipant[]).find((p) => p.username === user.username)
+          if (participant) {
+            setTotalDeposited(participant.totalDeposited)
+          }
+        })
     }
-  }, [user]);
+  }, [user])
 
   if (!user) {
     return (
@@ -70,6 +70,7 @@ export function DashboardHeader() {
   }
 
   const progressPercentage = (user?.totalWagered / totalDeposited) * 100
+  const rakebackPercentage = user?.rakebackPercentage || 0.3
 
   return (
     <div className="relative">
@@ -97,12 +98,14 @@ export function DashboardHeader() {
                   Welcome, {user?.username || "User"}
                 </h1>
                 <div className="px-3 py-1 bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 border border-emerald-500/30 rounded-full">
-                  <span className="text-emerald-400 text-sm font-semibold">{rakebackPercentage}%</span>
+                  <span className="text-emerald-400 text-sm font-semibold">
+                    {rakebackPercentage}%
+                  </span>
                 </div>
               </div>
 
               <p className="text-gray-400 text-sm">
-                Rakeback {rakebackPercentage.toFixed(1)}%
+                Rakeback {rakebackPercentage}%
               </p>
 
               {/* XP Progress Bar */}
