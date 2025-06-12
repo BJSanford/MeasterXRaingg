@@ -1,3 +1,7 @@
+// WEEKLY RACE LEADERBOARD API ROUTE
+// This API route proxies the /affiliates/races endpoint for the weekly race leaderboard.
+// For all-time/custom leaderboards, use /api/proxy/leaderboard instead.
+
 import { NextApiRequest, NextApiResponse } from "next";
 
 const PRIZE_DISTRIBUTION = [600, 300, 150, 75, 50, 10, 10, 5]; // Hardcoded prize distribution

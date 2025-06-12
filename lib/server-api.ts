@@ -397,8 +397,11 @@ async function handleApiRequest<T>(url: string, mockData: T, options: RequestIni
   }
 }
 
-// Server-side API functions
-// Update the fetchLeaderboard function to match the curl command format
+// SERVER-SIDE API FUNCTIONS
+// fetchLeaderboard: Fetches the weekly race leaderboard using /affiliates/races (for the weekly race only)
+// fetchLeaderboardByType: Fetches the all-time or custom leaderboard using /affiliates/leaderboard (for all users, any date range)
+
+// Fetches the weekly race leaderboard (WEEKLY RACE ONLY)
 export async function fetchLeaderboard(type: "wagered" | "deposited" = "wagered"): Promise<LeaderboardResponse> {
   console.log(`Fetching ${type} leaderboard from server-side...`)
 
@@ -450,7 +453,7 @@ export async function fetchLeaderboard(type: "wagered" | "deposited" = "wagered"
   }
 }
 
-// Fetch leaderboard by type and date range
+// Fetches the all-time or custom leaderboard (ALL-TIME OR CUSTOM RANGE)
 import oldApiData from "@/lib/static-data/old-api-data.json"; // Import the static data
 
 export async function fetchLeaderboardByType(

@@ -1,3 +1,7 @@
+// ALL-TIME OR CUSTOM LEADERBOARD API ROUTE
+// This API route proxies the /affiliates/leaderboard endpoint for all-time or custom date range leaderboards.
+// For the weekly race leaderboard, use /api/leaderboard instead.
+
 import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

@@ -1,3 +1,7 @@
+// WEEKLY RACE LEADERBOARD PAGE
+// This page displays the weekly race leaderboard using the /affiliates/races endpoint.
+// Do NOT confuse this with the all-time/custom leaderboard, which uses /affiliates/leaderboard.
+
 "use client"
 
 import { useEffect, useState, useCallback } from "react"

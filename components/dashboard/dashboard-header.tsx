@@ -24,7 +24,7 @@ export function DashboardHeader() {
 
   useEffect(() => {
     if (user) {
-      // Fetch avatar from Rain.GG leaderboard endpoint
+      // Fetch user info (wagered and avatar) from Rain.GG leaderboard endpoint
       axios
         .get("https://api.rain.gg/v1/affiliates/leaderboard", {
           params: {
@@ -34,10 +34,12 @@ export function DashboardHeader() {
           },
         })
         .then((response) => {
-          // FIX: Rain.GG returns { results: [...] } and avatar is a string URL
-          const participant = (response.data.results as any[]).find((p) => p.username === user.username)
+          const participant = response.data.results.find((p: any) => p.username === user.username)
           if (participant) {
-            setRainAvatar(participant.avatar)
+            // Use the avatar from the leaderboard (prefer medium, fallback to small or large)
+            setRainAvatar(participant.avatar?.medium || participant.avatar?.small || participant.avatar?.large || "/placeholder-user.jpg")
+            // Optionally, you could also set totalWagered here if you want to sync it
+            // setTotalWagered(participant.wagered)
           }
         })
 
@@ -51,8 +53,7 @@ export function DashboardHeader() {
           },
         })
         .then((response) => {
-          // FIX: Rain.GG returns { results: [...] }
-          const participant = (response.data.results as LeaderboardParticipant[]).find((p) => p.username === user.username)
+          const participant = response.data.results.find((p: any) => p.username === user.username)
           if (participant) {
             setTotalDeposited(participant.totalDeposited)
           }

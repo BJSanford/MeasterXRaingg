@@ -107,6 +107,7 @@ export interface UserProfile {
 }
 
 // API functions
+// fetchLeaderboard: Fetches the all-time or custom leaderboard using /affiliates/leaderboard (NOT the weekly race)
 export async function fetchLeaderboard(): Promise<LeaderboardResponse> {
   try {
     const response = await fetch(`${API_BASE_URL}/affiliates/leaderboard?code=MEASTER`, {
@@ -125,6 +126,7 @@ export async function fetchLeaderboard(): Promise<LeaderboardResponse> {
   }
 }
 
+// fetchRaces: Fetches the weekly race leaderboard using /affiliates/races
 export async function fetchRaces(): Promise<RacesFetchResponse> {
   try {
     const response = await fetch(`${API_BASE_URL}/affiliates/races?code=MEASTER`, {
