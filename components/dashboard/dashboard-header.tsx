@@ -16,7 +16,7 @@ export function DashboardHeader() {
     if (user) {
       const fetchLeaderboardData = async (type: string) => {
         const startDate = "2023-01-01T00:00:00.00Z";
-        const endDate = "2027-06-12T00:00:00.00Z";
+        const endDate = "2028-01-01T00:00:00.00Z";
 
         try {
           const response = await fetch(`/api/proxy/leaderboard?type=${type}&start_date=${startDate}&end_date=${endDate}`);
@@ -28,7 +28,7 @@ export function DashboardHeader() {
           const participant = data.results.find((p: any) => p.username === user.username);
           if (participant) {
             if (type === "wagered") {
-              setRainAvatar(participant.avatar?.medium || participant.avatar?.small || participant.avatar?.large || "/placeholder-user.jpg");
+              setRainAvatar(participant.avatar || "/placeholder-user.jpg");
             } else if (type === "deposited") {
               setTotalDeposited(participant.totalDeposited);
             }
