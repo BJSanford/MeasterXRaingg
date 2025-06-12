@@ -5,17 +5,8 @@ import { Button } from "@/components/ui/button"
 import { Settings, Bell, Crown, Zap } from "lucide-react"
 import Link from "next/link"
 import { useAuth } from "@/lib/auth-context"
-import { UserProfile } from "@/lib/api"
 import { useEffect, useState } from "react"
 import axios from "axios"
-
-interface LeaderboardParticipant {
-  username: string;
-  avatar: {
-    medium: string;
-  };
-  totalDeposited: number;
-}
 
 export function DashboardHeader() {
   const { user } = useAuth()
@@ -34,14 +25,18 @@ export function DashboardHeader() {
           },
         })
         .then((response) => {
+          console.log("Rain.gg leaderboard response (wagered):", response.data); // Debugging log
           const participant = response.data.results.find((p: any) => p.username === user.username)
           if (participant) {
-            // Use the avatar from the leaderboard (prefer medium, fallback to small or large)
+            console.log("Found participant:", participant); // Debugging log
             setRainAvatar(participant.avatar?.medium || participant.avatar?.small || participant.avatar?.large || "/placeholder-user.jpg")
-            // Optionally, you could also set totalWagered here if you want to sync it
-            // setTotalWagered(participant.wagered)
+          } else {
+            console.warn("Participant not found in wagered leaderboard for username:", user.username); // Debugging log
           }
         })
+        .catch((error) => {
+          console.error("Error fetching Rain.gg leaderboard (wagered):", error); // Debugging log
+        });
 
       // Fetch total deposited from Rain.GG leaderboard endpoint
       axios
@@ -53,13 +48,19 @@ export function DashboardHeader() {
           },
         })
         .then((response) => {
+          console.log("Rain.gg leaderboard response (deposited):", response.data); // Debugging log
           const participant = response.data.results.find((p: any) => p.username === user.username)
           if (participant) {
             setTotalDeposited(participant.totalDeposited)
+          } else {
+            console.warn("Participant not found in deposited leaderboard for username:", user.username); // Debugging log
           }
         })
+        .catch((error) => {
+          console.error("Error fetching Rain.gg leaderboard (deposited):", error); // Debugging log
+        });
     }
-  }, [user])
+  }, [user]);
 
   if (!user) {
     return (
