@@ -27,7 +27,7 @@ export default function LoginPage() {
       } else {
         setLoading(false);
         setError(
-          ""
+          "Failed to log in with Discord. Please try again later or contact support."
         );
       }
     }
