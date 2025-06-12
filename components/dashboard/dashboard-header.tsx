@@ -41,20 +41,20 @@ export function DashboardHeader() {
 
       // Calculate rakeback percentage based on rank
       const ranks = [
-        { threshold: 1000, rakeback: 0.2 },
-        { threshold: 2500, rakeback: 0.25 },
-        { threshold: 5000, rakeback: 0.3 },
-        { threshold: 10000, rakeback: 0.35 },
-        { threshold: 15000, rakeback: 0.4 },
-        { threshold: 25000, rakeback: 0.45 },
-        { threshold: 50000, rakeback: 0.5 },
-        { threshold: 75000, rakeback: 0.55 },
-        { threshold: 100000, rakeback: 0.6 },
-        { threshold: 150000, rakeback: 0.65 },
-        { threshold: 200000, rakeback: 0.7 },
+        { threshold: 1000, activeRakeback: 0.2 },
+        { threshold: 2500, activeRakeback: 0.25 },
+        { threshold: 5000, activeRakeback: 0.3 },
+        { threshold: 10000, activeRakeback: 0.35 },
+        { threshold: 15000, activeRakeback: 0.4 },
+        { threshold: 25000, activeRakeback: 0.45 },
+        { threshold: 50000, activeRakeback: 0.5 },
+        { threshold: 75000, activeRakeback: 0.55 },
+        { threshold: 100000, activeRakeback: 0.6 },
+        { threshold: 150000, activeRakeback: 0.65 },
+        { threshold: 200000, activeRakeback: 0.7 },
       ];
       const rank = ranks.find((r) => user.totalWagered >= r.threshold);
-      setRakebackPercentage(rank ? rank.rakeback : 0);
+      setRakebackPercentage(rank ? rank.activeRakeback : 0);
     }
   }, [user]);
 
@@ -102,7 +102,7 @@ export function DashboardHeader() {
               </div>
 
               <p className="text-gray-400 text-sm">
-                Rakeback {user?.rakebackPercentage || "0.3"}%
+                Rakeback {rakebackPercentage.toFixed(1)}%
               </p>
 
               {/* XP Progress Bar */}
