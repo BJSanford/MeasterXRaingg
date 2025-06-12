@@ -15,8 +15,11 @@ export function DashboardHeader() {
   useEffect(() => {
     if (user) {
       const fetchLeaderboardData = async (type: string) => {
+        const startDate = "2023-01-01T00:00:00.00Z";
+        const endDate = "2027-06-12T00:00:00.00Z";
+
         try {
-          const response = await fetch(`/api/proxy/leaderboard?type=${type}`);
+          const response = await fetch(`/api/proxy/leaderboard?type=${type}&start_date=${startDate}&end_date=${endDate}`);
           if (!response.ok) {
             throw new Error(`Failed to fetch ${type} leaderboard: ${response.statusText}`);
           }
