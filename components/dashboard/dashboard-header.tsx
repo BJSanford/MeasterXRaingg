@@ -34,9 +34,10 @@ export function DashboardHeader() {
           },
         })
         .then((response) => {
-          const participant = (response.data as LeaderboardParticipant[]).find((p) => p.username === user.username)
+          // FIX: Rain.GG returns { results: [...] } and avatar is a string URL
+          const participant = (response.data.results as any[]).find((p) => p.username === user.username)
           if (participant) {
-            setRainAvatar(participant.avatar.medium)
+            setRainAvatar(participant.avatar)
           }
         })
 
@@ -50,7 +51,8 @@ export function DashboardHeader() {
           },
         })
         .then((response) => {
-          const participant = (response.data as LeaderboardParticipant[]).find((p) => p.username === user.username)
+          // FIX: Rain.GG returns { results: [...] }
+          const participant = (response.data.results as LeaderboardParticipant[]).find((p) => p.username === user.username)
           if (participant) {
             setTotalDeposited(participant.totalDeposited)
           }
