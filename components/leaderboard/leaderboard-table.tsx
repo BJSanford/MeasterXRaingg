@@ -96,7 +96,7 @@ const leaderboardData = [
 	},
 ]
 
-const PRIZE_DISTRIBUTION = [500, 250, 150, 50, 20, 15, 10, 5]; // Hardcoded prize distribution
+const PRIZE_DISTRIBUTION = [700, 350, 200, 100, 75, 50, 15, 10]; // Hardcoded prize distribution
 
 export function LeaderboardTable({ leaderboard, isLoading, error, reload }: { leaderboard: any[], isLoading: boolean, error: string | null, reload: () => void }) {
 	const [sortBy, setSortBy] = useState("wagered")

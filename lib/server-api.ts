@@ -408,7 +408,7 @@ export async function fetchLeaderboard(type: "wagered" | "deposited" = "wagered"
   const url = `${API_BASE_URL}/affiliates/races?participant_count=50`
   console.log(`Request URL: ${url}`)
 
-  const PRIZE_DISTRIBUTION = [500, 250, 150, 50, 20, 15, 10, 5]; // Hardcoded prize distribution
+  const PRIZE_DISTRIBUTION = [700, 350, 200, 100, 75, 50, 15, 10]; // Hardcoded prize distribution
 
   try {
     const response = await fetch(url, {
