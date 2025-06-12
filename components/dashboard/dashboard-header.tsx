@@ -36,10 +36,8 @@ export function DashboardHeader() {
         .then((response) => {
           const participant = response.data.results.find((p: any) => p.username === user.username)
           if (participant) {
-            // Use the avatar from the leaderboard (prefer medium, fallback to small or large)
-            setRainAvatar(participant.avatar?.medium || participant.avatar?.small || participant.avatar?.large || "/placeholder-user.jpg")
-            // Optionally, you could also set totalWagered here if you want to sync it
-            // setTotalWagered(participant.wagered)
+            // Use the avatar as a direct string URL from the leaderboard endpoint only
+            setRainAvatar(typeof participant.avatar === "string" ? participant.avatar : "/placeholder-user.jpg")
           }
         })
 
