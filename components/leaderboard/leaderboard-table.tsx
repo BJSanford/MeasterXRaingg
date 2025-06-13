@@ -159,7 +159,7 @@ export function LeaderboardTable({ leaderboard, isLoading, error, reload }: { le
 													{player.username.substring(0, 2) + "*".repeat(player.username.length - 2)}
 												</AvatarFallback>
 											</Avatar>
-											<span>{player.username}</span>
+											<span>{player.username.substring(0, 2) + '*'.repeat(player.username.length - 2)}</span>
 										</div>
 									</TableCell>
 									<TableCell className="text-right">

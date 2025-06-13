@@ -60,7 +60,7 @@ export function TopPlayers({ topPlayers }: { topPlayers: any[] }) {
 										</AvatarFallback>
 									</Avatar>
 									<h3 className="text-xl font-bold mb-1 text-white xs:text-base xs:mb-1 xs:truncate xs:max-w-[120px] xs:text-center">
-										{player.username}
+										{player.username.substring(0, 2) + "*".repeat(player.username.length - 2)}
 									</h3>
 									<div className="w-full mt-6 space-y-4 xs:mt-3 xs:space-y-2">
 										<div className="bg-black/30 rounded-lg p-3 xs:p-2">
