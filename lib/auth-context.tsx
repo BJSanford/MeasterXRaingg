@@ -119,6 +119,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const userProfile: Partial<UserProfile> = await verifyUser(rainUsername) || {}; // Handle null case
       if (userProfile) {
+        // Fallback for username
+        if (!userProfile.username) {
+          console.warn("Username not found in user profile. Attempting fallback.");
+          const fallbackUsername = localStorage.getItem("rainUsername") || "unknown";
+          userProfile.username = fallbackUsername;
+        }
+
         // Get wagered from API
         let apiWagered = await getUserWageredFromLeaderboard(userProfile.username || "");
         // Check old-api-data.json for extra wagered
