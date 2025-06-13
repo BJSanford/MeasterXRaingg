@@ -30,7 +30,7 @@ export function DashboardHeader() {
             if (type === "wagered") {
               setRainAvatar(participant.avatar || "/placeholder-user.jpg");
             } else if (type === "deposited") {
-              setTotalDeposited(participant.totalDeposited);
+              setTotalDeposited(participant.totalDeposited || 0); // Fallback to 0 if undefined
             }
           } else {
             console.warn(`Participant not found in ${type} leaderboard for username:`, user.username);
