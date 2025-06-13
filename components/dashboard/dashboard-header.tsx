@@ -25,7 +25,7 @@ export function DashboardHeader() {
           }
           const data = await response.json();
           console.log(`Proxy leaderboard response (${type}):`, data);
-          const participant = data.results.find((p: any) => p.username === user.username);
+          const participant = data.results.find((p: any) => p.username?.toLowerCase().trim() === user.username?.toLowerCase().trim());
           if (participant) {
             if (type === "wagered") {
               setRainAvatar(participant.avatar || "/placeholder-user.jpg");

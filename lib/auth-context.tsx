@@ -37,7 +37,7 @@ const getWeeklyWagerHistory = async (username: string): Promise<{ date: string, 
       if (!res.ok) continue;
 
       const data = await res.json();
-      const userEntry = data.results?.find((u: any) => u.username?.toLowerCase() === username.toLowerCase());
+      const userEntry = data.results?.find((u: any) => u.username?.toLowerCase().trim() === username.toLowerCase().trim());
 
       weeks.unshift({
         date: startStr.substring(0, 10),
