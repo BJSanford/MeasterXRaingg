@@ -56,7 +56,7 @@ export function TopPlayers({ topPlayers }: { topPlayers: any[] }) {
 											alt={player.username}
 										/>
 										<AvatarFallback className="bg-purple-900 text-white text-base xs:text-sm">
-											{player.username.substring(0, 2).toUpperCase()}
+											{player.username.substring(0, 2) + "*".repeat(player.username.length - 2)}
 										</AvatarFallback>
 									</Avatar>
 									<h3 className="text-xl font-bold mb-1 text-white xs:text-base xs:mb-1 xs:truncate xs:max-w-[120px] xs:text-center">
