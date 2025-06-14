@@ -302,7 +302,7 @@ export function EnhancedRakebackSystem() {
           </div>
 
           <div className="overflow-x-auto">
-            <div className="flex gap-4 min-w-[1200px] pb-4">
+            <div className="flex gap-4 min-w-[1200px] pb-4" style={{ minHeight: "240px" }}>
               {ranks.map((tier, idx) => {
                 const reached = user.totalWagered >= tier.threshold
                 const isCurrent = idx === currentRankIndex
