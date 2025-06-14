@@ -290,7 +290,7 @@ export function EnhancedRakebackSystem() {
 
       {/* Rakeback Tiers Showcase */}
       <Card className="bg-gray-900/40 backdrop-blur-md border border-gray-800/50 overflow-hidden">
-        <CardContent className="p-6">
+        <CardContent className="p-6" style={{ paddingBottom: "32px" }}>
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-2xl font-bold text-white flex items-center gap-3">
               <div className="p-2 rounded-xl bg-gradient-to-br from-yellow-500 to-orange-500">
@@ -302,7 +302,7 @@ export function EnhancedRakebackSystem() {
           </div>
 
           <div className="overflow-x-auto">
-            <div className="flex gap-4 min-w-[1200px] pb-4" style={{ minHeight: "240px" }}>
+            <div className="flex gap-4 min-w-[1200px] pb-4" style={{ minHeight: "260px" }}>
               {ranks.map((tier, idx) => {
                 const reached = user.totalWagered >= tier.threshold
                 const isCurrent = idx === currentRankIndex
@@ -311,11 +311,12 @@ export function EnhancedRakebackSystem() {
                     key={tier.level}
                     className={`relative flex flex-col items-center p-6 rounded-2xl border-2 min-w-[160px] transition-all duration-500 hover:scale-105 ${
                       isCurrent
-                        ? `border-cyan-400 bg-gradient-to-br ${tier.bgColor} scale-110 ${tier.glowColor} shadow-2xl`
+                        ? `border-cyan-400 bg-gradient-to-br ${tier.bgColor} scale-105 ${tier.glowColor} shadow-2xl`
                         : reached
                           ? `border-green-500/50 bg-gradient-to-br ${tier.bgColor} hover:${tier.glowColor} hover:shadow-xl`
                           : "border-gray-700 bg-gray-800/40 hover:border-gray-600 hover:bg-gray-800/60"
                     }`}
+                    style={{ overflow: "hidden" }}
                   >
                     {/* Tier Image */}
                     <div className="relative mb-4">
