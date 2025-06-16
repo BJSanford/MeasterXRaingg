@@ -101,8 +101,10 @@ export function TopPlayers({ topPlayers }: { topPlayers: any[] }) {
               >
                 <div className="absolute inset-0 overflow-hidden rounded-xl pointer-events-none">
                   <div
-                    className="absolute -top-1/2 -left-1/2 h-[200%] w-[200%] bg-gradient-to-br from-transparent via-white/20 to-transparent 
-                                  opacity-0 group-hover:opacity-100 transition-opacity duration-700 animate-shine-custom group-hover:animate-none"
+                    className={
+                      "absolute -top-1/2 -left-1/2 h-[200%] w-[200%] bg-gradient-to-br from-transparent via-white/20 to-transparent " +
+                      "opacity-0 group-hover:opacity-100 transition-opacity duration-700 animate-shine-custom group-hover:animate-none"
+                    }
                     style={{
                       animationName: "shineEffect",
                       animationDuration: "1.2s",
