@@ -80,10 +80,7 @@ export function TopPlayers({ topPlayers }: { topPlayers: any[] }) {
 
             const { username = `Player ${player.rank || positionStyle.rank}`, wagered = 0, prize = 0 } = player
             const avatarSrc =
-              player.avatar?.large ||
-              player.avatar?.medium ||
-              player.avatar?.small ||
-              `/placeholder.svg?width=128&height=128&text=${username.charAt(0)}`
+              player.avatar?.rain || player.avatar?.large || player.avatar?.medium || player.avatar?.small || `/placeholder.svg?width=128&height=128&text=${username.charAt(0)}`
             const displayUsername =
               username.length === 1
                 ? username + "*"
@@ -137,7 +134,7 @@ export function TopPlayers({ topPlayers }: { topPlayers: any[] }) {
                   >
                     {displayUsername}
                   </h3>
-                  <p className="text-sm text-gray-400 mb-6 group-hover:text-gray-300">@{username}</p>
+                  <p className="text-sm text-gray-400 mb-6 group-hover:text-gray-300"></p>
                   <div className="w-full space-y-4">
                     <div
                       className={`bg-black/50 p-3 rounded-lg border border-gray-700/50 group-hover:border-${positionStyle.color}-500/50 transition-colors`}
