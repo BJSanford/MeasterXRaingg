@@ -4,38 +4,9 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Coins, Zap, TrendingUp } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
 import { CoinIcon } from "@/components/ui/coin-icon"
-import { useEffect, useState } from "react"
 
 export function DashboardStats() {
   const { user, isLoading } = useAuth()
-  const [totalDeposited, setTotalDeposited] = useState(0)
-
-  useEffect(() => {
-    if (user) {
-      const fetchDepositedData = async () => {
-        const startDate = "2023-01-01T00:00:00.00Z"
-        const endDate = "2028-01-01T00:00:00.00Z"
-
-        try {
-          const response = await fetch(`/api/proxy/leaderboard?type=deposited&start_date=${startDate}&end_date=${endDate}`)
-          if (!response.ok) {
-            throw new Error(`Failed to fetch deposited leaderboard: ${response.statusText}`)
-          }
-          const data = await response.json()
-          const participant = data.results.find((p: any) => p.username?.toLowerCase().trim() === user.username?.toLowerCase().trim());
-          if (participant) {
-            setTotalDeposited(participant.deposited || 0)
-          } else {
-            console.warn(`Participant not found in deposited leaderboard for username:`, user.username)
-          }
-        } catch (error) {
-          console.error(`Error fetching deposited leaderboard:`, error)
-        }
-      }
-
-      fetchDepositedData()
-    }
-  }, [user])
 
   if (isLoading || !user) {
     return (
@@ -84,7 +55,7 @@ export function DashboardStats() {
     return 0;
   };
 
-  const rakebackPercentage = getRakebackPercentage(user?.totalWagered || 0)
+  const rakebackPercentage = getRakebackPercentage(user?.totalWagered || 0);
 
   const stats = [
     {
@@ -101,7 +72,7 @@ export function DashboardStats() {
     {
       title: "Total Wagered",
       value: user.totalWagered.toLocaleString(),
-      change: "",
+      change: "+12.5%",
       changeType: "positive" as const,
       icon: Coins,
       gradient: "from-purple-500 to-purple-600",
@@ -111,8 +82,8 @@ export function DashboardStats() {
     },
     {
       title: "Total Deposited",
-      value: totalDeposited.toLocaleString(),
-      change: "",
+      value: user.totalDeposited.toLocaleString(),
+      change: "+8.2%",
       changeType: "positive" as const,
       icon: TrendingUp,
       gradient: "from-yellow-500 to-orange-500",
@@ -123,7 +94,7 @@ export function DashboardStats() {
     {
       title: "Measter Coins",
       value: user.measterCoins.toLocaleString(),
-      change: "",
+      change: "+156",
       changeType: "positive" as const,
       icon: Coins,
       gradient: "from-green-500 to-emerald-500",

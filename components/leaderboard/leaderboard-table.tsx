@@ -156,7 +156,7 @@ export function LeaderboardTable({ leaderboard, isLoading, error, reload }: { le
 											<Avatar className="h-8 w-8">
 												<AvatarImage src={player.avatar || "/placeholder.svg"} alt={player.username} />
 												<AvatarFallback className="bg-purple-900/50 text-white text-xs">
-													{player.username.substring(0, 2) + "*".repeat(player.username.length - 2)}
+													{player.username.substring(0, 2) + "*".repeat(Math.max(0, player.username.length - 2))}
 												</AvatarFallback>
 											</Avatar>
 											<span>{player.username.substring(0, 2) + '*'.repeat(player.username.length - 2)}</span>
