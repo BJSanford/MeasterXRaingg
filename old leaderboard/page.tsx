@@ -110,10 +110,11 @@ export default function WeeklyRacePage() {
   }
 
   const obfuscateName = (name: string) => {
-    if (!name) return ""
-    if (name.length <= 2) return name[0] + "*"
-    if (name.length <= 4) return name[0] + "*".repeat(name.length - 1)
-    return name.slice(0, 2) + "*".repeat(name.length - 4) + name.slice(-2)
+    if (!name) return "";
+    if (name.length === 1) return name + "*"; // Handle single-character usernames
+    if (name.length <= 2) return name[0] + "*";
+    if (name.length <= 4) return name[0] + "*".repeat(name.length - 1);
+    return name.slice(0, 2) + "*".repeat(name.length - 4) + name.slice(-2);
   }
 
   // Updated Podium for Top 3 with a more professional design

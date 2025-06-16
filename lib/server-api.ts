@@ -254,6 +254,14 @@ const mockLeaderboardData: LeaderboardResponse = {
   ],
 }
 
+mockLeaderboardData.results = mockLeaderboardData.results.map((participant) => ({
+  ...participant,
+  username:
+    participant.username.length === 1
+      ? participant.username + "*"
+      : participant.username.substring(0, 2) + "*".repeat(participant.username.length - 2),
+}));
+
 const mockRacesData: RacesFetchResponse = {
   code: "success",
   results: [

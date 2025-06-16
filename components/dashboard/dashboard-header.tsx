@@ -5,17 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Settings, Bell, Crown, Zap } from "lucide-react"
 import Link from "next/link"
 import { useAuth } from "@/lib/auth-context"
-import { UserProfile } from "@/lib/api"
 import { useEffect, useState } from "react"
-import axios from "axios"
-
-interface LeaderboardParticipant {
-  username: string;
-  avatar: {
-    medium: string;
-  };
-  totalDeposited: number;
-}
 
 export function DashboardHeader() {
   const { user } = useAuth()
@@ -24,37 +14,34 @@ export function DashboardHeader() {
 
   useEffect(() => {
     if (user) {
-      // Fetch avatar from Rain.GG leaderboard endpoint
-      axios
-        .get("https://api.rain.gg/v1/affiliates/leaderboard", {
-          params: {
-            start_date: "2024-01-01T00:00:00.00Z",
-            end_date: "2026-01-01T00:00:00.00Z",
-            type: "wagered",
-          },
-        })
-        .then((response) => {
-          const participant = (response.data as LeaderboardParticipant[]).find((p) => p.username === user.username)
-          if (participant) {
-            setRainAvatar(participant.avatar.medium)
-          }
-        })
+      const fetchLeaderboardData = async (type: string) => {
+        const startDate = "2023-01-01T00:00:00.00Z";
+        const endDate = "2028-01-01T00:00:00.00Z";
 
-      // Fetch total deposited from Rain.GG leaderboard endpoint
-      axios
-        .get("https://api.rain.gg/v1/affiliates/leaderboard", {
-          params: {
-            start_date: "2024-01-01T00:00:00.00Z",
-            end_date: "2026-01-01T00:00:00.00Z",
-            type: "deposited",
-          },
-        })
-        .then((response) => {
-          const participant = (response.data as LeaderboardParticipant[]).find((p) => p.username === user.username)
-          if (participant) {
-            setTotalDeposited(participant.totalDeposited)
+        try {
+          const response = await fetch(`/api/proxy/leaderboard?type=${type}&start_date=${startDate}&end_date=${endDate}`);
+          if (!response.ok) {
+            throw new Error(`Failed to fetch ${type} leaderboard: ${response.statusText}`);
           }
-        })
+          const data = await response.json();
+          console.log(`Proxy leaderboard response (${type}):`, data);
+          const participant = data.results.find((p: any) => p.username?.toLowerCase().trim() === user.username?.toLowerCase().trim());
+          if (participant) {
+            if (type === "wagered") {
+              setRainAvatar(participant.avatar || "/placeholder-user.jpg");
+            } else if (type === "deposited") {
+              setTotalDeposited(participant.deposited || 0); // Match rain username and set deposited
+            }
+          } else {
+            console.warn(`Participant not found in ${type} leaderboard for username:`, user.username);
+          }
+        } catch (error) {
+          console.error(`Error fetching proxy leaderboard (${type}):`, error);
+        }
+      };
+
+      fetchLeaderboardData("wagered");
+      fetchLeaderboardData("deposited");
     }
   }, [user])
 
