@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Menu } from "@headlessui/react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/context/auth-context";
 
 interface UserProfileDropdownProps {
   username: string;
@@ -106,11 +107,12 @@ const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
                   if (onSignOut) {
                     onSignOut();
                   }
-                  document.cookie.split(";").forEach((cookie) => {
-                    const [name] = cookie.split("=");
-                    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/`;
-                  });
-                  window.location.href = "/"; // Redirect to home page after clearing cookies
+                  // Close dropdown
+                  setMenuOpen(false);
+
+                  // Use logout function from auth-context
+                  const { logout } = useAuth();
+                  logout();
                 }}
                 className={cn(
                   "block w-full px-4 py-2 text-left text-sm text-red-600",

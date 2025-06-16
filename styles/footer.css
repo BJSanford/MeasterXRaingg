@@ -1,0 +1,7 @@
+footer {
+    position: relative; /* Ensure it's positioned properly */
+    z-index: 10; /* Bring it above other elements */
+    background-color: #fff; /* Set a visible background color */
+    padding: 20px; /* Add padding for spacing */
+    margin-top: 20px; /* Prevent overlap with other content */
+}

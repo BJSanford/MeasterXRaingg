@@ -65,9 +65,11 @@ export default function RewardsPage() {
             </Link>
           </Button>
         </div>
+
+        <div className="flex-grow"></div> {/* Extend the page */}
       </main>
 
-      <Footer className="relative z-10 mt-auto" />
+      <Footer className="relative z-20 mt-auto" />
     </div>
   )
 }
