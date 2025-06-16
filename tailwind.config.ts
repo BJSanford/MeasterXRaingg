@@ -116,7 +116,7 @@ const config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
-        // Custom animations for MeasterSkins
+        // Ensure this keyframe is present for animated gradient text
         "animate-text": {
           "0%": { "background-position": "0% 50%" },
           "50%": { "background-position": "100% 50%" },
@@ -154,7 +154,6 @@ const config = {
           "66%": { transform: "translateY(-5px) translateX(-5px)", opacity: "0.8" },
           "100%": { transform: "translateY(0px) translateX(0px)", opacity: "0.7" },
         },
-        // START: Added keyframes for dashboard header
         tilt: {
           "0%, 100%": { transform: "rotate(0deg)" },
           "50%": { transform: "rotate(0.5deg)" },
@@ -175,12 +174,11 @@ const config = {
           "0%": { "clip-path": "inset(0 100% 0 0)" },
           "100%": { "clip-path": "inset(0 0% 0 0)" },
         },
-        // END: Added keyframes for dashboard header
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        // Custom animations for MeasterSkins
+        // Ensure this animation utility is present for animated gradient text
         text: "animate-text 4s ease infinite",
         float: "float 6s ease-in-out infinite",
         "pulse-slow": "pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite",
@@ -189,13 +187,11 @@ const config = {
         "pulse-glow": "pulse-glow 3s ease-in-out infinite",
         "gradient-shift": "gradient-shift 8s ease infinite",
         "particle-float": "particle-float 4s ease-in-out infinite",
-        // START: Added animations for dashboard header
         tilt: "tilt 10s infinite linear",
         fadeInLeft: "fadeInLeft 0.5s ease-out forwards",
         fadeInRight: "fadeInRight 0.5s ease-out forwards",
         fadeInUp: "fadeInUp 0.5s ease-out forwards",
         "text-reveal": "textReveal 1s ease-out 0.3s forwards",
-        // END: Added animations for dashboard header
       },
     },
   },

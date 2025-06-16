@@ -111,19 +111,7 @@ html {
   -webkit-backdrop-filter: blur(12px);
 }
 
-/* Animation keyframes */
-@keyframes twinkle {
-  0% {
-    opacity: 0.3;
-  }
-  50% {
-    opacity: 0.8;
-  }
-  100% {
-    opacity: 0.3;
-  }
-}
-
+/* --- START: Ensure these are present for animated gradient text --- */
 @keyframes animate-text {
   0% {
     background-position: 0% 50%;
@@ -133,6 +121,19 @@ html {
   }
   100% {
     background-position: 0% 50%;
+  }
+}
+/* --- END: Ensure these are present for animated gradient text --- */
+
+@keyframes twinkle {
+  0% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0.3;
   }
 }
 
@@ -200,7 +201,6 @@ html {
   }
 }
 
-/* Animation for How It Works section */
 @keyframes blob {
   0% {
     transform: translate(0px, 0px) scale(1);
@@ -216,12 +216,13 @@ html {
   }
 }
 
-/* Utility classes */
 @layer utilities {
+  /* --- START: Ensure this utility is present for animated gradient text --- */
   .animate-text {
-    background-size: 300% 300%;
+    background-size: 300% 300%; /* Or 200% 200% - adjust as needed */
     animation: animate-text 4s ease infinite;
   }
+  /* --- END: Ensure this utility is present for animated gradient text --- */
 
   .animate-float {
     animation: float 6s ease-in-out infinite;
@@ -248,7 +249,6 @@ html {
     animation: fade-in-down 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
   }
 
-  /* How It Works animations */
   .animate-blob {
     animation: blob 7s infinite;
   }
@@ -262,7 +262,7 @@ html {
   }
 }
 
-/* Text gradient utilities */
+/* --- START: Ensure these text utilities are present --- */
 .text-gradient {
   background-clip: text;
   -webkit-background-clip: text;
@@ -270,8 +270,10 @@ html {
 }
 
 .bg-gradient-text {
+  /* This is a specific gradient example, you might use Tailwind's direct gradient classes instead */
   background-image: linear-gradient(to right, #22d3ee, #8b5cf6, #22d3ee);
 }
+/* --- END: Ensure these text utilities are present --- */
 
 /* Glow effects */
 .glow {

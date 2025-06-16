@@ -9,19 +9,21 @@ import { Gift, Sparkles } from "lucide-react"
 export const metadata: Metadata = {
   title: "Rewards Shop - Coming Soon | MeasterSkins",
   description:
-    "The MeasterSkins Rewards Shop is coming soon! Get ready to redeem exclusive rewards with your Measter Coins on Rain.gg.",
+    "The MeasterSkins Rewards Shop is coming soon! Get ready to redeem Measter Coins for skins, Rain coins, and much more on Rain.gg.", // Updated description
 }
 
 export default function RewardsPage() {
   return (
-    <div className="min-h-screen text-white flex flex-col bg-gray-950 relative">
-      <AnimatedBackground className="absolute inset-0 z-0" />
+    <div className="min-h-screen text-white flex flex-col bg-gray-950">
+      <AnimatedBackground />
 
-      <main className="relative z-10 flex-grow flex flex-col items-center justify-center text-center px-4 py-16 overflow-hidden">
-        {/* Background Image */}
+      {/* Changed: Removed justify-center, adjusted py-16 to py-24 for more top/bottom space if content is short, 
+          but main will still grow. items-center keeps horizontal centering. */}
+      <main className="relative z-10 flex-grow flex flex-col items-center px-4 py-24 sm:py-32 overflow-hidden">
+        {/* Blurred Background Image */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="/placeholder.svg?height=1080&width=1920"
+            src="/placeholder.svg?height=1080&width=1920" // Added query for better placeholder
             alt="Rewards Shop Preview"
             layout="fill"
             objectFit="cover"
@@ -31,8 +33,8 @@ export default function RewardsPage() {
           <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-transparent to-transparent"></div>
         </div>
 
-        {/* Rewards Content */}
-        <div className="relative z-10 flex flex-col items-center p-6 bg-black/30 backdrop-blur-sm rounded-xl shadow-2xl max-w-2xl">
+        {/* Coming Soon Content */}
+        <div className="relative z-10 flex flex-col items-center p-6 sm:p-8 bg-black/40 backdrop-blur-md rounded-xl shadow-2xl max-w-2xl text-center">
           <div className="p-4 bg-gradient-to-br from-purple-600/20 to-cyan-600/20 rounded-full mb-6 shadow-lg">
             <Gift className="w-16 h-16 md:w-20 md:h-20 text-purple-400 animate-pulse" />
           </div>
@@ -45,11 +47,11 @@ export default function RewardsPage() {
           <p className="text-2xl sm:text-3xl font-semibold text-gray-100 mb-6 bg-clip-text text-transparent bg-gradient-to-r from-gray-100 to-gray-300">
             Launching Soon!
           </p>
+          {/* Changed: Updated text content below */}
           <p className="text-md sm:text-lg text-gray-300 max-w-lg mb-8 leading-relaxed">
-            We're crafting an incredible rewards experience just for you. Soon, you'll be able to redeem your Measter
-            Coins for exclusive skins, site credits, and much more. Stay tuned!
+            We're crafting an incredible rewards experience just for you. Soon, you'll be able to redeem Measter Coins
+            for skins, Rain coins, and much more. Stay tuned!
           </p>
-
           <Button
             size="lg"
             variant="default"
@@ -64,8 +66,9 @@ export default function RewardsPage() {
         </div>
       </main>
 
-      {/* ✅ Footer should now appear properly */}
-      <Footer className="relative z-20" />
+      <div className="relative z-10 w-full">
+        <Footer />
+      </div>
     </div>
   )
 }

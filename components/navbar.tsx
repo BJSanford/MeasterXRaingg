@@ -35,6 +35,7 @@ export function Navbar({ session: initialSession }: NavbarProps) {
 
   const handleSignOut = () => {
     logout()
+    setSession(null) // Ensure session state is cleared
   }
 
   const handleLogin = () => {
