@@ -62,9 +62,12 @@ export default function RewardsPage() {
             </Link>
           </Button>
         </div>
+
+        {/* Added padding to ensure footer visibility */}
+        <div className="flex-grow"></div>
       </main>
 
-      <Footer />
+      <Footer className="mt-auto" />
     </div>
   )
 }

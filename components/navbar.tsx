@@ -54,10 +54,11 @@ export function Navbar({ session: initialSession }: NavbarProps) {
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <div className="flex items-center">
           <Link href="/" className="flex items-center gap-3 group">
+            {/* Updated the logo to display within a circular frame */}
             <img
               src="/images/measter-logo.png"
               alt="MeasterCS Logo"
-              className="w-10 h-10 transition-transform duration-300 group-hover:scale-110"
+              className="w-10 h-10 rounded-full transition-transform duration-300 group-hover:scale-110"
             />
             <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-cyan-400 group-hover:from-purple-300 group-hover:to-cyan-300 transition-all duration-300">
               MeasterCS

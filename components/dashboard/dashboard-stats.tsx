@@ -128,7 +128,7 @@ export function DashboardStats() {
       icon: Coins,
       gradient: "from-green-500 to-emerald-500",
       bgGradient: "from-green-500/10 to-emerald-500/5",
-      description: "Available to spend",
+      description: "Coming Soon",
       isCoin: true,
     },
   ]
@@ -178,7 +178,7 @@ export function DashboardStats() {
                 <p className="text-sm text-gray-400 font-medium">{stat.title}</p>
                 <p className="text-2xl font-bold text-white group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-gray-300 group-hover:bg-clip-text transition-all duration-300 flex items-center gap-1">
                   {stat.isCoin && <CoinIcon size={20} className="mb-1" />}
-                  {stat.value}
+                  <span className="text-white group-hover:text-white transition-colors duration-300">{stat.value}</span>
                 </p>
                 <p className="text-xs text-gray-500">{stat.description}</p>
               </div>
