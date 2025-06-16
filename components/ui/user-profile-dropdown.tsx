@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Menu } from "@headlessui/react";
 import { cn } from "@/lib/utils";
-import { useAuth } from "@/context/auth-context";
+import { useAuth } from "@/lib/auth-context";
 
 interface UserProfileDropdownProps {
   username: string;
