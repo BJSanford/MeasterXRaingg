@@ -79,8 +79,7 @@ export function TopPlayers({ topPlayers }: { topPlayers: any[] }) {
               )
 
             const { username = `Player ${player.rank || positionStyle.rank}`, wagered = 0, prize = 0 } = player
-            const avatarSrc =
-              player.avatar?.rain || player.avatar?.large || player.avatar?.medium || player.avatar?.small || `/placeholder.svg?width=128&height=128&text=${username.charAt(0)}`
+            const avatarSrc = player.avatar || "/placeholder.svg"
             const displayUsername =
               username.length === 1
                 ? username + "*"
@@ -124,7 +123,7 @@ export function TopPlayers({ topPlayers }: { topPlayers: any[] }) {
                     className={`h-24 w-24 md:h-28 md:w-28 mb-4 ring-4 ${colors.avatarRing} ring-offset-4 ring-offset-gray-900 
                               transition-transform duration-300 group-hover:scale-110 mt-4`}
                   >
-                    <AvatarImage src={avatarSrc || "/placeholder.svg"} alt={displayUsername} />
+                    <AvatarImage src={avatarSrc} alt={player.username} />
                     <AvatarFallback className={`${colors.bg} ${colors.text} font-bold text-3xl`}>
                       {displayUsername.substring(0, 1).toUpperCase()}
                     </AvatarFallback>
