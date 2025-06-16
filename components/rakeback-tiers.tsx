@@ -7,17 +7,17 @@ import { useState } from "react"
 export function RakebackTiers() {
   // Standardized image filenames (all lowercase, hyphens)
   const tiers = [
-    { level: "Iron", threshold: 1000, claimable: 3.00, rankReward: 0.3, activeRakeback: 0.2 },
-    { level: "Bronze", threshold: 2500, claimable: 7.50, rankReward: 0.3, activeRakeback: 0.25 },
+    { level: "Iron", threshold: 1000, claimable: 5.00, rankReward: 0.3, activeRakeback: 0.2 },
+    { level: "Bronze", threshold: 2500, claimable: 10.00, rankReward: 0.3, activeRakeback: 0.25 },
     { level: "Silver", threshold: 5000, claimable: 15.00, rankReward: 0.3, activeRakeback: 0.3 },
-    { level: "Gold", threshold: 10000, claimable: 30.00, rankReward: 0.3, activeRakeback: 0.35 },
-    { level: "Platinum", threshold: 15000, claimable: 45.00, rankReward: 0.3, activeRakeback: 0.4 },
-    { level: "Emerald", threshold: 25000, claimable: 75.00, rankReward: 0.3, activeRakeback: 0.45 },
-    { level: "Diamond", threshold: 50000, claimable: 150.00, rankReward: 0.3, activeRakeback: 0.5 },
-    { level: "Blood Diamond", threshold: 75000, claimable: 225.00, rankReward: 0.3, activeRakeback: 0.55 },
-    { level: "Obsidian", threshold: 100000, claimable: 300.00, rankReward: 0.3, activeRakeback: 0.6 },
-    { level: "Imperial", threshold: 150000, claimable: 450.00, rankReward: 0.3, activeRakeback: 0.65 },
-    { level: "Ascendent", threshold: 200000, claimable: 600.00, rankReward: 0.3, activeRakeback: 0.7 },
+    { level: "Gold", threshold: 10000, claimable: 20.00, rankReward: 0.3, activeRakeback: 0.35 },
+    { level: "Platinum", threshold: 15000, claimable: 30.00, rankReward: 0.3, activeRakeback: 0.4 },
+    { level: "Emerald", threshold: 25000, claimable: 40.00, rankReward: 0.3, activeRakeback: 0.45 },
+    { level: "Diamond", threshold: 50000, claimable: 50.00, rankReward: 0.3, activeRakeback: 0.5 },
+    { level: "Blood Diamond", threshold: 75000, claimable: 60.00, rankReward: 0.3, activeRakeback: 0.55 },
+    { level: "Obsidian", threshold: 100000, claimable: 70.00, rankReward: 0.3, activeRakeback: 0.6 },
+    { level: "Imperial", threshold: 150000, claimable: 100.00, rankReward: 0.3, activeRakeback: 0.65 },
+    { level: "Ascendent", threshold: 200000, claimable: 200.00, rankReward: 0.3, activeRakeback: 0.7 },
   ]
 
   // Helper to handle image error fallback

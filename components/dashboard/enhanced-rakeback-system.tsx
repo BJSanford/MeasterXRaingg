@@ -27,7 +27,7 @@ const ranks: Rank[] = [
   {
     level: "Iron",
     threshold: 1000,
-    claimable: 3.0,
+    claimable: 5.0,
     rankReward: 0.3,
     activeRakeback: 0.2,
     color: "text-gray-400",
@@ -38,7 +38,7 @@ const ranks: Rank[] = [
   {
     level: "Bronze",
     threshold: 2500,
-    claimable: 7.5,
+    claimable: 10.0,
     rankReward: 0.3,
     activeRakeback: 0.25,
     color: "text-amber-600",
@@ -60,7 +60,7 @@ const ranks: Rank[] = [
   {
     level: "Gold",
     threshold: 10000,
-    claimable: 30.0,
+    claimable: 20.0,
     rankReward: 0.3,
     activeRakeback: 0.35,
     color: "text-yellow-400",
@@ -71,7 +71,7 @@ const ranks: Rank[] = [
   {
     level: "Platinum",
     threshold: 15000,
-    claimable: 45.0,
+    claimable: 30.0,
     rankReward: 0.3,
     activeRakeback: 0.4,
     color: "text-blue-300",
@@ -82,7 +82,7 @@ const ranks: Rank[] = [
   {
     level: "Emerald",
     threshold: 25000,
-    claimable: 75.0,
+    claimable: 40.0,
     rankReward: 0.3,
     activeRakeback: 0.45,
     color: "text-emerald-400",
@@ -93,7 +93,7 @@ const ranks: Rank[] = [
   {
     level: "Diamond",
     threshold: 50000,
-    claimable: 150.0,
+    claimable: 50.0,
     rankReward: 0.3,
     activeRakeback: 0.5,
     color: "text-cyan-400",
@@ -104,7 +104,7 @@ const ranks: Rank[] = [
   {
     level: "Blood Diamond",
     threshold: 75000,
-    claimable: 225.0,
+    claimable: 60.0,
     rankReward: 0.3,
     activeRakeback: 0.55,
     color: "text-red-400",
@@ -115,7 +115,7 @@ const ranks: Rank[] = [
   {
     level: "Obsidian",
     threshold: 100000,
-    claimable: 300.0,
+    claimable: 70.0,
     rankReward: 0.3,
     activeRakeback: 0.6,
     color: "text-purple-400",
@@ -126,7 +126,7 @@ const ranks: Rank[] = [
   {
     level: "Imperial",
     threshold: 150000,
-    claimable: 450.0,
+    claimable: 100.0,
     rankReward: 0.3,
     activeRakeback: 0.65,
     color: "text-orange-400",
@@ -137,7 +137,7 @@ const ranks: Rank[] = [
   {
     level: "Ascendent",
     threshold: 200000,
-    claimable: 600.0,
+    claimable: 200.0,
     rankReward: 0.3,
     activeRakeback: 0.7,
     color: "text-pink-400",
