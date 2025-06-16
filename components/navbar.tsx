@@ -7,12 +7,14 @@ import { DiscordLoginButton } from "@/components/ui/discord-login-button"
 import { MeasterLogo } from "@/components/ui/measter-logo"
 import UserProfileDropdown from "@/components/ui/user-profile-dropdown"
 import { Home, Trophy, Gift } from "lucide-react"
+import { useAuth } from "@/lib/auth-context"
 
 interface NavbarProps {
   session?: any
 }
 
 export function Navbar({ session: initialSession }: NavbarProps) {
+  const { logout } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
   const [session, setSession] = useState(initialSession)
   const [rainUsername, setRainUsername] = useState<string | null>(null)
@@ -32,9 +34,7 @@ export function Navbar({ session: initialSession }: NavbarProps) {
   }
 
   const handleSignOut = () => {
-    if (typeof window !== "undefined") {
-      window.location.href = "/api/auth/signout"
-    }
+    logout()
   }
 
   const handleLogin = () => {

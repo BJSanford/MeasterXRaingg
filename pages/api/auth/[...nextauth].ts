@@ -40,6 +40,7 @@ export const authOptions: AuthOptions = {
   },
   pages: {
     signIn: "/login", // Redirect to the login page if not authenticated
+    signOut: "/", // Redirect to the home page after signing out
   },
   secret: process.env.NEXTAUTH_SECRET,
 };

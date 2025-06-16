@@ -18,24 +18,20 @@ export default function RewardsPage() {
       <AnimatedBackground className="absolute inset-0 z-0" />
 
       <main className="relative z-10 flex-grow flex flex-col items-center justify-center text-center px-4 py-16 overflow-hidden">
-        {/* Added extra spacing to extend the page */}
-        <div className="flex-grow"></div>
-
-        {/* Blurred Background Image */}
+        {/* Background Image */}
         <div className="absolute inset-0 z-0">
           <Image
             src="/placeholder.svg?height=1080&width=1920"
             alt="Rewards Shop Preview"
             layout="fill"
             objectFit="cover"
-            className="filter blur-xl scale-110 opacity-30" // Increased blur, adjusted opacity
+            className="filter blur-xl scale-110 opacity-30"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-transparent to-transparent"></div>{" "}
-          {/* Smoother blend with background */}
+          <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-transparent to-transparent"></div>
         </div>
 
-        {/* Coming Soon Content */}
+        {/* Rewards Content */}
         <div className="relative z-10 flex flex-col items-center p-6 bg-black/30 backdrop-blur-sm rounded-xl shadow-2xl max-w-2xl">
           <div className="p-4 bg-gradient-to-br from-purple-600/20 to-cyan-600/20 rounded-full mb-6 shadow-lg">
             <Gift className="w-16 h-16 md:w-20 md:h-20 text-purple-400 animate-pulse" />
@@ -53,6 +49,7 @@ export default function RewardsPage() {
             We're crafting an incredible rewards experience just for you. Soon, you'll be able to redeem your Measter
             Coins for exclusive skins, site credits, and much more. Stay tuned!
           </p>
+
           <Button
             size="lg"
             variant="default"
@@ -65,11 +62,10 @@ export default function RewardsPage() {
             </Link>
           </Button>
         </div>
-
-        <div className="flex-grow"></div> {/* Extend the page */}
       </main>
 
-      <Footer className="relative z-20 mt-auto" />
+      {/* ✅ Footer should now appear properly */}
+      <Footer className="relative z-20" />
     </div>
   )
 }
