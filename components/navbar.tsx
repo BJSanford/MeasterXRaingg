@@ -55,7 +55,7 @@ export function Navbar({ session: initialSession }: NavbarProps) {
         <div className="flex items-center">
           <Link href="/" className="flex items-center gap-3 group">
             <img
-              src="/attached_assets/image_1746718725259.png"
+              src="/images/measter-logo.png"
               alt="MeasterCS Logo"
               className="w-10 h-10 transition-transform duration-300 group-hover:scale-110"
             />

@@ -91,7 +91,7 @@ export function TopPlayers({ topPlayers }: { topPlayers: any[] }) {
                 key={player.id || username + positionStyle.rank}
                 className={`group relative rounded-xl border-2 p-6 pt-12 transition-all duration-300 ease-out
                   ${colors.border} ${colors.bg} ${colors.shadow}
-                  ${positionStyle.rank === 1 ? "md:order-2 md:scale-110 md:-translate-y-8 z-20" : positionStyle.rank === 2 ? "md:order-1" : "md:order-3"}
+                  ${positionStyle.rank === 1 ? "md:order-2 md:scale-110 md:-translate-y-8 z-20" : positionStyle.rank === 2 ? "md:order-1 md:mr-4" : "md:order-3 md:ml-4"}
                   hover:scale-105 md:hover:!scale-115 hover:z-30 transform-gpu 
                 `}
               >
