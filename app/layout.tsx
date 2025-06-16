@@ -16,8 +16,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en">
       <body className="bg-black text-white">
-        <Navbar session={session} /> {/* Pass session to Navbar */}
         <AuthProvider>
+          <Navbar session={session} /> {/* Pass session to Navbar */}
           {children}
         </AuthProvider>
       </body>
