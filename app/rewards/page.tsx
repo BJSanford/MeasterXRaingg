@@ -14,10 +14,13 @@ export const metadata: Metadata = {
 
 export default function RewardsPage() {
   return (
-    <div className="min-h-screen text-white flex flex-col bg-gray-950">
-      <AnimatedBackground />
+    <div className="min-h-screen text-white flex flex-col bg-gray-950 relative">
+      <AnimatedBackground className="absolute inset-0 z-0" />
 
       <main className="relative z-10 flex-grow flex flex-col items-center justify-center text-center px-4 py-16 overflow-hidden">
+        {/* Added extra spacing to extend the page */}
+        <div className="flex-grow"></div>
+
         {/* Blurred Background Image */}
         <div className="absolute inset-0 z-0">
           <Image
@@ -62,12 +65,9 @@ export default function RewardsPage() {
             </Link>
           </Button>
         </div>
-
-        {/* Added padding to ensure footer visibility */}
-        <div className="flex-grow"></div>
       </main>
 
-      <Footer className="mt-auto" />
+      <Footer className="relative z-10 mt-auto" />
     </div>
   )
 }

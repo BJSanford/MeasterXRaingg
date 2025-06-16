@@ -11,12 +11,12 @@ import { CoinIcon } from "@/components/ui/coin-icon" // Re-added from original f
 
 export function DashboardHeader() {
   const { user } = useAuth()
-  const [rainAvatar, setRainAvatar] = useState("/placeholder.svg?width=128&height=128") // Default placeholder
+  const [rainAvatar, setRainAvatar] = useState("/placeholder-user.jpg") // Default placeholder
   const [totalDeposited, setTotalDeposited] = useState(0)
   const [level, setLevel] = useState("Bronze") // Default level
 
   useEffect(() => {
-    if (user && user.username) {
+    if (user) {
       // Ensure user and username are available
       const fetchLeaderboardData = async (type: string) => {
         const startDate = "2023-01-01T00:00:00.00Z" // Using fixed dates as in original
@@ -33,20 +33,20 @@ export function DashboardHeader() {
           const participant = data.results.find((p: any) => p.username === user.username)
           if (participant) {
             if (type === "wagered") {
-              setRainAvatar(participant.avatar || "/placeholder.svg?width=128&height=128")
+              setRainAvatar(participant.avatar || "/placeholder-user.jpg")
             } else if (type === "deposited") {
-              setTotalDeposited(participant.deposited || 0)
+              setTotalDeposited(participant.deposited !== undefined ? participant.deposited : 0)
             }
           } else {
             console.warn(`Participant not found in ${type} leaderboard for username:`, user.username)
             // Set defaults if participant not found to avoid issues with calculations
-            if (type === "wagered") setRainAvatar("/placeholder.svg?width=128&height=128")
+            if (type === "wagered") setRainAvatar("/placeholder-user.jpg")
             if (type === "deposited") setTotalDeposited(0)
           }
         } catch (error) {
           console.error(`Error fetching proxy leaderboard (${type}):`, error)
           // Set defaults on error
-          if (type === "wagered") setRainAvatar("/placeholder.svg?width=128&height=128")
+          if (type === "wagered") setRainAvatar("/placeholder-user.jpg")
           if (type === "deposited") setTotalDeposited(0)
         }
       }
@@ -69,11 +69,6 @@ export function DashboardHeader() {
         return "Bronze" // Default if no conditions met
       }
       setLevel(calculateLevel(user?.totalWagered || 0))
-    } else {
-      // Reset states if user logs out or is not available
-      setRainAvatar("/placeholder.svg?width=128&height=128")
-      setTotalDeposited(0)
-      setLevel("Bronze")
     }
   }, [user])
 
@@ -81,9 +76,9 @@ export function DashboardHeader() {
   if (!user) {
     return (
       <div className="relative">
-        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 via-cyan-600/20 to-purple-600/20 rounded-3xl blur-xl opacity-50"></div>
-        <div className="relative bg-gray-900/50 backdrop-blur-md border border-gray-800/50 rounded-3xl p-6 md:p-8 mb-8 shadow-2xl">
-          <div className="h-20 animate-pulse bg-gray-800/50 rounded-lg"></div> {/* Simplified pulse from original */}
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 via-cyan-600/20 to-purple-600/20 rounded-2xl blur-xl"></div>
+        <div className="relative bg-gray-900/40 backdrop-blur-md border border-gray-800/50 rounded-2xl p-6 mb-8">
+          <div className="h-20 animate-pulse bg-gray-800/50 rounded-lg"></div>
         </div>
       </div>
     )
@@ -113,7 +108,7 @@ export function DashboardHeader() {
 
   return (
     <div className="relative group">
-      <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 via-cyan-500 to-pink-500 rounded-3xl blur-md opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200 animate-tilt"></div>
+      <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 via-cyan-500 to-pink-500 rounded-3xl blur-md opacity-25 group-hover:opacity-50 transition-opacity duration-300 animate-tilt"></div>
 
       <div className="relative bg-gray-900/80 backdrop-blur-xl border border-gray-700/60 rounded-3xl p-6 md:p-8 mb-8 shadow-2xl shadow-purple-500/20 overflow-hidden">
         <div className="absolute inset-0 opacity-[0.03] [mask-image:radial-gradient(60%_90%_at_50%_0%,white,transparent)]">
@@ -237,21 +232,21 @@ export function DashboardHeader() {
 // (As provided in the previous response)
 /* In tailwind.config.ts:
 theme: {
-  extend: {
-    keyframes: {
-      tilt: { '0%, 100%': { transform: 'rotate(0deg)' }, '50%': { transform: 'rotate(0.5deg)' }, },
-      fadeInLeft: { '0%': { opacity: '0', transform: 'translateX(-20px)' }, '100%': { opacity: '1', transform: 'translateX(0)' }, },
-      fadeInRight: { '0%': { opacity: '0', transform: 'translateX(20px)' }, '100%': { opacity: '1', transform: 'translateX(0)' }, },
-      fadeInUp: { '0%': { opacity: '0', transform: 'translateY(20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' }, },
-      textReveal: { '0%': { 'clip-path': 'inset(0 100% 0 0)' }, '100%': { 'clip-path': 'inset(0 0 0 0)' }, }
-    },
-    animation: {
-      tilt: 'tilt 10s infinite linear',
-      fadeInLeft: 'fadeInLeft 0.5s ease-out forwards',
-      fadeInRight: 'fadeInRight 0.5s ease-out forwards',
-      fadeInUp: 'fadeInUp 0.5s ease-out forwards',
-      'text-reveal': 'textReveal 1s ease-out 0.3s forwards',
-    },
+extend: {
+  keyframes: {
+    tilt: { '0%, 100%': { transform: 'rotate(0deg)' }, '50%': { transform: 'rotate(0.5deg)' }, },
+    fadeInLeft: { '0%': { opacity: '0', transform: 'translateX(-20px)' }, '100%': { opacity: '1', transform: 'translateX(0)' }, },
+    fadeInRight: { '0%': { opacity: '0', transform: 'translateX(20px)' }, '100%': { opacity: '1', transform: 'translateX(0)' }, },
+    fadeInUp: { '0%': { opacity: '0', transform: 'translateY(20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' }, },
+    textReveal: { '0%': { 'clip-path': 'inset(0 100% 0 0)' }, '100%': { 'clip-path': 'inset(0 0 0 0)' }, }
   },
+  animation: {
+    tilt: 'tilt 10s infinite linear',
+    fadeInLeft: 'fadeInLeft 0.5s ease-out forwards',
+    fadeInRight: 'fadeInRight 0.5s ease-out forwards',
+    fadeInUp: 'fadeInUp 0.5s ease-out forwards',
+    'text-reveal': 'textReveal 1s ease-out 0.3s forwards',
+  },
+},
 },
 */

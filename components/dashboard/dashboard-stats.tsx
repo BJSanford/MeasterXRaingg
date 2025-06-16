@@ -122,14 +122,14 @@ export function DashboardStats() {
     },
     {
       title: "Measter Coins",
-      value: user.measterCoins.toLocaleString(),
+      value: "",
       change: "",
-      changeType: "positive" as const,
+      changeType: "neutral" as const,
       icon: Coins,
       gradient: "from-green-500 to-emerald-500",
       bgGradient: "from-green-500/10 to-emerald-500/5",
-      description: "Coming Soon",
-      isCoin: true,
+      description: <span className="text-lg font-bold">Coming Soon!</span>,
+      isCoin: false,
     },
   ]
 
