@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import type { AuthOptions } from "next-auth";
 import type { JWT } from "next-auth/jwt";
 import type { Session } from "next-auth";
+import { serialize } from "cookie";
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -84,6 +85,26 @@ export const authOptions: AuthOptions = {
         } else {
           session.user.verified = false;
         }
+
+        // Set signed cookies for Rain username and ID
+        const rainUsername = session.user.rainUsername || "";
+        const rainId = session.user.rainId || "";
+
+        const rainUsernameCookie = serialize("rainUsername", rainUsername, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "Strict",
+          path: "/",
+        });
+
+        const rainIdCookie = serialize("rainId", rainId, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "Strict",
+          path: "/",
+        });
+
+        session.cookies = [rainUsernameCookie, rainIdCookie];
       }
       console.log("🔵 SESSION AFTER SESSION CALLBACK:", session);
       return session;
