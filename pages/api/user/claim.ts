@@ -6,21 +6,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   console.log("Incoming request payload:", req.body);
 
   if (req.method === "POST") {
-    const { rainUsername, discordId, rewardAmount } = req.body;
+    const { rainId, discordId, rewardAmount } = req.body;
 
     console.log("Received payload:", req.body);
-    console.log("rainUsername:", req.body.rainUsername);
+    console.log("rainId:", req.body.rainId);
     console.log("discordId:", req.body.discordId);
     console.log("rewardAmount:", req.body.rewardAmount);
 
-    if (!rainUsername || !discordId || !rewardAmount || typeof rewardAmount !== "number") {
+    if (!rainId || !discordId || !rewardAmount || typeof rewardAmount !== "number") {
       return res.status(400).json({ error: "Invalid request data" });
     }
 
     try {
       // Check if the reward has already been claimed
       const existingClaim = await prisma.rankRewardClaim.findFirst({
-        where: { rainUsername, rewardAmount },
+        where: { rainId, rewardAmount },
       });
 
       if (existingClaim) {
@@ -29,7 +29,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       // Mark the reward as claimed
       await prisma.rankRewardClaim.create({
-        data: { rainUsername, rewardAmount },
+        data: { rainId, rewardAmount },
       });
 
       // Notify the Discord bot
@@ -43,7 +43,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       await axios.post(botEndpoint, {
         discordId,
-        rainUsername,
+        rainId,
         rewardAmount,
       });
 

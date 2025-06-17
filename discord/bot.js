@@ -3,6 +3,7 @@ require('dotenv').config();
 
 const { Client, GatewayIntentBits, PermissionsBitField } = require("discord.js");
 const axios = require("axios");
+const express = require("express");
 
 // Environment Variables
 const GUILD_ID = process.env.GUILD_ID;
@@ -22,6 +23,8 @@ const client = new Client({
         GatewayIntentBits.GuildMembers,
     ],
 });
+const app = express();
+app.use(express.json());
 
 // In-memory cache to prevent duplicate channels
 const activeVerifications = new Set();
@@ -103,32 +106,64 @@ client.on("messageCreate", async (message) => {
     }
 });
 
-client.on("rankRewardClaim", async (claimData) => {
-    const { discordId, rainUsername, rewardAmount } = claimData;
+app.post("/discord/rankRewardClaim", async (req, res) => {
+    const { discordId, rainId, rewardAmount } = req.body;
+
+    if (!discordId || !rainId || !rewardAmount) {
+        return res.status(400).json({ error: "Invalid request data" });
+    }
+
+    console.log("Request body:", req.body);
+    console.log("Guild ID:", GUILD_ID);
+    console.log("Moderator Role ID:", MOD_ROLE_ID);
+
     const guild = await client.guilds.fetch(GUILD_ID);
+    console.log("Fetched guild:", guild);
+
+    const member = await guild.members.fetch(discordId).catch(err => {
+        console.error("Error fetching member:", err);
+        res.status(400).json({ error: "Invalid Discord ID" });
+        return null;
+    });
+
+    if (!member) return;
+
+    const modRole = guild.roles.cache.get(MOD_ROLE_ID);
+    if (!modRole) {
+        console.error("Invalid MOD_ROLE_ID:", MOD_ROLE_ID);
+        return res.status(400).json({ error: "Invalid moderator role ID" });
+    }
 
     try {
         const channel = await guild.channels.create({
-            name: `${rainUsername}-Rank-Reward`,
+            name: `${rainId}-Rank-Reward`,
             type: 0, // GUILD_TEXT
             permissionOverwrites: [
-                { id: guild.roles.everyone, deny: [PermissionsBitField.Flags.ViewChannel] },
-                { id: discordId, allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages] },
-                { id: MOD_ROLE_ID, allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages] },
+                { id: guild.roles.everyone.id, deny: [PermissionsBitField.Flags.ViewChannel] },
+                { id: member.id, allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages] },
+                { id: modRole.id, allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages] },
             ],
         });
 
+        console.log("Created channel:", channel);
+
         channel.send(
             `🎉 Congratulations <@${discordId}>! You have claimed a rank reward of **${rewardAmount}**.
-Rain.gg Username: **${rainUsername}**.
+Rain.gg ID: **${rainId}**.
 A moderator will assist you shortly.`
         );
 
-        // Ping specific Discord ID
         channel.send(`<@239127154275647489>, please assist with the reward distribution.`);
+        res.status(200).json({ message: "Rank reward channel created successfully!" });
     } catch (err) {
         console.error("Error creating rank reward channel:", err);
+        res.status(500).json({ error: "Internal server error" });
     }
+});
+
+const PORT = process.env.PORT || 20161;
+app.listen(PORT, () => {
+    console.log(`HTTP server running on port ${PORT}`);
 });
 
 client.login(process.env.DISCORD_BOT_TOKEN);

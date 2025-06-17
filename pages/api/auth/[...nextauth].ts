@@ -48,6 +48,32 @@ export const authOptions: AuthOptions = {
             discordUsername: token.name,
             verified: "true",
           };
+
+          // Fetch Rain ID from Rain.gg API
+          const leaderboardUrl = `https://api.rain.gg/v1/affiliates/leaderboard?type=deposited`;
+          const response = await fetch(leaderboardUrl, {
+            headers: {
+              accept: "application/json",
+              "x-api-key": process.env.RAIN_API_KEY || "",
+            },
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            const leaderboardUser = data.results.find(
+              (user: any) => user.username === userVerification.rainUsername
+            );
+
+            if (leaderboardUser) {
+              session.user.rainId = leaderboardUser.id; // Attach Rain ID to session
+              session.localStorage = {
+                rainId: leaderboardUser.id,
+                rainUsername: userVerification.rainUsername,
+                discordUsername: token.name,
+                verified: "true",
+              };
+            }
+          }
         } else {
           session.user.verified = false;
         }
