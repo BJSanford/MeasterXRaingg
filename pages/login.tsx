@@ -23,8 +23,17 @@ export default function LoginPage() {
         const avatar = (session.user as any)?.image;
         localStorage.setItem("discordAvatar", typeof avatar === "string" ? avatar : "");
       }
-      // Redirect to home page after login
-      router.push("/");
+
+      const verified = localStorage.getItem("verified") === "true";
+      const rainUsername = localStorage.getItem("rainUsername");
+
+      if (verified && rainUsername) {
+        // Redirect to dashboard if user is verified and has a Rain username
+        router.push("/dashboard");
+      } else {
+        // Redirect to login if not verified or missing Rain username
+        router.push("/login");
+      }
     } else if (status === "unauthenticated") {
       if (!loginAttempted) {
         setLoginAttempted(true);
