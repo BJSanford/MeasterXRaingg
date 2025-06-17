@@ -46,6 +46,7 @@ export const authOptions: AuthOptions = {
           session.localStorage = {
             rainUsername: userVerification.rainUsername,
             discordUsername: token.name,
+            discordId: token.sub, // Save Discord ID in session storage
             verified: "true",
           };
 
