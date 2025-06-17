@@ -12,9 +12,14 @@ export default function LoginPage() {
   useEffect(() => {
     if (status === "loading") return; // Handle loading state
     if (status === "authenticated") {
-      // Store Discord user details in localStorage
       if (session?.user) {
+        // Store Discord user details in localStorage
         localStorage.setItem("discordUsername", session.user.name || "");
+        localStorage.setItem("discordId", session.user.id || "");
+        localStorage.setItem("rainUsername", session.user.rainUsername || "");
+        localStorage.setItem("rainId", session.user.rainId || "");
+        localStorage.setItem("verified", session.user.verified ? "true" : "false");
+
         const avatar = (session.user as any)?.image;
         localStorage.setItem("discordAvatar", typeof avatar === "string" ? avatar : "");
       }
