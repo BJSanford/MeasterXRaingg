@@ -259,11 +259,12 @@ export function EnhancedRakebackSystem() {
                   className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white border-0 px-6 py-2"
                   onClick={async () => {
                     try {
-                      const discordId = user.id || localStorage.getItem("discordId");
-                      const rainUsername = user.rainUsername || localStorage.getItem("rainUsername");
+                      const discordId = localStorage.getItem("discordId") || user.id;
+                      const rainId = localStorage.getItem("rainId") || user.rainId;
 
-                      if (!discordId || !rainUsername) {
-                        alert("Missing Discord ID or Rain.gg username.");
+                      if (!discordId || !rainId) {
+                        console.error("Missing Discord ID or Rain ID.", { discordId, rainId });
+                        alert("Missing Discord ID or Rain ID.");
                         return;
                       }
 
@@ -274,7 +275,7 @@ export function EnhancedRakebackSystem() {
                         },
                         body: JSON.stringify({
                           discordId,
-                          rainUsername,
+                          rainId,
                           rewardAmount: tier.claimable,
                         }),
                       });
@@ -345,7 +346,7 @@ export function EnhancedRakebackSystem() {
                     <p className="text-xs text-gray-500 flex items-center gap-1">
                       <CoinIcon size={12} className="mb-0.5" />
                       {(nextTier.threshold - user.totalWagered).toLocaleString()} to next tier
-                    </p>
+                    </div>
                   </div>
                 )}
               </div>
