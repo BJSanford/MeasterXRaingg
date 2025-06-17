@@ -50,7 +50,7 @@ export const authOptions: AuthOptions = {
           };
 
           // Fetch Rain ID from Rain.gg API
-          const leaderboardUrl = `https://api.rain.gg/v1/affiliates/leaderboard?type=deposited`;
+          const leaderboardUrl = `https://api.rain.gg/v1/affiliates/leaderboard?start_date=2024-01-01T00%3A00%3A00.00Z&end_date=2026-01-01T00%3A00%3A00.00Z&type=deposited`;
           const response = await fetch(leaderboardUrl, {
             headers: {
               accept: "application/json",
@@ -78,7 +78,8 @@ export const authOptions: AuthOptions = {
               console.warn("No matching user found in leaderboard for Rain username:", userVerification.rainUsername);
             }
           } else {
-            console.error("Failed to fetch Rain.gg leaderboard. Status:", response.status);
+            const errorText = await response.text();
+            console.error("Failed to fetch Rain.gg leaderboard. Status:", response.status, "Response:", errorText);
           }
         } else {
           session.user.verified = false;
