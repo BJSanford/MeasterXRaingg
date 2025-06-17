@@ -93,12 +93,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         if (rainUsername) {
           await loadUser(rainUsername);
+          if (!verified) {
+            router.replace("/verification-pending");
+          }
         } else {
           setIsLoading(false);
-        }
-
-        if (!verified) {
-          router.replace("/verification-pending");
         }
       } catch (error) {
         console.error("Error checking authentication:", error);
