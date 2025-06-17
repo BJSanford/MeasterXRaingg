@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
+import Cookies from "js-cookie";
 
 export default function LoginPage() {
   const { data: session, status } = useSession();
@@ -22,6 +23,14 @@ export default function LoginPage() {
 
         const avatar = (session.user as any)?.image;
         localStorage.setItem("discordAvatar", typeof avatar === "string" ? avatar : "");
+
+        // Set cookies for middleware authentication
+        Cookies.set("discordUsername", session.user.name || "", { path: "/" });
+        Cookies.set("rainUsername", session.user.rainUsername || "", { path: "/" });
+        Cookies.set("verified", session.user.verified ? "true" : "false", { path: "/" });
+
+        // Redirect to home page after login
+        router.push("/");
       }
 
       const verified = localStorage.getItem("verified") === "true";
