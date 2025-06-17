@@ -86,9 +86,10 @@ export const authOptions: AuthOptions = {
           session.user.verified = false;
         }
 
-        // Set signed cookies for Rain username and ID
+        // Set signed cookies for Rain username, ID, and verified status
         const rainUsername = session.user.rainUsername || "";
         const rainId = session.user.rainId || "";
+        const verified = session.user.verified ? "true" : "false";
 
         const rainUsernameCookie = serialize("rainUsername", rainUsername, {
           httpOnly: true,
@@ -104,7 +105,14 @@ export const authOptions: AuthOptions = {
           path: "/",
         });
 
-        session.cookies = [rainUsernameCookie, rainIdCookie];
+        const verifiedCookie = serialize("verified", verified, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "Strict",
+          path: "/",
+        });
+
+        session.cookies = [rainUsernameCookie, rainIdCookie, verifiedCookie];
       }
       console.log("🔵 SESSION AFTER SESSION CALLBACK:", session);
       return session;
