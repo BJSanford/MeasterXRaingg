@@ -6,14 +6,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   console.log("Incoming request payload:", req.body);
 
   if (req.method === "POST") {
-    const { discordId, rewardAmount } = req.body;
+    const { rainUsername, discordId, rewardAmount } = req.body;
 
-    if (!discordId || !rewardAmount || typeof rewardAmount !== "number") {
+    if (!rainUsername || !discordId || !rewardAmount || typeof rewardAmount !== "number") {
       return res.status(400).json({ error: "Invalid request data" });
     }
 
     try {
-      // Fetch Rain ID dynamically using discordId
+      // Fetch Rain ID dynamically using rainUsername
       const leaderboardUrl = `https://api.rain.gg/v1/affiliates/leaderboard?start_date=2024-01-01T00%3A00%3A00.00Z&end_date=2026-01-01T00%3A00%3A00.00Z&type=deposited`;
       const leaderboardResponse = await axios.get(leaderboardUrl, {
         headers: {
@@ -23,11 +23,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
 
       const leaderboardUser = leaderboardResponse.data.results.find(
-        (user: any) => user.discordId === discordId
+        (user: any) => user.username === rainUsername
       );
 
       if (!leaderboardUser) {
-        return res.status(404).json({ error: "Discord ID not found in leaderboard" });
+        return res.status(404).json({ error: "Rain username not found in leaderboard" });
       }
 
       const rainId = leaderboardUser.id;

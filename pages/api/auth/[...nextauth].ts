@@ -61,15 +61,12 @@ export const authOptions: AuthOptions = {
 
           if (response.ok) {
             const data = await response.json();
-            console.log("Rain.gg API response:", data);
             const leaderboardUser = data.results.find(
               (user: any) => user.username === userVerification.rainUsername
             );
 
             if (leaderboardUser) {
-              console.log("Leaderboard user found:", leaderboardUser);
               session.user.rainId = leaderboardUser.id; // Attach Rain ID to session
-              console.log("Rain ID assigned to session.user:", session.user.rainId);
               session.localStorage = {
                 rainId: leaderboardUser.id, // Ensure consistency with response field "id"
                 rainUsername: userVerification.rainUsername,
@@ -77,13 +74,6 @@ export const authOptions: AuthOptions = {
                 discordId: token.sub, // Save Discord ID in session storage
                 verified: "true",
               };
-              console.log("Session localStorage updated:", session.localStorage);
-
-              // Explicitly add rainId to session storage
-              if (typeof window !== "undefined") {
-                window.localStorage.setItem("rainId", leaderboardUser.id);
-                console.log("Rain ID added to localStorage:", leaderboardUser.id);
-              }
             } else {
               console.warn("No matching user found in leaderboard for Rain username:", userVerification.rainUsername);
             }
