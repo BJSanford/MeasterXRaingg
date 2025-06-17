@@ -14,3 +14,10 @@ model UserVerification {
   rainUsername    String
   verified        Boolean @default(false)
 }
+
+model RankRewardClaim {
+  id           Int      @id @default(autoincrement())
+  rainUsername String
+  rewardAmount Float
+  claimedAt    DateTime @default(now())
+}

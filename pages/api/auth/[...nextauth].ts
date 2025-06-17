@@ -40,14 +40,13 @@ export const authOptions: AuthOptions = {
         });
 
         if (userVerification) {
-          // Set cookies for linked account
+          // Set localStorage values for linked account
           session.user.rainUsername = userVerification.rainUsername;
           session.user.verified = true;
-          const cookieOptions = "; Path=/; HttpOnly; Secure";
-          session.cookies = {
-            rainUsername: `${userVerification.rainUsername}${cookieOptions}`,
-            discordUsername: `${token.name}${cookieOptions}`,
-            verified: `true${cookieOptions}`,
+          session.localStorage = {
+            rainUsername: userVerification.rainUsername,
+            discordUsername: token.name,
+            verified: "true",
           };
         } else {
           session.user.verified = false;

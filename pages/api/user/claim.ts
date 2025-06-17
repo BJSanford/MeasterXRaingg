@@ -1,17 +1,42 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import { prisma } from "../../../lib/prisma";
+import axios from "axios";
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {
-    const { amount } = req.body;
+    const { rainUsername, discordId, rewardAmount } = req.body;
 
-    if (!amount || typeof amount !== "number") {
-      return res.status(400).json({ error: "Invalid amount" });
+    if (!rainUsername || !discordId || !rewardAmount || typeof rewardAmount !== "number") {
+      return res.status(400).json({ error: "Invalid request data" });
     }
 
-    // Simulate sending a trigger to the Discord bot
-    console.log(`Triggering Discord bot to tip ${amount} coins.`);
+    try {
+      // Check if the reward has already been claimed
+      const existingClaim = await prisma.rankRewardClaim.findFirst({
+        where: { rainUsername, rewardAmount },
+      });
 
-    res.status(200).json({ message: "Claim successful!" });
+      if (existingClaim) {
+        return res.status(400).json({ error: "Reward already claimed" });
+      }
+
+      // Mark the reward as claimed
+      await prisma.rankRewardClaim.create({
+        data: { rainUsername, rewardAmount },
+      });
+
+      // Notify the Discord bot
+      await axios.post(`${process.env.API_BASE_URL}/discord/rankRewardClaim`, {
+        discordId,
+        rainUsername,
+        rewardAmount,
+      });
+
+      res.status(200).json({ message: "Reward claimed successfully!" });
+    } catch (error) {
+      console.error("Error processing claim:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
   } else {
     res.setHeader("Allow", ["POST"]);
     res.status(405).end(`Method ${req.method} Not Allowed`);

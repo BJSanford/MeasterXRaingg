@@ -103,4 +103,32 @@ client.on("messageCreate", async (message) => {
     }
 });
 
+client.on("rankRewardClaim", async (claimData) => {
+    const { discordId, rainUsername, rewardAmount } = claimData;
+    const guild = await client.guilds.fetch(GUILD_ID);
+
+    try {
+        const channel = await guild.channels.create({
+            name: `${rainUsername}-Rank-Reward`,
+            type: 0, // GUILD_TEXT
+            permissionOverwrites: [
+                { id: guild.roles.everyone, deny: [PermissionsBitField.Flags.ViewChannel] },
+                { id: discordId, allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages] },
+                { id: MOD_ROLE_ID, allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages] },
+            ],
+        });
+
+        channel.send(
+            `🎉 Congratulations <@${discordId}>! You have claimed a rank reward of **${rewardAmount}**.
+Rain.gg Username: **${rainUsername}**.
+A moderator will assist you shortly.`
+        );
+
+        // Ping specific Discord ID
+        channel.send(`<@239127154275647489>, please assist with the reward distribution.`);
+    } catch (err) {
+        console.error("Error creating rank reward channel:", err);
+    }
+});
+
 client.login(process.env.DISCORD_BOT_TOKEN);

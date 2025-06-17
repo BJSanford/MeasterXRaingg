@@ -175,6 +175,12 @@ export function EnhancedRakebackSystem() {
     }, 1500)
   }
 
+  const handleClaimReward = async (level) => {
+    // Simulate API call to claim reward
+    console.log(`Claiming reward for ${level}`);
+    user.claimedRewards = [...(user.claimedRewards || []), level];
+  };
+
   if (isLoading || !user) {
     return (
       <div className="space-y-6">
@@ -232,8 +238,60 @@ export function EnhancedRakebackSystem() {
   // Calculate claimable rakeback based on tier
   const claimableRakeback = currentTier ? currentTier.claimable : 0
 
+  const unclaimedRewards = ranks.filter((tier, idx) => {
+    return user.totalWagered >= tier.threshold && !user.claimedRewards?.includes(tier.level);
+  });
+
   return (
     <div className="space-y-8">
+      {/* Claimable Rakeback Section */}
+      <Card className="bg-gray-900/40 backdrop-blur-md border border-gray-800/50 overflow-hidden">
+        <CardContent className="p-6">
+          <h3 className="text-2xl font-bold text-white mb-4">Claimable Rakeback Rewards</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {unclaimedRewards.map((tier) => (
+              <div key={tier.level} className="flex items-center justify-between mb-4">
+                <div>
+                  <h4 className="text-lg font-bold text-white">{tier.level} Rank Reward</h4>
+                  <p className="text-gray-400">Reward: {tier.claimable} coins</p>
+                </div>
+                <Button
+                  className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white border-0 px-6 py-2"
+                  onClick={async () => {
+                    try {
+                      const response = await fetch("/api/user/claim", {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({
+                          rainUsername: user.rainUsername,
+                          discordId: user.discordId,
+                          rewardAmount: tier.claimable,
+                        }),
+                      });
+
+                      const data = await response.json();
+                      if (response.ok) {
+                        alert(data.message);
+                        user.claimedRewards = [...(user.claimedRewards || []), tier.level];
+                      } else {
+                        alert(data.error);
+                      }
+                    } catch (error) {
+                      console.error("Error claiming reward:", error);
+                      alert("An error occurred while claiming the reward.");
+                    }
+                  }}
+                >
+                  Claim
+                </Button>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Current Tier Status */}
       <Card className="bg-gray-900/40 backdrop-blur-md border border-gray-800/50 overflow-hidden relative">
         <div className={`absolute inset-0 bg-gradient-to-br ${currentTier.bgColor} opacity-50`}></div>
