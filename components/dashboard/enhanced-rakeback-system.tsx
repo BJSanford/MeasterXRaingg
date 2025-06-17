@@ -176,9 +176,21 @@ export function EnhancedRakebackSystem() {
   }
 
   const handleClaimReward = async (level) => {
-    // Simulate API call to claim reward
-    console.log(`Claiming reward for ${level}`);
-    user.claimedRewards = [...(user.claimedRewards || []), level];
+    const rainId = localStorage.getItem('rainId');
+    const discordId = localStorage.getItem('discordId');
+
+    if (!rainId || !discordId) {
+      console.error('Rain ID or Discord ID is missing');
+      return;
+    }
+
+    try {
+      // Simulate API call to claim reward
+      console.log(`Claiming reward for ${level} with Rain ID: ${rainId} and Discord ID: ${discordId}`);
+      user.claimedRewards = [...(user.claimedRewards || []), level];
+    } catch (error) {
+      console.error('Error claiming reward:', error);
+    }
   };
 
   if (isLoading || !user) {
