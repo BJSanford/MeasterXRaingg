@@ -33,7 +33,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
 
       // Notify the Discord bot
-      await axios.post(`${process.env.API_BASE_URL}/discord/rankRewardClaim`, {
+      const botEndpoint = process.env.API_BASE_URL
+        ? `${process.env.API_BASE_URL}/discord/rankRewardClaim`
+        : "http://localhost:3000/discord/rankRewardClaim";
+
+      if (!process.env.API_BASE_URL) {
+        console.warn("API_BASE_URL is not defined. Using fallback URL: http://localhost:3000/discord/rankRewardClaim");
+      }
+
+      await axios.post(botEndpoint, {
         discordId,
         rainUsername,
         rewardAmount,
@@ -42,6 +50,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.status(200).json({ message: "Reward claimed successfully!" });
     } catch (error) {
       console.error("Error processing claim:", error);
+      console.error("Error details:", error.response?.data || error.message || error);
       res.status(500).json({ error: "Internal server error" });
     }
   } else {
