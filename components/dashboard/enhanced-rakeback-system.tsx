@@ -259,14 +259,22 @@ export function EnhancedRakebackSystem() {
                   className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white border-0 px-6 py-2"
                   onClick={async () => {
                     try {
+                      const discordId = user.id || localStorage.getItem("discordId");
+                      const rainUsername = user.rainUsername || localStorage.getItem("rainUsername");
+
+                      if (!discordId || !rainUsername) {
+                        alert("Missing Discord ID or Rain.gg username.");
+                        return;
+                      }
+
                       const response = await fetch("/api/user/claim", {
                         method: "POST",
                         headers: {
                           "Content-Type": "application/json",
                         },
                         body: JSON.stringify({
-                          discordId: user.id || localStorage.getItem("discordId") || "",
-                          rainUsername: user.rainUsername || localStorage.getItem("rainUsername") || "",
+                          discordId,
+                          rainUsername,
                           rewardAmount: tier.claimable,
                         }),
                       });

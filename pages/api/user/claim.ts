@@ -47,9 +47,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
 
       // Notify the Discord bot
-      const botEndpoint = process.env.API_BASE_URL
-        ? `${process.env.API_BASE_URL}/discord/rankRewardClaim`
-        : "http://localhost:3000/discord/rankRewardClaim";
+      const botEndpoint = `${process.env.API_BASE_URL}/discord/rankRewardClaim`.replace(/\/discord\/discord\//, '/discord/');
 
       await axios.post(botEndpoint, {
         discordId,
