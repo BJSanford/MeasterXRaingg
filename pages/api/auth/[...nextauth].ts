@@ -74,6 +74,7 @@ export const authOptions: AuthOptions = {
                 rainId: leaderboardUser.id, // Ensure consistency with response field "id"
                 rainUsername: userVerification.rainUsername,
                 discordUsername: token.name,
+                discordId: token.sub, // Save Discord ID in session storage
                 verified: "true",
               };
               console.log("Session localStorage updated:", session.localStorage);

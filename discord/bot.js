@@ -106,6 +106,27 @@ client.on("messageCreate", async (message) => {
     }
 });
 
+client.on("messageCreate", async (message) => {
+    if (message.content.startsWith("!close")) {
+        if (!message.member?.roles.cache.has(MOD_ROLE_ID)) {
+            message.reply("You do not have permission to use this command.");
+            return;
+        }
+
+        try {
+            if (message.channel.name.includes("Rank-Reward")) {
+                await message.channel.delete();
+                console.log("Channel closed and deleted successfully.");
+            } else {
+                message.reply("This command can only be used in rank reward channels.");
+            }
+        } catch (err) {
+            console.error("Error closing channel:", err);
+            message.reply("An error occurred while closing the channel. Please try again.");
+        }
+    }
+});
+
 app.post("/discord/rankRewardClaim", async (req, res) => {
     const { discordId, rainId, rewardAmount } = req.body;
 
