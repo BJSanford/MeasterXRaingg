@@ -136,7 +136,7 @@ app.post("/discord/rankRewardClaim", async (req, res) => {
 
     try {
         const channel = await guild.channels.create({
-            name: `${rainId}-Rank-Reward`,
+            name: `${member.user.username}-Rank-Reward`, // Use Discord username for channel name
             type: 0, // GUILD_TEXT
             permissionOverwrites: [
                 { id: guild.roles.everyone.id, deny: [PermissionsBitField.Flags.ViewChannel] },

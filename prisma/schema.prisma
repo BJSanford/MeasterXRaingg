@@ -17,8 +17,7 @@ model UserVerification {
 
 model RankRewardClaim {
   id           Int      @id @default(autoincrement())
-  rainUsername String
-  rainId       String?  // Optional Rain ID for existing rows
+  rainId       String   // Use Rain ID for tracking claims
   rewardAmount Float
   claimedAt    DateTime @default(now())
 }
