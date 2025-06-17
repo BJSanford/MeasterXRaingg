@@ -259,14 +259,17 @@ export function EnhancedRakebackSystem() {
                   className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white border-0 px-6 py-2"
                   onClick={async () => {
                     try {
-                      const discordId = localStorage.getItem("discordId") || user.id;
-                      const rainId = localStorage.getItem("rainId") || user.rainId;
+                      const discordId = localStorage.getItem("discordId") || user?.id;
+                      const rainId = localStorage.getItem("rainId") || user?.rainId;
 
                       if (!discordId || !rainId) {
                         console.error("Missing Discord ID or Rain ID.", { discordId, rainId });
-                        alert("Missing Discord ID or Rain ID.");
+                        alert("Missing Discord ID or Rain ID. Please refresh the page and try again.");
                         return;
                       }
+
+                      // Debug logging
+                      console.log("Using Discord ID and Rain ID:", { discordId, rainId });
 
                       const response = await fetch("/api/user/claim", {
                         method: "POST",
