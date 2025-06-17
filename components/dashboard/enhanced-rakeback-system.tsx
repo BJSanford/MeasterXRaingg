@@ -265,7 +265,7 @@ export function EnhancedRakebackSystem() {
                           "Content-Type": "application/json",
                         },
                         body: JSON.stringify({
-                          rainUsername: user.rainUsername || "",
+                          rainUsername: user.rainUsername || localStorage.getItem("rainUsername") || "",
                           discordId: user.id || "",
                           rewardAmount: tier.claimable,
                         }),
