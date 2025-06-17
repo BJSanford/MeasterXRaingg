@@ -346,7 +346,7 @@ export function EnhancedRakebackSystem() {
                     <p className="text-xs text-gray-500 flex items-center gap-1">
                       <CoinIcon size={12} className="mb-0.5" />
                       {(nextTier.threshold - user.totalWagered).toLocaleString()} to next tier
-                    </div>
+                    </p>
                   </div>
                 )}
               </div>
