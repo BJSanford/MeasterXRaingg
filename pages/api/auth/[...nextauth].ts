@@ -33,6 +33,25 @@ export const authOptions: AuthOptions = {
       if (session.user) {
         session.user.id = token.sub as string; // Attach Discord user ID to session
         session.user.name = token.name as string; // Attach Discord username to session
+
+        // Check UserVerification database for linked Rain.gg account
+        const userVerification = await prisma.userVerification.findFirst({
+          where: { discordId: token.sub },
+        });
+
+        if (userVerification) {
+          // Set cookies for linked account
+          session.user.rainUsername = userVerification.rainUsername;
+          session.user.verified = true;
+          const cookieOptions = "; Path=/; HttpOnly; Secure";
+          session.cookies = {
+            rainUsername: `${userVerification.rainUsername}${cookieOptions}`,
+            discordUsername: `${token.name}${cookieOptions}`,
+            verified: `true${cookieOptions}`,
+          };
+        } else {
+          session.user.verified = false;
+        }
       }
       console.log("🔵 SESSION AFTER SESSION CALLBACK:", session);
       return session;
