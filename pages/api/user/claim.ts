@@ -3,6 +3,8 @@ import { prisma } from "../../../lib/prisma";
 import axios from "axios";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  console.log("Incoming request payload:", req.body);
+
   if (req.method === "POST") {
     const { rainUsername, discordId, rewardAmount } = req.body;
 
