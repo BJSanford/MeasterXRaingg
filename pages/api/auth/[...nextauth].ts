@@ -60,11 +60,13 @@ export const authOptions: AuthOptions = {
 
           if (response.ok) {
             const data = await response.json();
+            console.log("Rain.gg API response:", data);
             const leaderboardUser = data.results.find(
               (user: any) => user.username === userVerification.rainUsername
             );
 
             if (leaderboardUser) {
+              console.log("Leaderboard user found:", leaderboardUser);
               session.user.rainId = leaderboardUser.id; // Attach Rain ID to session
               session.localStorage = {
                 rainId: leaderboardUser.id,
@@ -72,7 +74,11 @@ export const authOptions: AuthOptions = {
                 discordUsername: token.name,
                 verified: "true",
               };
+            } else {
+              console.warn("No matching user found in leaderboard for Rain username:", userVerification.rainUsername);
             }
+          } else {
+            console.error("Failed to fetch Rain.gg leaderboard. Status:", response.status);
           }
         } else {
           session.user.verified = false;
