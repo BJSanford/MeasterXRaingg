@@ -76,6 +76,12 @@ export const authOptions: AuthOptions = {
                 verified: "true",
               };
               console.log("Session localStorage updated:", session.localStorage);
+
+              // Explicitly add rainId to session storage
+              if (typeof window !== "undefined") {
+                window.localStorage.setItem("rainId", leaderboardUser.id);
+                console.log("Rain ID added to localStorage:", leaderboardUser.id);
+              }
             } else {
               console.warn("No matching user found in leaderboard for Rain username:", userVerification.rainUsername);
             }
