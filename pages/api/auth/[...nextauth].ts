@@ -68,12 +68,14 @@ export const authOptions: AuthOptions = {
             if (leaderboardUser) {
               console.log("Leaderboard user found:", leaderboardUser);
               session.user.rainId = leaderboardUser.id; // Attach Rain ID to session
+              console.log("Rain ID assigned to session.user:", session.user.rainId);
               session.localStorage = {
-                rainId: leaderboardUser.id,
+                rainId: leaderboardUser.id, // Ensure consistency with response field "id"
                 rainUsername: userVerification.rainUsername,
                 discordUsername: token.name,
                 verified: "true",
               };
+              console.log("Session localStorage updated:", session.localStorage);
             } else {
               console.warn("No matching user found in leaderboard for Rain username:", userVerification.rainUsername);
             }
