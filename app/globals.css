@@ -76,6 +76,26 @@
   }
 }
 
+/* --- START: More robust animation definition --- */
+/* By defining the animation and class outside of a @layer, we make it less likely to be purged. */
+@keyframes animate-text {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-text {
+  background-size: 200% 200%; /* Or 300% 300% */
+  animation: animate-text 4s ease infinite;
+}
+/* --- END: More robust animation definition --- */
+
 /* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 10px;
@@ -111,20 +131,7 @@ html {
   -webkit-backdrop-filter: blur(12px);
 }
 
-/* --- START: Ensure these are present for animated gradient text --- */
-@keyframes animate-text {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-/* --- END: Ensure these are present for animated gradient text --- */
-
+/* Animation keyframes */
 @keyframes twinkle {
   0% {
     opacity: 0.3;
@@ -201,6 +208,7 @@ html {
   }
 }
 
+/* Animation for How It Works section */
 @keyframes blob {
   0% {
     transform: translate(0px, 0px) scale(1);
@@ -216,13 +224,12 @@ html {
   }
 }
 
+/* Utility classes */
 @layer utilities {
-  /* --- START: Ensure this utility is present for animated gradient text --- */
-  .animate-text {
-    background-size: 300% 300%; /* Or 200% 200% - adjust as needed */
-    animation: animate-text 4s ease infinite;
-  }
-  /* --- END: Ensure this utility is present for animated gradient text --- */
+  /*
+    The .animate-text utility is now defined outside this layer to make it more robust.
+    If you had it here before, it's now safe to remove from inside this @layer block.
+  */
 
   .animate-float {
     animation: float 6s ease-in-out infinite;
@@ -249,6 +256,7 @@ html {
     animation: fade-in-down 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
   }
 
+  /* How It Works animations */
   .animate-blob {
     animation: blob 7s infinite;
   }
@@ -262,7 +270,7 @@ html {
   }
 }
 
-/* --- START: Ensure these text utilities are present --- */
+/* Text gradient utilities */
 .text-gradient {
   background-clip: text;
   -webkit-background-clip: text;
@@ -270,10 +278,8 @@ html {
 }
 
 .bg-gradient-text {
-  /* This is a specific gradient example, you might use Tailwind's direct gradient classes instead */
   background-image: linear-gradient(to right, #22d3ee, #8b5cf6, #22d3ee);
 }
-/* --- END: Ensure these text utilities are present --- */
 
 /* Glow effects */
 .glow {
