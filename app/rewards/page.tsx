@@ -40,7 +40,7 @@ export default function RewardsPage() {
           </div>
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-3">
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-cyan-400 animate-text">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-cyan-400 animate-text bg-[size:300%_300%]">
               Rewards Shop
             </span>
           </h1>
