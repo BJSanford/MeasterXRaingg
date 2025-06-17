@@ -14,27 +14,23 @@ export default function LoginPage() {
     if (status === "loading") return; // Handle loading state
     if (status === "authenticated") {
       if (session?.user) {
-        // Store Discord user details in localStorage
-        localStorage.setItem("discordUsername", session.user.name || "");
-        localStorage.setItem("discordId", session.user.id || "");
-        localStorage.setItem("rainUsername", session.user.rainUsername || "");
-        localStorage.setItem("rainId", session.user.rainId || "");
-        localStorage.setItem("verified", session.user.verified ? "true" : "false");
+        // Store Discord user details in secure cookies
+        Cookies.set("discordUsername", session.user.name || "", { path: "/", secure: true, sameSite: "Strict" });
+        Cookies.set("discordId", session.user.id || "", { path: "/", secure: true, sameSite: "Strict" });
+        Cookies.set("rainUsername", session.user.rainUsername || "", { path: "/", secure: true, sameSite: "Strict" });
+        Cookies.set("rainId", session.user.rainId || "", { path: "/", secure: true, sameSite: "Strict" });
+        Cookies.set("verified", session.user.verified ? "true" : "false", { path: "/", secure: true, sameSite: "Strict" });
 
+        // Store Discord avatar in localStorage
         const avatar = (session.user as any)?.image;
         localStorage.setItem("discordAvatar", typeof avatar === "string" ? avatar : "");
-
-        // Set cookies for middleware authentication
-        Cookies.set("discordUsername", session.user.name || "", { path: "/" });
-        Cookies.set("rainUsername", session.user.rainUsername || "", { path: "/" });
-        Cookies.set("verified", session.user.verified ? "true" : "false", { path: "/" });
 
         // Redirect to home page after login
         router.push("/");
       }
 
-      const verified = localStorage.getItem("verified") === "true";
-      const rainUsername = localStorage.getItem("rainUsername");
+      const verified = Cookies.get("verified") === "true";
+      const rainUsername = Cookies.get("rainUsername");
 
       if (verified && rainUsername) {
         // Redirect to dashboard if user is verified and has a Rain username
@@ -49,9 +45,7 @@ export default function LoginPage() {
         signIn("discord");
       } else {
         setLoading(false);
-        setError(
-          ""
-        );
+        setError("");
       }
     }
   }, [status, session, router, loginAttempted]);

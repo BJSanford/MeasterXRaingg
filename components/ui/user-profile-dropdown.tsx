@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Menu } from "@headlessui/react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/lib/auth-context";
+import Cookies from "js-cookie";
 
 interface UserProfileDropdownProps {
   username: string;
@@ -26,13 +27,13 @@ const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
   // Load Discord avatar and Rain.gg info from localStorage
   useEffect(() => {
     setDiscordAvatar(localStorage.getItem("discordAvatar"));
-    setRainUsername(localStorage.getItem("rainUsername"));
-    setVerified(localStorage.getItem("verified") === "true");
+    setRainUsername(Cookies.get("rainUsername"));
+    setVerified(Cookies.get("verified") === "true");
 
-    // Listen for localStorage changes (e.g., after verification)
+    // Listen for cookie changes (e.g., after verification)
     const handleStorage = () => {
-      setRainUsername(localStorage.getItem("rainUsername"));
-      setVerified(localStorage.getItem("verified") === "true");
+      setRainUsername(Cookies.get("rainUsername"));
+      setVerified(Cookies.get("verified") === "true");
     };
     window.addEventListener("storage", handleStorage);
     return () => window.removeEventListener("storage", handleStorage);
@@ -41,8 +42,8 @@ const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
   // Refresh rainUsername/verified when menu opens (in case user just verified)
   const handleMenuOpen = () => {
     setMenuOpen(true);
-    setRainUsername(localStorage.getItem("rainUsername"));
-    setVerified(localStorage.getItem("verified") === "true");
+    setRainUsername(Cookies.get("rainUsername"));
+    setVerified(Cookies.get("verified") === "true");
   };
 
   return (

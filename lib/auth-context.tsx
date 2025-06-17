@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 import { verifyUser } from "@/lib/server-api" // Make sure this is imported
 import oldApiData from "@/lib/static-data/old-api-data.json"; // Import the static data
 import { UserProfile } from "@/lib/api";
+import Cookies from "js-cookie";
 
 interface AuthContextType {
   user: UserProfile | null
@@ -87,23 +88,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Check if user is logged in
     const checkAuth = async () => {
       try {
-        // Try to load user from localStorage first
-        const userStr = localStorage.getItem("user");
-        if (userStr) {
-          const userObj = JSON.parse(userStr);
-          setUser({ ...userObj, verified: userObj.verified ?? true });
-          // If not verified, redirect to verification pending
-          if (userObj.verified === false) {
-            router.replace("/verification-pending");
-          }
-          setIsLoading(false);
-          return;
-        }
-        const rainUsername = localStorage.getItem("rainUsername");
+        const rainUsername = Cookies.get("rainUsername");
+        const verified = Cookies.get("verified") === "true";
+
         if (rainUsername) {
           await loadUser(rainUsername);
         } else {
           setIsLoading(false);
+        }
+
+        if (!verified) {
+          router.replace("/verification-pending");
         }
       } catch (error) {
         console.error("Error checking authentication:", error);
@@ -112,7 +107,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     checkAuth();
-  }, [])
+  }, []);
 
   const loadUser = async (rainUsername: string) => {
     setIsLoading(true);
@@ -166,7 +161,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const login = async (rainUsername: string) => {
-    localStorage.setItem("rainUsername", rainUsername)
+    Cookies.set("rainUsername", rainUsername, { path: "/", secure: true, sameSite: "Strict" });
     await loadUser(rainUsername)
   }
 
