@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "../../../lib/prisma";
 import axios from "axios";
+import { API_BASE_URL } from "../../../lib/server-api";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   console.log("Incoming request payload:", req.body);
@@ -15,16 +16,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     try {
       // Fetch Rain ID dynamically using rainUsername
-      const leaderboardResponse = await axios.get(`${process.env.API_BASE_URL}/affiliates/leaderboard=deposited`, {
+      const leaderboardResponse = await axios.get(`${API_BASE_URL}/affiliates/leaderboard?start_date=2020-01-01T00%3A00%3A00.00Z&end_date=2029-01-01T00%3A00%3A00.00Z&type=deposited`, {
         headers: {
           'Content-Type': 'application/json',
           'x-api-key': process.env.RAIN_API_KEY,
         },
       });
 
+      console.log("Full leaderboard API response:", leaderboardResponse.data);
       const leaderboardUser = leaderboardResponse.data.results.find(
         (user: any) => user.username === rainUsername
       );
+      console.log("Leaderboard user found:", leaderboardUser);
 
       if (!leaderboardUser) {
         return res.status(404).json({ error: "Rain username not found in leaderboard" });
