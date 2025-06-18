@@ -19,7 +19,7 @@ export function Footer() {
           <div className="md:col-span-2 space-y-6">
             <Link href="/" className="flex items-center gap-3 group">
               <div className="relative h-12 w-12 overflow-hidden rounded-lg group-hover:scale-105 transition-transform duration-300">
-                <Image src="/public/images/measter-logo.png" alt="MeasterCS Logo" fill className="object-cover" />
+                <Image src="/images/measter-logo.png" alt="MeasterCS Logo" fill className="object-cover" />
               </div>
               <span className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-cyan-400">
                 MeasterRewards
