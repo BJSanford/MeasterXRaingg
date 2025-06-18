@@ -234,7 +234,7 @@ export function EnhancedRakebackSystem() {
               <span className="text-yellow-400 font-bold">1,000</span> coins to unlock rakeback rewards!
             </p>
           </div>
-          <Button className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white font-bold text-sm px-6 py-2 rounded-lg">
+          <Button className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white font-bold text-sm px-4 py-2 rounded-lg whitespace-nowrap">
             Start Wagering
           </Button>
         </CardContent>
@@ -274,7 +274,7 @@ export function EnhancedRakebackSystem() {
                     className="drop-shadow-lg"
                   />
                 </div>
-                <div className="absolute -top-2 -right-2 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full p-1 animate-pulse-slower">
+                <div className="absolute -top-2 -right-2 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full p-1 animate-pulse-slowest">
                   <Crown className="h-4 w-4 text-white" />
                 </div>
               </div>
