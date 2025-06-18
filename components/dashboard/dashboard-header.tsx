@@ -9,6 +9,21 @@ import { useAuth } from "@/lib/auth-context"
 import { useEffect, useState } from "react"
 import { CoinIcon } from "@/components/ui/coin-icon" // Re-added from original for progress bar context
 
+const ranks = [
+  { level: "Diamond", threshold: 200000, activeRakeback: 0.7 },
+  { level: "Platinum", threshold: 150000, activeRakeback: 0.65 },
+  { level: "Gold", threshold: 100000, activeRakeback: 0.6 },
+  { level: "Silver", threshold: 75000, activeRakeback: 0.55 },
+  { level: "Bronze+", threshold: 50000, activeRakeback: 0.5 },
+  { level: "Iron+", threshold: 25000, activeRakeback: 0.45 },
+  { level: "Iron", threshold: 15000, activeRakeback: 0.4 },
+  { level: "Wood+", threshold: 10000, activeRakeback: 0.35 },
+  { level: "Wood", threshold: 5000, activeRakeback: 0.3 },
+  { level: "Stone+", threshold: 2500, activeRakeback: 0.25 },
+  { level: "Stone", threshold: 1000, activeRakeback: 0.2 },
+  { level: "Unranked", threshold: 0, activeRakeback: 0 },
+]
+
 export function DashboardHeader() {
   const { user } = useAuth()
   const [rainAvatar, setRainAvatar] = useState("/placeholder-user.jpg") // Default placeholder
@@ -54,21 +69,22 @@ export function DashboardHeader() {
       fetchLeaderboardData("wagered")
       fetchLeaderboardData("deposited")
 
-      const calculateLevel = (wagered: number) => {
-        if (wagered >= 200000) return "Diamond"
-        if (wagered >= 150000) return "Platinum"
-        if (wagered >= 100000) return "Gold"
-        if (wagered >= 75000) return "Silver"
-        if (wagered >= 50000) return "Bronze+"
-        if (wagered >= 25000) return "Iron+"
-        if (wagered >= 15000) return "Iron"
-        if (wagered >= 10000) return "Wood+"
-        if (wagered >= 5000) return "Wood"
-        if (wagered >= 2500) return "Stone+"
-        if (wagered >= 1000) return "Stone"
-        return "Bronze" // Default if no conditions met
-      }
-      setLevel(calculateLevel(user?.totalWagered || 0))
+      const getCurrentRankIndex = (wagered: number) => {
+        for (let i = ranks.length - 1; i >= 0; i--) {
+          if (wagered >= ranks[i].threshold) {
+            return i;
+          }
+        }
+        return -1;
+      };
+
+      const currentRankIndex = user && user.totalWagered ? getCurrentRankIndex(user.totalWagered) : -1;
+      const currentTier = currentRankIndex >= 0 ? ranks[currentRankIndex] : null;
+      const rakebackPercentage = currentTier ? currentTier.activeRakeback : 0;
+      const rakebackDisplay = `${(rakebackPercentage * 100).toFixed(2)}%`;
+      const level = currentTier ? currentTier.level : "Unranked";
+
+      setLevel(level)
     }
   }, [user])
 
@@ -83,24 +99,6 @@ export function DashboardHeader() {
       </div>
     )
   }
-
-  // Rakeback percentage calculation from your original file
-  const getRakebackPercentage = (wagered: number) => {
-    if (wagered >= 200000) return 0.7
-    if (wagered >= 150000) return 0.65
-    if (wagered >= 100000) return 0.6
-    if (wagered >= 75000) return 0.55
-    if (wagered >= 50000) return 0.5
-    if (wagered >= 25000) return 0.45
-    if (wagered >= 15000) return 0.4
-    if (wagered >= 10000) return 0.35
-    if (wagered >= 5000) return 0.3
-    if (wagered >= 2500) return 0.25
-    if (wagered >= 1000) return 0.2
-    return 0 // Default rakeback
-  }
-  const rakebackPercentage = getRakebackPercentage(user?.totalWagered || 0)
-  const rakebackDisplay = `${(rakebackPercentage * 100).toFixed(2)}%`
 
   // Progress bar percentage from your original file (Wagered vs Deposited)
   // Ensure totalDeposited is not zero to avoid division by zero
@@ -159,17 +157,6 @@ export function DashboardHeader() {
           </div>
 
           <div className="w-full md:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3 md:gap-4 animate-fadeInRight">
-            <div className="flex-1 sm:flex-initial grid grid-cols-2 sm:flex gap-2 md:gap-3 text-xs">
-              <div className="bg-white/5 p-2 rounded-lg text-center backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-colors">
-                <p className="text-neutral-400">Wagered</p>
-                <p className="font-bold text-sm text-white">${(user.totalWagered || 0).toLocaleString()}</p>
-              </div>
-              <div className="bg-white/5 p-2 rounded-lg text-center backdrop-blur-sm border border-white/10 hover:bg-white/10 transition-colors">
-                <p className="text-neutral-400">Deposited</p>
-                <p className="font-bold text-sm text-white">${totalDeposited.toLocaleString()}</p>
-              </div>
-            </div>
-
             <Button
               asChild
               className="bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 text-white font-semibold px-4 py-2 md:px-5 rounded-lg shadow-lg hover:shadow-purple-500/30 transition-all duration-300 transform hover:scale-105 group/button"
