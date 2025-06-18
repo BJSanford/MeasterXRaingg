@@ -143,7 +143,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           totalDeposited,
           rakebackPercentage: 5,
           rakebackEarned: Math.round(totalWagered * 0.05),
-          measterCoins: Math.floor(totalWagered / 10),
+          measterRewards: Math.floor(totalWagered / 10),
           joinDate: userProfile.joinDate || "Unknown",
           depositHistory: userProfile.depositHistory || [],
           wagerHistory,

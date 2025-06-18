@@ -7,9 +7,9 @@ import { Button } from "@/components/ui/button"
 import { Gift, Sparkles } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "Rewards Shop - Coming Soon | MeasterSkins",
+  title: "Rewards Shop - Coming Soon | MeasterRewards",
   description:
-    "The MeasterSkins Rewards Shop is coming soon! Get ready to redeem Measter Coins for skins, Rain coins, and much more on Rain.gg.", // Updated description
+    "The MeasterRewards Rewards Shop is coming soon! Get ready to redeem Measter Rewards for skins, Rain coins, and much more on Rain.gg.",
 }
 
 export default function RewardsPage() {
@@ -49,7 +49,7 @@ export default function RewardsPage() {
           </p>
           {/* Changed: Updated text content below */}
           <p className="text-md sm:text-lg text-gray-300 max-w-lg mb-8 leading-relaxed">
-            We're crafting an incredible rewards experience just for you. Soon, you'll be able to redeem Measter Coins
+            We're crafting an incredible rewards experience just for you. Soon, you'll be able to redeem Measter Rewards
             for skins, Rain coins, and much more. Stay tuned!
           </p>
           <Button
@@ -60,7 +60,7 @@ export default function RewardsPage() {
           >
             <Link href="/">
               <Sparkles className="mr-2 h-5 w-5 transition-transform duration-300 group-hover:rotate-12" />
-              Explore MeasterSkins
+              Explore MeasterRewards
             </Link>
           </Button>
         </div>

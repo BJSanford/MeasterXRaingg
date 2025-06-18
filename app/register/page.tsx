@@ -30,7 +30,7 @@ export default function RegisterPage() {
       <div className="text-center p-8 bg-gray-800 rounded-2xl shadow-2xl">
         <h1 className="text-4xl font-extrabold mb-6">Register / Verify</h1>
         <p className="text-lg mb-4 text-gray-400">
-          Please make sure you are in MeasterCS_Skins discord. If you are, please wait to be @ed in a channel, then provide proof of ownership of your Rain.gg account.
+          Please make sure you are in MeasterRewards discord. If you are, please wait to be @ed in a channel, then provide proof of ownership of your Rain.gg account.
         </p>
         {error && <p className="mb-4 text-red-400">{error}</p>}
         <input

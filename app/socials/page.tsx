@@ -15,34 +15,34 @@ import { fadeIn, staggerContainer } from "@/lib/animation-utils"
 const socialLinks = [
 	{
 		platform: "Kick",
-		username: "meastercs-skins",
-		url: "https://kick.com/meastercs-skins",
+		username: "measterrewards",
+		url: "https://kick.com/measterrewards",
 		icon: "/images/kick-icon.png",
 		color: "from-green-500 to-green-700",
-		description: "Watch Measter's live streams on Kick",
+		description: "Watch MeasterRewards's live streams on Kick",
 	},
 	{
 		platform: "Twitter",
-		username: "MeasterAce",
-		url: "https://x.com/MeasterAce",
+		username: "MeasterRewards",
+		url: "https://x.com/MeasterRewards",
 		icon: "/images/twitter-icon.png",
 		color: "from-blue-400 to-blue-600",
-		description: "Follow Measter for updates and announcements",
+		description: "Follow MeasterRewards for updates and announcements",
 	},
 	{
 		platform: "YouTube",
-		username: "MeasterCS_Skins",
-		url: "https://www.youtube.com/@MeasterCS_Skins/videos",
+		username: "MeasterRewards",
+		url: "https://www.youtube.com/@MeasterRewards/videos",
 		icon: "/images/youtube-icon.png",
 		color: "from-red-500 to-red-700",
-		description: "Watch Measter's videos and tutorials",
+		description: "Watch MeasterRewards's videos and tutorials",
 	},
 ]
 
 // Mock Kick stream data
 const kickStreamInfo = {
 	status: "Live",
-	title: "CS2 Case Openings & Giveaways - Code MEASTER",
+	title: "CS2 Case Openings & Giveaways - Code MEASTERREWARDS",
 	viewers: 1245,
 	category: "Counter-Strike 2",
 }
@@ -169,7 +169,7 @@ export default function SocialsPage() {
 						className="flex items-center gap-2 border-blue-600 text-blue-400 hover:bg-blue-900/30"
 						size="sm"
 					>
-						<a href="https://x.com/MeasterAce" target="_blank" rel="noopener noreferrer">
+						<a href="https://x.com/MeasterRewards" target="_blank" rel="noopener noreferrer">
 							<Twitter className="h-5 w-5" />
 							Follow on Twitter
 							<ExternalLink className="h-4 w-4" />
@@ -181,7 +181,7 @@ export default function SocialsPage() {
 						className="flex items-center gap-2 border-green-600 text-green-400 hover:bg-green-900/30"
 						size="sm"
 					>
-						<a href="https://kick.com/meastercs-skins" target="_blank" rel="noopener noreferrer">
+						<a href="https://kick.com/measterrewards" target="_blank" rel="noopener noreferrer">
 							<span className="text-green-500 font-bold text-lg">K</span>
 							Follow on Kick
 							<ExternalLink className="h-4 w-4" />
@@ -193,7 +193,7 @@ export default function SocialsPage() {
 						size="sm"
 					>
 						<a
-							href="https://www.youtube.com/@MeasterCS_Skins"
+							href="https://www.youtube.com/@MeasterRewards"
 							target="_blank"
 							rel="noopener noreferrer"
 						>

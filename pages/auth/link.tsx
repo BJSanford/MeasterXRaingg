@@ -104,7 +104,7 @@ export default function LinkAccountPage() {
       <div className="text-center p-8 bg-gray-800 rounded-lg shadow-lg max-w-lg w-full">
         <h1 className="text-3xl font-bold mb-6">Link Your Account</h1>
         <p className="mb-4 text-gray-300">
-          Please make sure you are in MeasterCS_Skins Discord. If you are, please wait to be @ed in a channel, then provide proof of ownership of your Rain.gg account.
+          Please make sure you are in MeasterRewards Discord. If you are, please wait to be @ed in a channel, then provide proof of ownership of your Rain.gg account.
         </p>
         {error && <p className="text-red-500 mb-4">{error}</p>}
         <input

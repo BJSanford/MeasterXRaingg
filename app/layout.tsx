@@ -5,8 +5,8 @@ import { AuthProvider } from "@/lib/auth-context";
 import "@/styles/globals.css";
 
 export const metadata = {
-  title: 'MeasterSkins',
-  description: 'MeasterSkins is a rewards dashboard for Rain.gg users, allowing you to track your wagering, claim rakeback, and earn exclusive rewards by connecting your Rain.gg account and participating in community events.',
+  title: 'MeasterRewards',
+  description: 'MeasterRewards is a rewards dashboard for Rain.gg users, allowing you to track your wagering, claim rakeback, and earn exclusive rewards by connecting your Rain.gg account and participating in community events.',
   generator: '',
 }
 

@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { DiscIcon as Discord, Twitch, Twitter } from "lucide-react"
+import { DiscIcon as Discord, Twitter } from "lucide-react"
 
 export function Footer() {
   return (
@@ -16,7 +16,7 @@ export function Footer() {
                 </div>
               </div>
               <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-cyan-400">
-                MeasterSkins
+                MeasterRewards
               </span>
             </Link>
             <p className="text-gray-400 text-sm">
@@ -33,7 +33,7 @@ export function Footer() {
                 <span className="sr-only">Twitter</span>
               </Button>
               <Button variant="ghost" size="icon" className="rounded-full hover:bg-purple-500/20 hover:text-purple-400">
-                <Twitch className="h-5 w-5" />
+                <img src="/images/kick-icon.png" alt="Kick" className="h-5 w-5" />
                 <span className="sr-only">Kick</span>
               </Button>
             </div>
@@ -57,16 +57,6 @@ export function Footer() {
                   Rewards
                 </Link>
               </li>
-              <li>
-                <Link href="/giveaways" className="text-gray-400 hover:text-purple-400 transition-colors">
-                  Giveaways
-                </Link>
-              </li>
-              <li>
-                <Link href="/about" className="text-gray-400 hover:text-purple-400 transition-colors">
-                  About
-                </Link>
-              </li>
             </ul>
           </div>
 
@@ -74,59 +64,19 @@ export function Footer() {
             <h3 className="font-bold text-lg mb-4">Resources</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/faq" className="text-gray-400 hover:text-purple-400 transition-colors">
-                  FAQ
-                </Link>
-              </li>
-              <li>
-                <Link href="/support" className="text-gray-400 hover:text-purple-400 transition-colors">
-                  Support
-                </Link>
-              </li>
-              <li>
-                <Link href="/terms" className="text-gray-400 hover:text-purple-400 transition-colors">
+                <Link href="https://rain.gg/help/terms-of-service" className="text-gray-400 hover:text-purple-400 transition-colors">
                   Terms of Service
-                </Link>
-              </li>
-              <li>
-                <Link href="/privacy" className="text-gray-400 hover:text-purple-400 transition-colors">
-                  Privacy Policy
                 </Link>
               </li>
             </ul>
           </div>
-
-          <div>
-            <h3 className="font-bold text-lg mb-4">Newsletter</h3>
-            <p className="text-gray-400 text-sm mb-4">
-              Subscribe to our newsletter for the latest updates, giveaways, and promotions.
-            </p>
-            <form className="flex flex-col sm:flex-row gap-2">
-              <input
-                type="email"
-                placeholder="Your email"
-                className="px-4 py-2 bg-gray-900 border border-gray-800 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 w-full sm:w-auto"
-              />
-              <Button className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white border-0 w-full sm:w-auto">
-                Subscribe
-              </Button>
-            </form>
-          </div>
         </div>
 
         <div className="border-t border-gray-800 mt-12 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-gray-400 text-sm">&copy; {new Date().getFullYear()} MeasterSkins. All rights reserved.</p>
-          <div className="flex flex-wrap gap-4 justify-center md:justify-end">
-            <Link href="/terms" className="text-gray-400 text-sm hover:text-purple-400 transition-colors">
-              Terms
-            </Link>
-            <Link href="/privacy" className="text-gray-400 text-sm hover:text-purple-400 transition-colors">
-              Privacy
-            </Link>
-            <Link href="/cookies" className="text-gray-400 text-sm hover:text-purple-400 transition-colors">
-              Cookies
-            </Link>
-          </div>
+          <p className="text-gray-400 text-sm">&copy; {new Date().getFullYear()} MeasterRewards. All rights reserved.</p>
+          <p className="text-gray-400 text-sm">
+            18+ | Gamble Responsibly | BeGambleAware. Most people gamble for fun and enjoyment. Do not think of gambling as a way to make money. Only gamble with money you can afford to lose. Set a money and time limit in advance. Never chase your losses. Don't use gambling to distract yourself from everyday problems.
+          </p>
         </div>
       </div>
     </footer>

@@ -84,7 +84,7 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Custom colors for MeasterSkins
+        // Custom colors for MeasterRewards
         purple: {
           400: "#a78bfa",
           500: "#8b5cf6",
