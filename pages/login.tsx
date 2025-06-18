@@ -31,6 +31,7 @@ export default function LoginPage() {
         if (!session.user.rainId) {
           (async () => {
             try {
+              console.log("Fetching leaderboard data for Rain ID...");
               const response = await fetch(`${API_BASE_URL}/affiliates/leaderboard?start_date=2020-01-01T00%3A00%3A00.00Z&end_date=2029-01-01T00%3A00%3A00.00Z&type=deposited`, {
                 method: "GET",
                 headers: {
@@ -41,16 +42,18 @@ export default function LoginPage() {
 
               if (response.ok) {
                 const data = await response.json();
+                console.log("Leaderboard API response:", data);
                 const leaderboardUser = data.results.find((user: any) => user.username === session.user.rainUsername);
 
                 if (leaderboardUser) {
                   const rainId = leaderboardUser.id;
+                  console.log("Rain ID found:", rainId);
                   Cookies.set("rainId", rainId, { path: "/", secure: true, sameSite: "Strict" });
                 } else {
                   console.error("Rain username not found in leaderboard.");
                 }
               } else {
-                console.error("Failed to fetch leaderboard data.");
+                console.error("Failed to fetch leaderboard data. Status:", response.status);
               }
             } catch (error) {
               console.error("Error fetching Rain ID dynamically:", error);

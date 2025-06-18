@@ -7,7 +7,6 @@ import { verifyUser } from "@/lib/server-api" // Make sure this is imported
 import oldApiData from "@/lib/static-data/old-api-data.json"; // Import the static data
 import { UserProfile } from "@/lib/api";
 import Cookies from "js-cookie";
-import { fetchAndStoreRainId } from "./rainId-utils";
 
 interface AuthContextType {
   user: UserProfile | null
@@ -163,13 +162,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (rainUsername: string) => {
     Cookies.set("rainUsername", rainUsername, { path: "/", secure: true, sameSite: "Strict" });
     await loadUser(rainUsername)
-
-    // Fetch Rain ID dynamically if not available
-    const fetchRainId = async () => {
-      await fetchAndStoreRainId(rainUsername);
-    };
-
-    await fetchRainId();
   }
 
   const logout = () => {
