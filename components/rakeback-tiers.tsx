@@ -7,17 +7,17 @@ import { useState } from "react"
 export function RakebackTiers() {
   // Standardized image filenames (all lowercase, hyphens)
   const tiers = [
-    { level: "Iron", threshold: 1000, claimable: 5.00, rankReward: 0.3, activeRakeback: 0.2 },
-    { level: "Bronze", threshold: 2500, claimable: 10.00, rankReward: 0.3, activeRakeback: 0.25 },
-    { level: "Silver", threshold: 5000, claimable: 15.00, rankReward: 0.3, activeRakeback: 0.3 },
-    { level: "Gold", threshold: 10000, claimable: 20.00, rankReward: 0.3, activeRakeback: 0.35 },
-    { level: "Platinum", threshold: 15000, claimable: 30.00, rankReward: 0.3, activeRakeback: 0.4 },
-    { level: "Emerald", threshold: 25000, claimable: 40.00, rankReward: 0.3, activeRakeback: 0.45 },
-    { level: "Diamond", threshold: 50000, claimable: 50.00, rankReward: 0.3, activeRakeback: 0.5 },
-    { level: "Blood Diamond", threshold: 75000, claimable: 60.00, rankReward: 0.3, activeRakeback: 0.55 },
-    { level: "Obsidian", threshold: 100000, claimable: 70.00, rankReward: 0.3, activeRakeback: 0.6 },
-    { level: "Imperial", threshold: 150000, claimable: 100.00, rankReward: 0.3, activeRakeback: 0.65 },
-    { level: "Ascendent", threshold: 200000, claimable: 200.00, rankReward: 0.3, activeRakeback: 0.7 },
+    { level: "Iron", threshold: 1000, claimable: 5.00, activeRakeback: 0.2 },
+    { level: "Bronze", threshold: 2500, claimable: 10.00, activeRakeback: 0.25 },
+    { level: "Silver", threshold: 5000, claimable: 15.00, activeRakeback: 0.3 },
+    { level: "Gold", threshold: 10000, claimable: 20.00, activeRakeback: 0.35 },
+    { level: "Platinum", threshold: 15000, claimable: 30.00, activeRakeback: 0.4 },
+    { level: "Emerald", threshold: 25000, claimable: 40.00, activeRakeback: 0.45 },
+    { level: "Diamond", threshold: 50000, claimable: 50.00, activeRakeback: 0.5 },
+    { level: "Blood Diamond", threshold: 75000, claimable: 60.00, activeRakeback: 0.55 },
+    { level: "Obsidian", threshold: 100000, claimable: 70.00, activeRakeback: 0.6 },
+    { level: "Imperial", threshold: 150000, claimable: 100.00, activeRakeback: 0.65 },
+    { level: "Ascendent", threshold: 200000, claimable: 200.00, activeRakeback: 0.7 },
   ]
 
   // Helper to handle image error fallback
@@ -64,7 +64,6 @@ export function RakebackTiers() {
               </div>
               {/* Rakeback always below on mobile, right on desktop */}
               <div className="flex flex-col sm:flex-row gap-1 sm:gap-2 mt-2 sm:mt-0 text-xs sm:text-base">
-                <span className="text-gray-400">Rank Reward: <span className="font-bold text-cyan-400">{tier.rankReward}%</span></span>
                 <span className="text-gray-400">Active Rakeback: <span className="font-bold text-green-400">{tier.activeRakeback}%</span></span>
               </div>
             </div>

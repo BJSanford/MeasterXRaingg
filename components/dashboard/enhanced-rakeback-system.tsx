@@ -176,22 +176,22 @@ export function EnhancedRakebackSystem() {
   }
 
   const handleClaimReward = async (level) => {
-    const rainId = localStorage.getItem('rainId');
-    const discordId = localStorage.getItem('discordId');
+    const rainId = localStorage.getItem("rainId")
+    const discordId = localStorage.getItem("discordId")
 
     if (!rainId || !discordId) {
-      console.error('Rain ID or Discord ID is missing');
-      return;
+      console.error("Rain ID or Discord ID is missing")
+      return
     }
 
     try {
       // Simulate API call to claim reward
-      console.log(`Claiming reward for ${level} with Rain ID: ${rainId} and Discord ID: ${discordId}`);
-      user.claimedRewards = [...(user.claimedRewards || []), level];
+      console.log(`Claiming reward for ${level} with Rain ID: ${rainId} and Discord ID: ${discordId}`)
+      user.claimedRewards = [...(user.claimedRewards || []), level]
     } catch (error) {
-      console.error('Error claiming reward:', error);
+      console.error("Error claiming reward:", error)
     }
-  };
+  }
 
   if (isLoading || !user) {
     return (
@@ -251,71 +251,11 @@ export function EnhancedRakebackSystem() {
   const claimableRakeback = currentTier ? currentTier.claimable : 0
 
   const unclaimedRewards = ranks.filter((tier, idx) => {
-    return user.totalWagered >= tier.threshold && !user.claimedRewards?.includes(tier.level);
-  });
+    return user.totalWagered >= tier.threshold && !user.claimedRewards?.includes(tier.level)
+  })
 
   return (
     <div className="space-y-8">
-      {/* Claimable Rakeback Section */}
-      <Card className="bg-gray-900/40 backdrop-blur-md border border-gray-800/50 overflow-hidden">
-        <CardContent className="p-6">
-          <h3 className="text-2xl font-bold text-white mb-4">Claimable Rakeback Rewards</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {unclaimedRewards.map((tier) => (
-              <div key={tier.level} className="flex items-center justify-between mb-4">
-                <div>
-                  <h4 className="text-lg font-bold text-white">{tier.level} Rank Reward</h4>
-                  <p className="text-gray-400">Reward: {tier.claimable} coins</p>
-                </div>
-                <Button
-                  className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white border-0 px-6 py-2"
-                  onClick={async () => {
-                    try {
-                      const discordId = localStorage.getItem("discordId") || user?.id;
-                      const rainId = localStorage.getItem("rainId") || user?.rainId;
-
-                      if (!discordId || !rainId) {
-                        console.error("Missing Discord ID or Rain ID.", { discordId, rainId });
-                        alert("Missing Discord ID or Rain ID. Please refresh the page and try again.");
-                        return;
-                      }
-
-                      // Debug logging
-                      console.log("Using Discord ID and Rain ID:", { discordId, rainId });
-
-                      const response = await fetch("/api/user/claim", {
-                        method: "POST",
-                        headers: {
-                          "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({
-                          discordId,
-                          rainId,
-                          rewardAmount: tier.claimable,
-                        }),
-                      });
-
-                      const data = await response.json();
-                      if (response.ok) {
-                        alert(data.message);
-                        user.claimedRewards = [...(user.claimedRewards || []), tier.level];
-                      } else {
-                        alert(data.error);
-                      }
-                    } catch (error) {
-                      console.error("Error claiming reward:", error);
-                      alert("An error occurred while claiming the reward.");
-                    }
-                  }}
-                >
-                  Claim
-                </Button>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Current Tier Status */}
       <Card className="bg-gray-900/40 backdrop-blur-md border border-gray-800/50 overflow-hidden relative">
         <div className={`absolute inset-0 bg-gradient-to-br ${currentTier.bgColor} opacity-50`}></div>
@@ -383,14 +323,13 @@ export function EnhancedRakebackSystem() {
             <div className="text-sm text-gray-400">Scroll to view all tiers →</div>
           </div>
 
-          <div
-            className="overflow-x-auto pt-6 pb-4 px-2"
-            style={{ minHeight: "260px", overflowY: "visible" }}
-          >
+          <div className="overflow-x-auto pt-6 pb-4 px-2" style={{ minHeight: "260px", overflowY: "visible" }}>
             <div className="inline-flex gap-4" style={{ minHeight: "260px" }}>
               {ranks.map((tier, idx) => {
-                const reached = user.totalWagered >= tier.threshold;
-                const isCurrent = idx === currentRankIndex;
+                const reached = user.totalWagered >= tier.threshold
+                const isCurrent = idx === currentRankIndex
+                const canClaim = reached && !(user.claimedRewards || []).includes(tier.level)
+
                 return (
                   <div
                     key={tier.level}
@@ -398,8 +337,8 @@ export function EnhancedRakebackSystem() {
                       isCurrent
                         ? `border-cyan-400 bg-gradient-to-br ${tier.bgColor} scale-105 ${tier.glowColor} shadow-2xl`
                         : reached
-                        ? `border-green-500/50 bg-gradient-to-br ${tier.bgColor} hover:${tier.glowColor} hover:shadow-xl`
-                        : "border-gray-700 bg-gray-800/40 hover:border-gray-600 hover:bg-gray-800/60"
+                          ? `border-green-500/50 bg-gradient-to-br ${tier.bgColor} hover:${tier.glowColor} hover:shadow-xl`
+                          : "border-gray-700 bg-gray-800/40 hover:border-gray-600 hover:bg-gray-800/60"
                     }`}
                     style={{ overflow: "visible", transformOrigin: "center" }}
                   >
@@ -443,6 +382,53 @@ export function EnhancedRakebackSystem() {
                         </div>
                       </div>
                     </div>
+
+                    {/* Claim Button */}
+                    {canClaim && (
+                      <Button
+                        className="w-full mt-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white border-0 px-3 py-2 text-sm"
+                        onClick={async () => {
+                          try {
+                            const discordId = localStorage.getItem("discordId") || user?.id
+                            const rainId = localStorage.getItem("rainId") || user?.rainId
+
+                            if (!discordId || !rainId) {
+                              console.error("Missing Discord ID or Rain ID.", { discordId, rainId })
+                              alert("Missing Discord ID or Rain ID. Please refresh the page and try again.")
+                              return
+                            }
+
+                            // Debug logging
+                            console.log("Using Discord ID and Rain ID:", { discordId, rainId })
+
+                            const response = await fetch("/api/user/claim", {
+                              method: "POST",
+                              headers: {
+                                "Content-Type": "application/json",
+                              },
+                              body: JSON.stringify({
+                                discordId,
+                                rainId,
+                                rewardAmount: tier.claimable,
+                              }),
+                            })
+
+                            const data = await response.json()
+                            if (response.ok) {
+                              alert(data.message)
+                              user.claimedRewards = [...(user.claimedRewards || []), tier.level]
+                            } else {
+                              alert(data.error)
+                            }
+                          } catch (error) {
+                            console.error("Error claiming reward:", error)
+                            alert("An error occurred while claiming the reward.")
+                          }
+                        }}
+                      >
+                        Claim
+                      </Button>
+                    )}
 
                     {/* Status Badge */}
                     <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">

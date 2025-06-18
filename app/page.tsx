@@ -118,7 +118,7 @@ export default function HomePage() {
                 </span>
               </h2>
               <p className="text-gray-400 text-center max-w-2xl mx-auto mb-8">
-                Earn more coins as you wager and level up through our tier system. All tiers maintain a 0.3% rakeback
+                Earn more coins as you wager and level up through our tier system. All tiers maintain a 0.1% rakeback
                 reward.
               </p>
             </div>
