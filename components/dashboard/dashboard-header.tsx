@@ -84,28 +84,26 @@ export function DashboardHeader() {
     )
   }
 
-  // Rakeback percentage calculation from your original file
-  const getRakebackPercentage = (wagered: number) => {
-    if (wagered >= 200000) return 0.7
-    if (wagered >= 150000) return 0.65
-    if (wagered >= 100000) return 0.6
-    if (wagered >= 75000) return 0.55
-    if (wagered >= 50000) return 0.5
-    if (wagered >= 25000) return 0.45
-    if (wagered >= 15000) return 0.4
-    if (wagered >= 10000) return 0.35
-    if (wagered >= 5000) return 0.3
-    if (wagered >= 2500) return 0.25
-    if (wagered >= 1000) return 0.2
-    return 0 // Default rakeback
+  // Updated rank calculation and rakeback percentage logic based on the provided graph.
+  // Added rank icon display next to the rank name.
+  const calculateRank = (wagered: number) => {
+    if (wagered >= 200000) return { name: "Ascendent", icon: "/icons/ascendent.png", rakeback: 0.7 }
+    if (wagered >= 150000) return { name: "Imperial", icon: "/icons/imperial.png", rakeback: 0.65 }
+    if (wagered >= 100000) return { name: "Obsidian", icon: "/icons/obsidian.png", rakeback: 0.6 }
+    if (wagered >= 75000) return { name: "Blood Diamond", icon: "/icons/blood-diamond.png", rakeback: 0.55 }
+    if (wagered >= 50000) return { name: "Diamond", icon: "/icons/diamond.png", rakeback: 0.5 }
+    if (wagered >= 25000) return { name: "Emerald", icon: "/icons/emerald.png", rakeback: 0.45 }
+    if (wagered >= 15000) return { name: "Platinum", icon: "/icons/platinum.png", rakeback: 0.4 }
+    if (wagered >= 10000) return { name: "Gold", icon: "/icons/gold.png", rakeback: 0.35 }
+    if (wagered >= 5000) return { name: "Silver", icon: "/icons/silver.png", rakeback: 0.3 }
+    if (wagered >= 2500) return { name: "Bronze", icon: "/icons/bronze.png", rakeback: 0.25 }
+    if (wagered >= 1000) return { name: "Iron", icon: "/icons/iron.png", rakeback: 0.2 }
+    return { name: "Unranked", icon: "/icons/unranked.png", rakeback: 0 }
   }
-  const rakebackPercentage = getRakebackPercentage(user?.totalWagered || 0)
-  const rakebackDisplay = `${(rakebackPercentage * 100).toFixed(2)}%`
 
-  // Progress bar percentage from your original file (Wagered vs Deposited)
-  // Ensure totalDeposited is not zero to avoid division by zero
-  const progressPercentage = totalDeposited > 0 ? ((user?.totalWagered || 0) / totalDeposited) * 100 : 0
+  const rank = calculateRank(user?.totalWagered || 0)
 
+  // Updated display logic for rank and rakeback percentage.
   return (
     <div className="relative group">
       <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 via-cyan-500 to-pink-500 rounded-3xl blur-md opacity-25 group-hover:opacity-50 transition-opacity duration-300 animate-tilt"></div>
@@ -148,11 +146,12 @@ export function DashboardHeader() {
                   {user.username}!
                 </span>
               </h1>
-              <p className="text-xs md:text-sm text-cyan-300/80 font-medium flex items-center gap-1">
+              <p className="text-xs md:text-sm text-cyan-300/80 font-medium flex items-center gap-2">
                 <Gift size={14} className="opacity-70" />
-                Rakeback: <span className="font-bold text-cyan-200">{rakebackDisplay}</span>
-                <span className="ml-1 px-2 py-0.5 bg-cyan-500/10 text-cyan-400 text-xs rounded-full border border-cyan-500/20">
-                  {level} Tier
+                Rakeback: <span className="font-bold text-cyan-200">{(rank.rakeback * 100).toFixed(2)}%</span>
+                <span className="ml-1 px-2 py-0.5 bg-cyan-500/10 text-cyan-400 text-xs rounded-full border border-cyan-500/20 flex items-center gap-1">
+                  <img src={rank.icon} alt={rank.name} className="h-4 w-4" />
+                  {rank.name} Tier
                 </span>
               </p>
             </div>
