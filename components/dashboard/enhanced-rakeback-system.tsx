@@ -437,7 +437,7 @@ export function EnhancedRakebackSystem() {
                     {/* Enhanced Claim Button */}
                     {canClaim && (
                       <Button
-                        className="w-full mb-4 bg-gradient-to-r from-green-600 via-green-700 to-emerald-600 hover:from-green-700 hover:via-green-800 hover:to-emerald-700 text-white border-0 px-4 py-3 text-sm font-bold shadow-lg hover:shadow-green-500/25 transition-all duration-300 group-hover:scale-105"
+                        className="w-full mb-4 bg-gradient-to-r from-green-600 via-green-700 to-emerald-600 hover:from-green-700 hover:via-green-800 hover:to-emerald-700 text-white border-0 px-6 py-4 text-base font-bold shadow-lg hover:shadow-green-500/25 transition-all duration-300 group-hover:scale-105"
                         onClick={async () => {
                           try {
                             const discordId = localStorage.getItem("discordId") || user?.id
@@ -477,10 +477,10 @@ export function EnhancedRakebackSystem() {
                         }}
                       >
                         <div className="flex items-center gap-2">
-                          <Gift className="h-4 w-4" />
+                          <Gift className="h-5 w-5" />
                           <span>Claim {tier.level} Reward</span>
                           <div className="flex items-center gap-1">
-                            <CoinIcon size={14} />
+                            <CoinIcon size={16} />
                             <span>{tier.claimable}</span>
                           </div>
                         </div>
