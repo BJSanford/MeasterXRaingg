@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import Image from "next/image"
 import { useState } from "react"
-import { Crown, Zap, Gift, TrendingUp, Sparkles, Star, Trophy } from "lucide-react"
+import { Crown, Zap, Gift, TrendingUp, Sparkles, Star, Trophy, Award } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
 import { CoinIcon } from "@/components/ui/coin-icon"
 
@@ -310,21 +310,38 @@ export function EnhancedRakebackSystem() {
         </CardContent>
       </Card>
 
-      {/* Rakeback Tiers Showcase */}
-      <Card className="bg-gray-900/40 backdrop-blur-md border border-gray-800/50 overflow-hidden">
-        <CardContent className="p-6" style={{ paddingBottom: "32px" }}>
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-2xl font-bold text-white flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-gradient-to-br from-yellow-500 to-orange-500">
-                <Trophy className="h-6 w-6 text-white" />
+      {/* Enhanced Rakeback Tiers Showcase */}
+      <Card className="bg-gray-900/40 backdrop-blur-md border border-gray-800/50 overflow-hidden relative">
+        {/* Animated background particles */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-10 left-10 w-2 h-2 bg-purple-500/30 rounded-full animate-pulse"></div>
+          <div className="absolute top-20 right-20 w-1 h-1 bg-cyan-500/40 rounded-full animate-ping"></div>
+          <div className="absolute bottom-20 left-1/4 w-1.5 h-1.5 bg-yellow-500/30 rounded-full animate-pulse delay-1000"></div>
+          <div className="absolute bottom-10 right-1/3 w-1 h-1 bg-green-500/40 rounded-full animate-ping delay-500"></div>
+        </div>
+
+        <CardContent className="p-8 relative">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                <div className="p-3 rounded-2xl bg-gradient-to-br from-yellow-500 to-orange-500 shadow-lg animate-pulse">
+                  <Trophy className="h-8 w-8 text-white" />
+                </div>
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full animate-ping"></div>
               </div>
-              Rakeback Tiers
-            </h3>
-            <div className="text-sm text-gray-400">Scroll to view all tiers →</div>
+              <div>
+                <h3 className="text-3xl font-bold text-white mb-1">Rakeback Tiers</h3>
+                <p className="text-gray-400">Unlock exclusive rewards as you progress</p>
+              </div>
+            </div>
+            <div className="text-sm text-gray-400 flex items-center gap-2">
+              <div className="w-2 h-2 bg-cyan-500 rounded-full animate-pulse"></div>
+              Scroll to view all tiers →
+            </div>
           </div>
 
-          <div className="overflow-x-auto pt-6 pb-4 px-2" style={{ minHeight: "260px", overflowY: "visible" }}>
-            <div className="inline-flex gap-4" style={{ minHeight: "260px" }}>
+          <div className="overflow-x-auto py-8 px-4" style={{ minHeight: "400px", overflowY: "visible" }}>
+            <div className="inline-flex gap-6" style={{ minHeight: "400px" }}>
               {ranks.map((tier, idx) => {
                 const reached = user.totalWagered >= tier.threshold
                 const isCurrent = idx === currentRankIndex
@@ -333,60 +350,94 @@ export function EnhancedRakebackSystem() {
                 return (
                   <div
                     key={tier.level}
-                    className={`relative flex flex-col items-center p-6 rounded-2xl border-2 min-w-[160px] transition-all duration-500 hover:scale-105 ${
+                    className={`relative flex flex-col items-center p-8 rounded-3xl border-2 min-w-[220px] transition-all duration-700 hover:scale-110 hover:-translate-y-2 group ${
                       isCurrent
-                        ? `border-cyan-400 bg-gradient-to-br ${tier.bgColor} scale-105 ${tier.glowColor} shadow-2xl`
+                        ? `border-cyan-400 bg-gradient-to-br ${tier.bgColor} scale-105 ${tier.glowColor} shadow-2xl animate-pulse`
                         : reached
-                          ? `border-green-500/50 bg-gradient-to-br ${tier.bgColor} hover:${tier.glowColor} hover:shadow-xl`
-                          : "border-gray-700 bg-gray-800/40 hover:border-gray-600 hover:bg-gray-800/60"
+                          ? `border-green-500/50 bg-gradient-to-br ${tier.bgColor} hover:${tier.glowColor} hover:shadow-2xl`
+                          : "border-gray-700 bg-gray-800/40 hover:border-gray-600 hover:bg-gray-800/60 hover:shadow-xl"
                     }`}
-                    style={{ overflow: "visible", transformOrigin: "center" }}
+                    style={{
+                      overflow: "visible",
+                      transformOrigin: "center",
+                      backdropFilter: "blur(20px)",
+                    }}
                   >
-                    {/* Tier Image */}
-                    <div className="relative mb-4">
+                    {/* Floating particles around current tier */}
+                    {isCurrent && (
+                      <>
+                        <div className="absolute -top-2 -left-2 w-1 h-1 bg-cyan-400 rounded-full animate-ping"></div>
+                        <div className="absolute -top-1 -right-3 w-1.5 h-1.5 bg-purple-400 rounded-full animate-pulse delay-300"></div>
+                        <div className="absolute -bottom-2 -left-1 w-1 h-1 bg-yellow-400 rounded-full animate-ping delay-700"></div>
+                        <div className="absolute -bottom-1 -right-2 w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse delay-1000"></div>
+                      </>
+                    )}
+
+                    {/* Tier Image with enhanced styling */}
+                    <div className="relative mb-6 group-hover:scale-110 transition-transform duration-500">
                       <div
-                        className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${tier.bgColor} border border-gray-600 flex items-center justify-center ${tier.glowColor} shadow-lg`}
+                        className={`w-24 h-24 rounded-3xl bg-gradient-to-br ${tier.bgColor} border-2 border-gray-600 flex items-center justify-center ${tier.glowColor} shadow-2xl group-hover:shadow-3xl transition-all duration-500`}
                       >
                         <Image
                           src={`/images/tiers/${tier.level.toLowerCase().replace(/ /g, "-")}.png`}
                           alt={tier.level}
-                          width={40}
-                          height={40}
-                          className="drop-shadow-lg"
+                          width={56}
+                          height={56}
+                          className="drop-shadow-2xl group-hover:drop-shadow-3xl transition-all duration-500"
                         />
                       </div>
+
+                      {/* Status indicators */}
                       {isCurrent && (
-                        <div className="absolute -top-2 -right-2 w-4 h-4 bg-cyan-400 rounded-full animate-pulse border-2 border-white z-10"></div>
+                        <div className="absolute -top-3 -right-3 w-6 h-6 bg-gradient-to-r from-cyan-400 to-cyan-500 rounded-full animate-pulse border-3 border-white z-10 flex items-center justify-center">
+                          <Crown className="h-3 w-3 text-white" />
+                        </div>
                       )}
                       {reached && !isCurrent && (
-                        <div className="absolute -top-2 -right-2 w-4 h-4 bg-green-400 rounded-full border-2 border-white z-10">
-                          <Star className="h-2 w-2 text-white absolute top-0.5 left-0.5" />
+                        <div className="absolute -top-3 -right-3 w-6 h-6 bg-gradient-to-r from-green-400 to-green-500 rounded-full border-3 border-white z-10 flex items-center justify-center">
+                          <Star className="h-3 w-3 text-white" />
+                        </div>
+                      )}
+                      {canClaim && (
+                        <div className="absolute -top-1 -left-1 w-4 h-4 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full animate-bounce border-2 border-white z-10 flex items-center justify-center">
+                          <Gift className="h-2 w-2 text-white" />
                         </div>
                       )}
                     </div>
 
-                    {/* Tier Info */}
-                    <div className="text-center space-y-2">
-                      <h4 className={`font-bold text-lg ${tier.color}`}>{tier.level}</h4>
-                      <div className="space-y-1">
-                        <p className="text-xs text-gray-400 flex items-center justify-center gap-1">
-                          <CoinIcon size={12} className="mb-0.5" />
-                          {tier.threshold.toLocaleString()}
-                        </p>
-                        <div className="flex items-center justify-center gap-1">
-                          <CoinIcon size={12} className="text-yellow-400" />
+                    {/* Enhanced Tier Info */}
+                    <div className="text-center space-y-4 mb-6">
+                      <h4
+                        className={`font-bold text-2xl ${tier.color} group-hover:scale-105 transition-transform duration-300`}
+                      >
+                        {tier.level}
+                      </h4>
+
+                      <div className="space-y-3">
+                        {/* Threshold */}
+                        <div className="flex items-center justify-center gap-2 p-2 bg-gray-800/50 rounded-xl border border-gray-700/50">
+                          <CoinIcon size={16} className="text-gray-400" />
+                          <span className="text-sm text-gray-300 font-semibold">{tier.threshold.toLocaleString()}</span>
+                        </div>
+
+                        {/* Rank Reward */}
+                        <div className="flex items-center justify-center gap-2 p-2 bg-yellow-900/20 rounded-xl border border-yellow-500/30">
+                          <Award className="h-4 w-4 text-yellow-400" />
+                          <CoinIcon size={16} className="text-yellow-400" />
                           <span className="text-sm font-bold text-yellow-400">+{tier.claimable}</span>
                         </div>
-                        <div className="px-2 py-1 bg-cyan-900/30 rounded-full border border-cyan-500/30">
-                          <span className="text-xs text-cyan-400 font-semibold">{tier.activeRakeback}% RB</span>
+
+                        {/* Rakeback Rate */}
+                        <div className="px-3 py-2 bg-gradient-to-r from-cyan-900/30 to-purple-900/30 rounded-xl border border-cyan-500/30">
+                          <span className="text-sm text-cyan-400 font-semibold">{tier.activeRakeback}% Rakeback</span>
                         </div>
                       </div>
                     </div>
 
-                    {/* Claim Button */}
+                    {/* Enhanced Claim Button */}
                     {canClaim && (
                       <Button
-                        className="w-full mt-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white border-0 px-3 py-2 text-sm"
+                        className="w-full mb-4 bg-gradient-to-r from-green-600 via-green-700 to-emerald-600 hover:from-green-700 hover:via-green-800 hover:to-emerald-700 text-white border-0 px-4 py-3 text-sm font-bold shadow-lg hover:shadow-green-500/25 transition-all duration-300 group-hover:scale-105"
                         onClick={async () => {
                           try {
                             const discordId = localStorage.getItem("discordId") || user?.id
@@ -398,7 +449,6 @@ export function EnhancedRakebackSystem() {
                               return
                             }
 
-                            // Debug logging
                             console.log("Using Discord ID and Rain ID:", { discordId, rainId })
 
                             const response = await fetch("/api/user/claim", {
@@ -426,24 +476,33 @@ export function EnhancedRakebackSystem() {
                           }
                         }}
                       >
-                        Claim
+                        <div className="flex items-center gap-2">
+                          <Gift className="h-4 w-4" />
+                          <span>Claim {tier.level} Reward</span>
+                          <div className="flex items-center gap-1">
+                            <CoinIcon size={14} />
+                            <span>{tier.claimable}</span>
+                          </div>
+                        </div>
                       </Button>
                     )}
 
-                    {/* Status Badge */}
-                    <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
+                    {/* Enhanced Status Badge */}
+                    <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2">
                       {isCurrent && (
-                        <div className="px-3 py-1 text-xs bg-gradient-to-r from-cyan-500 to-cyan-600 text-white rounded-full animate-pulse shadow-lg">
-                          Current
+                        <div className="px-4 py-2 text-sm bg-gradient-to-r from-cyan-500 to-cyan-600 text-white rounded-full animate-pulse shadow-lg border-2 border-white/20 font-bold">
+                          Current Tier
                         </div>
                       )}
                       {reached && !isCurrent && (
-                        <div className="px-3 py-1 text-xs bg-gradient-to-r from-green-500 to-green-600 text-white rounded-full shadow-lg">
+                        <div className="px-4 py-2 text-sm bg-gradient-to-r from-green-500 to-green-600 text-white rounded-full shadow-lg border-2 border-white/20 font-bold">
                           Unlocked
                         </div>
                       )}
                       {!reached && (
-                        <div className="px-3 py-1 text-xs bg-gray-700 text-gray-300 rounded-full">Locked</div>
+                        <div className="px-4 py-2 text-sm bg-gray-700 text-gray-300 rounded-full border-2 border-gray-600 font-bold">
+                          Locked
+                        </div>
                       )}
                     </div>
                   </div>

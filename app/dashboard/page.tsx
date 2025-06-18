@@ -12,6 +12,9 @@ export default function DashboardPage() {
       <AnimatedBackground />
 
       <main className="relative z-10 container mx-auto px-4 py-8 space-y-8">
+        <p className="text-xs text-gray-400 text-center">
+          Disclaimer: All wagered/deposited data is only on CODE MEASTER.
+        </p>
         <DashboardHeader />
         <DashboardStats />
         <EnhancedRakebackSystem />
