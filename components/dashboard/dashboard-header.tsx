@@ -9,208 +9,212 @@ import { useAuth } from "@/lib/auth-context"
 import { useEffect, useState } from "react"
 import { CoinIcon } from "@/components/ui/coin-icon" // Re-added from original for progress bar context
 
-const ranks = [
-	{ level: "Diamond", threshold: 200000, activeRakeback: 0.7 },
-	{ level: "Platinum", threshold: 150000, activeRakeback: 0.65 },
-	{ level: "Gold", threshold: 100000, activeRakeback: 0.6 },
-	{ level: "Silver", threshold: 75000, activeRakeback: 0.55 },
-	{ level: "Bronze+", threshold: 50000, activeRakeback: 0.5 },
-	{ level: "Iron+", threshold: 25000, activeRakeback: 0.45 },
-	{ level: "Iron", threshold: 15000, activeRakeback: 0.4 },
-	{ level: "Wood+", threshold: 10000, activeRakeback: 0.35 },
-	{ level: "Wood", threshold: 5000, activeRakeback: 0.3 },
-	{ level: "Stone+", threshold: 2500, activeRakeback: 0.25 },
-	{ level: "Stone", threshold: 1000, activeRakeback: 0.2 },
-	{ level: "Unranked", threshold: 0, activeRakeback: 0 },
-]
-
 export function DashboardHeader() {
-	const { user } = useAuth()
-	const [rainAvatar, setRainAvatar] = useState("/placeholder-user.jpg") // Default placeholder
-	const [totalDeposited, setTotalDeposited] = useState(0)
-	const [level, setLevel] = useState("Bronze") // Default level
+  const { user } = useAuth()
+  const [rainAvatar, setRainAvatar] = useState("/placeholder-user.jpg") // Default placeholder
+  const [totalDeposited, setTotalDeposited] = useState(0)
+  const [level, setLevel] = useState("Bronze") // Default level
 
-	const getCurrentRankIndex = (wagered: number) => {
-		for (let i = ranks.length - 1; i >= 0; i--) {
-			if (wagered >= ranks[i].threshold) {
-				return i
-			}
-		}
-		return -1
-	}
+  useEffect(() => {
+    if (user) {
+      // Ensure user and username are available
+      const fetchLeaderboardData = async (type: string) => {
+        const startDate = "2023-01-01T00:00:00.00Z" // Using fixed dates as in original
+        const endDate = "2028-01-01T00:00:00.00Z"
 
-	const currentRankIndex = user && user.totalWagered ? getCurrentRankIndex(user.totalWagered) : -1
-	const currentTier = currentRankIndex >= 0 ? ranks[currentRankIndex] : null
-	const rakebackPercentage = currentTier ? currentTier.activeRakeback : 0
-	const rakebackDisplay = `${(rakebackPercentage * 100).toFixed(2)}%`
-	const level = currentTier ? currentTier.level : "Unranked"
+        try {
+          const response = await fetch(
+            `/api/proxy/leaderboard?type=${type}&start_date=${startDate}&end_date=${endDate}`,
+          )
+          if (!response.ok) {
+            throw new Error(`Failed to fetch ${type} leaderboard: ${response.statusText}`)
+          }
+          const data = await response.json()
+          const participant = data.results.find((p: any) => p.username === user.username)
+          if (participant) {
+            if (type === "wagered") {
+              setRainAvatar(participant.avatar || "/placeholder-user.jpg")
+            } else if (type === "deposited") {
+              setTotalDeposited(participant.deposited !== undefined ? participant.deposited : 0)
+            }
+          } else {
+            console.warn(`Participant not found in ${type} leaderboard for username:`, user.username)
+            // Set defaults if participant not found to avoid issues with calculations
+            if (type === "wagered") setRainAvatar("/placeholder-user.jpg")
+            if (type === "deposited") setTotalDeposited(0)
+          }
+        } catch (error) {
+          console.error(`Error fetching proxy leaderboard (${type}):`, error)
+          // Set defaults on error
+          if (type === "wagered") setRainAvatar("/placeholder-user.jpg")
+          if (type === "deposited") setTotalDeposited(0)
+        }
+      }
 
-	useEffect(() => {
-		if (user) {
-			// Fetch leaderboard data and set rainAvatar and totalDeposited
-			const fetchLeaderboardData = async (type: string) => {
-				const startDate = "2023-01-01T00:00:00.00Z" // Using fixed dates as in original
-				const endDate = "2028-01-01T00:00:00.00Z"
+      fetchLeaderboardData("wagered")
+      fetchLeaderboardData("deposited")
 
-				try {
-					const response = await fetch(
-						`/api/proxy/leaderboard?type=${type}&start_date=${startDate}&end_date=${endDate}`,
-					)
-					if (!response.ok) {
-						throw new Error(`Failed to fetch ${type} leaderboard: ${response.statusText}`)
-					}
-					const data = await response.json()
-					const participant = data.results.find((p: any) => p.username === user.username)
-					if (participant) {
-						if (type === "wagered") {
-							setRainAvatar(participant.avatar || "/placeholder-user.jpg")
-						} else if (type === "deposited") {
-							setTotalDeposited(participant.deposited !== undefined ? participant.deposited : 0)
-						}
-					} else {
-						console.warn(`Participant not found in ${type} leaderboard for username:`, user.username)
-						// Set defaults if participant not found to avoid issues with calculations
-						if (type === "wagered") setRainAvatar("/placeholder-user.jpg")
-						if (type === "deposited") setTotalDeposited(0)
-					}
-				} catch (error) {
-					console.error(`Error fetching proxy leaderboard (${type}):`, error)
-					// Set defaults on error
-					if (type === "wagered") setRainAvatar("/placeholder-user.jpg")
-					if (type === "deposited") setTotalDeposited(0)
-				}
-			}
+      const calculateLevel = (wagered: number) => {
+        if (wagered >= 200000) return "Diamond"
+        if (wagered >= 150000) return "Platinum"
+        if (wagered >= 100000) return "Gold"
+        if (wagered >= 75000) return "Silver"
+        if (wagered >= 50000) return "Bronze+"
+        if (wagered >= 25000) return "Iron+"
+        if (wagered >= 15000) return "Iron"
+        if (wagered >= 10000) return "Wood+"
+        if (wagered >= 5000) return "Wood"
+        if (wagered >= 2500) return "Stone+"
+        if (wagered >= 1000) return "Stone"
+        return "Bronze" // Default if no conditions met
+      }
+      setLevel(calculateLevel(user?.totalWagered || 0))
+    }
+  }, [user])
 
-			fetchLeaderboardData("wagered")
-			fetchLeaderboardData("deposited")
-		}
-	}, [user])
+  // Original loading state from your file
+  if (!user) {
+    return (
+      <div className="relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 via-cyan-600/20 to-purple-600/20 rounded-2xl blur-xl"></div>
+        <div className="relative bg-gray-900/40 backdrop-blur-md border border-gray-800/50 rounded-2xl p-6 mb-8">
+          <div className="h-20 animate-pulse bg-gray-800/50 rounded-lg"></div>
+        </div>
+      </div>
+    )
+  }
 
-	// Original loading state from your file
-	if (!user) {
-		return (
-			<div className="relative">
-				<div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 via-cyan-600/20 to-purple-600/20 rounded-2xl blur-xl"></div>
-				<div className="relative bg-gray-900/40 backdrop-blur-md border border-gray-800/50 rounded-2xl p-6 mb-8">
-					<div className="h-20 animate-pulse bg-gray-800/50 rounded-lg"></div>
-				</div>
-			</div>
-		)
-	}
+  // Rakeback percentage calculation from your original file
+  const getRakebackPercentage = (wagered: number) => {
+    if (wagered >= 200000) return 0.7
+    if (wagered >= 150000) return 0.65
+    if (wagered >= 100000) return 0.6
+    if (wagered >= 75000) return 0.55
+    if (wagered >= 50000) return 0.5
+    if (wagered >= 25000) return 0.45
+    if (wagered >= 15000) return 0.4
+    if (wagered >= 10000) return 0.35
+    if (wagered >= 5000) return 0.3
+    if (wagered >= 2500) return 0.25
+    if (wagered >= 1000) return 0.2
+    return 0 // Default rakeback
+  }
+  const rakebackPercentage = getRakebackPercentage(user?.totalWagered || 0)
+  const rakebackDisplay = `${(rakebackPercentage * 100).toFixed(2)}%`
 
-	// Progress bar percentage from your original file (Wagered vs Deposited)
-	// Ensure totalDeposited is not zero to avoid division by zero
-	const progressPercentage = totalDeposited > 0 ? ((user?.totalWagered || 0) / totalDeposited) * 100 : 0
+  // Progress bar percentage from your original file (Wagered vs Deposited)
+  // Ensure totalDeposited is not zero to avoid division by zero
+  const progressPercentage = totalDeposited > 0 ? ((user?.totalWagered || 0) / totalDeposited) * 100 : 0
 
-	return (
-		<div className="relative group">
-			<div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 via-cyan-500 to-pink-500 rounded-3xl blur-md opacity-25 group-hover:opacity-50 transition-opacity duration-300 animate-tilt"></div>
+  return (
+    <div className="relative group">
+      <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 via-cyan-500 to-pink-500 rounded-3xl blur-md opacity-25 group-hover:opacity-50 transition-opacity duration-300 animate-tilt"></div>
 
-			<div className="relative bg-gray-900/80 backdrop-blur-xl border border-gray-700/60 rounded-3xl p-6 md:p-8 mb-8 shadow-2xl shadow-purple-500/20 overflow-hidden">
-				<div className="absolute inset-0 opacity-[0.03] [mask-image:radial-gradient(60%_90%_at_50%_0%,white,transparent)]">
-					<svg
-						aria-hidden="true"
-						className="absolute inset-x-0 inset-y-[-30%] h-[160%] w-full skew-y-[-18deg] fill-white/40 stroke-white/50"
-					>
-						<defs>
-							<pattern id="hex-pattern-header" width="72" height="72" patternUnits="userSpaceOnUse" x="50%" y="100%">
-								<path d="M.5 36V.5h35.5V36M36.5 71.5V36h35.5v35.5H.5z"></path>
-							</pattern>
-						</defs>
-						<rect width="100%" height="100%" fill="url(#hex-pattern-header)"></rect>
-					</svg>
-				</div>
+      <div className="relative bg-gray-900/80 backdrop-blur-xl border border-gray-700/60 rounded-3xl p-6 md:p-8 mb-8 shadow-2xl shadow-purple-500/20 overflow-hidden">
+        <div className="absolute inset-0 opacity-[0.03] [mask-image:radial-gradient(60%_90%_at_50%_0%,white,transparent)]">
+          <svg
+            aria-hidden="true"
+            className="absolute inset-x-0 inset-y-[-30%] h-[160%] w-full skew-y-[-18deg] fill-white/40 stroke-white/50"
+          >
+            <defs>
+              <pattern id="hex-pattern-header" width="72" height="72" patternUnits="userSpaceOnUse" x="50%" y="100%">
+                <path d="M.5 36V.5h35.5V36M36.5 71.5V36h35.5v35.5H.5z"></path>
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#hex-pattern-header)"></rect>
+          </svg>
+        </div>
 
-				<div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-					<div className="flex items-center gap-4 md:gap-6 animate-fadeInLeft">
-						<div className="relative shrink-0">
-							<Avatar className="h-16 w-16 md:h-20 md:w-20 border-2 border-cyan-400/50 shadow-lg transition-all duration-300 group-hover:scale-105 group-hover:shadow-cyan-500/30">
-								<AvatarImage src={rainAvatar || "/placeholder.svg"} alt={user.username || "User"} />
-								<AvatarFallback className="bg-gradient-to-br from-purple-600 to-cyan-500 text-white text-lg md:text-xl font-semibold">
-									{user.username?.slice(0, 2).toUpperCase() || "ME"}
-								</AvatarFallback>
-							</Avatar>
-							<div className="absolute -bottom-1 -right-1 bg-gradient-to-r from-yellow-400 to-orange-500 p-1.5 rounded-full shadow-md transform transition-all duration-300 group-hover:scale-110">
-								<Crown className="h-3 w-3 md:h-4 md:w-4 text-white" />
-							</div>
-						</div>
+        <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+          <div className="flex items-center gap-4 md:gap-6 animate-fadeInLeft">
+            <div className="relative shrink-0">
+              <Avatar className="h-16 w-16 md:h-20 md:w-20 border-2 border-cyan-400/50 shadow-lg transition-all duration-300 group-hover:scale-105 group-hover:shadow-cyan-500/30">
+                <AvatarImage src={rainAvatar || "/placeholder.svg"} alt={user.username || "User"} />
+                <AvatarFallback className="bg-gradient-to-br from-purple-600 to-cyan-500 text-white text-lg md:text-xl font-semibold">
+                  {user.username?.slice(0, 2).toUpperCase() || "ME"}
+                </AvatarFallback>
+              </Avatar>
+              <div className="absolute -bottom-1 -right-1 bg-gradient-to-r from-yellow-400 to-orange-500 p-1.5 rounded-full shadow-md transform transition-all duration-300 group-hover:scale-110">
+                <Crown className="h-3 w-3 md:h-4 md:w-4 text-white" />
+              </div>
+            </div>
 
-						<div className="space-y-1">
-							<h1 className="text-2xl md:text-3xl font-bold">
-								<span className="block bg-gradient-to-r from-white via-neutral-200 to-purple-300 bg-clip-text text-transparent leading-tight">
-									Welcome back,
-								</span>
-								<span className="block bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent leading-tight animate-text-reveal">
-									{user.username}!
-								</span>
-							</h1>
-							<p className="text-xs md:text-sm text-cyan-300/80 font-medium flex items-center gap-1">
-								<Gift size={14} className="opacity-70" />
-								Rakeback: <span className="font-bold text-cyan-200">{rakebackDisplay}</span>
-								<span className="ml-1 px-2 py-0.5 bg-cyan-500/10 text-cyan-400 text-xs rounded-full border border-cyan-500/20">
-									{level} Tier
-								</span>
-							</p>
-						</div>
-					</div>
+            <div className="space-y-1">
+              <h1 className="text-2xl md:text-3xl font-bold">
+                <span className="block bg-gradient-to-r from-white via-neutral-200 to-purple-300 bg-clip-text text-transparent leading-tight">
+                  Welcome back,
+                </span>
+                <span className="block bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent leading-tight animate-text-reveal">
+                  {user.username}!
+                </span>
+              </h1>
+              <p className="text-xs md:text-sm text-cyan-300/80 font-medium flex items-center gap-1">
+                <Gift size={14} className="opacity-70" />
+                Rakeback: <span className="font-bold text-cyan-200">{rakebackDisplay}</span>
+                <span className="ml-1 px-2 py-0.5 bg-cyan-500/10 text-cyan-400 text-xs rounded-full border border-cyan-500/20">
+                  {level} Tier
+                </span>
+              </p>
+            </div>
+          </div>
 
-					<div className="w-full md:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3 md:gap-4 animate-fadeInRight">
-						<Button
-							asChild
-							className="bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 text-white font-semibold px-4 py-2 md:px-5 rounded-lg shadow-lg hover:shadow-purple-500/30 transition-all duration-300 transform hover:scale-105 group/button"
-						>
-							<Link href="/rewards" className="flex items-center gap-2 text-sm md:text-base">
-								<Zap className="h-4 w-4 md:h-5 md:w-5 transition-transform duration-300 group-hover/button:rotate-[15deg] group-hover/button:scale-110" />
-								Shop Rewards
-							</Link>
-						</Button>
-					</div>
-				</div>
+          <div className="w-full md:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3 md:gap-4 animate-fadeInRight">
+            <Button
+              asChild
+              className="bg-gradient-to-r from-purple-600 to-cyan-500 hover:from-purple-700 hover:to-cyan-600 text-white font-semibold px-4 py-2 md:px-5 rounded-lg shadow-lg hover:shadow-purple-500/30 transition-all duration-300 transform hover:scale-105 group/button"
+            >
+              <Link href="/rewards" className="flex items-center gap-2 text-sm md:text-base">
+                <Zap className="h-4 w-4 md:h-5 md:w-5 transition-transform duration-300 group-hover/button:rotate-[15deg] group-hover/button:scale-110" />
+                Shop Rewards
+              </Link>
+            </Button>
+          </div>
+        </div>
 
-				{/* Original Progress Bar (Wagered vs Deposited) - Styled with new UI elements */}
-				<div className="mt-6 animate-fadeInUp" style={{ animationDelay: "0.3s" }}>
-					<div className="flex justify-between text-xs text-gray-400 mb-1">
-						<span className="flex items-center gap-1">
-							<CoinIcon size={12} className="mb-0.5 opacity-70" />
-							{(user.totalWagered || 0).toLocaleString()} Wagered
-						</span>
-						<span className="flex items-center gap-1">
-							<CoinIcon size={12} className="mb-0.5 opacity-70" />
-							{totalDeposited.toLocaleString()} Deposited
-						</span>
-					</div>
-					<div className="h-2 bg-gray-800/60 rounded-full overflow-hidden border border-gray-700/50">
-						<div
-							className="h-full bg-gradient-to-r from-purple-500 to-cyan-500 rounded-full transition-all duration-1000 ease-out"
-							style={{ width: `${Math.min(100, progressPercentage)}%` }} // Cap at 100%
-						></div>
-					</div>
-				</div>
+        {/* Original Progress Bar (Wagered vs Deposited) - Styled with new UI elements */}
+        <div className="mt-6 animate-fadeInUp" style={{ animationDelay: "0.3s" }}>
+          <div className="flex justify-between text-xs text-gray-400 mb-1">
+            <span className="flex items-center gap-1">
+              <CoinIcon size={12} className="mb-0.5 opacity-70" />
+              {(user.totalWagered || 0).toLocaleString()} Wagered
+            </span>
+            <span className="flex items-center gap-1">
+              <CoinIcon size={12} className="mb-0.5 opacity-70" />
+              {totalDeposited.toLocaleString()} Deposited
+            </span>
+          </div>
+          <div className="h-2 bg-gray-800/60 rounded-full overflow-hidden border border-gray-700/50">
+            <div
+              className="h-full bg-gradient-to-r from-purple-500 to-cyan-500 rounded-full transition-all duration-1000 ease-out"
+              style={{ width: `${Math.min(100, progressPercentage)}%` }} // Cap at 100%
+            ></div>
+          </div>
+        </div>
 
-				<div className="absolute top-4 right-4 flex gap-2 md:gap-3">
-					<Button
-						variant="ghost"
-						size="icon"
-						className="text-neutral-400 hover:text-white hover:bg-white/10 rounded-full transition-all duration-300 transform hover:scale-110"
-						aria-label="Notifications"
-					>
-						<Bell className="h-5 w-5" />
-						<span className="absolute top-1.5 right-1.5 block h-2 w-2 rounded-full bg-red-500 ring-1 ring-gray-900 animate-pulse"></span>
-						<span className="sr-only">Notifications</span>
-					</Button>
-					<Button
-						variant="ghost"
-						size="icon"
-						className="text-neutral-400 hover:text-white hover:bg-white/10 rounded-full transition-all duration-300 transform hover:scale-110"
-						aria-label="Settings"
-					>
-						<Settings className="h-5 w-5" />
-						<span className="sr-only">Settings</span>
-					</Button>
-				</div>
-			</div>
-		</div>
-	)
+        <div className="absolute top-4 right-4 flex gap-2 md:gap-3">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-neutral-400 hover:text-white hover:bg-white/10 rounded-full transition-all duration-300 transform hover:scale-110"
+            aria-label="Notifications"
+          >
+            <Bell className="h-5 w-5" />
+            <span className="absolute top-1.5 right-1.5 block h-2 w-2 rounded-full bg-red-500 ring-1 ring-gray-900 animate-pulse"></span>
+            <span className="sr-only">Notifications</span>
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-neutral-400 hover:text-white hover:bg-white/10 rounded-full transition-all duration-300 transform hover:scale-110"
+            aria-label="Settings"
+          >
+            <Settings className="h-5 w-5" />
+            <span className="sr-only">Settings</span>
+          </Button>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 // Remember to add these keyframes and animations to your tailwind.config.ts or globals.css
