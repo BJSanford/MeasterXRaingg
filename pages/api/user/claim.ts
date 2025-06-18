@@ -30,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
 
       // Notify the Discord bot
-      const botEndpoint = `${process.env.API_BASE_URL}/discord/rankRewardClaim`.replace(/\/discord\/discord\//, '/discord/');
+      const botEndpoint = `${process.env.API_BASE_URL}/discord/rankRewardClaim`;
 
       console.log("Bot endpoint:", botEndpoint);
       console.log("Payload sent to bot:", { discordId, rainId, rewardAmount });
