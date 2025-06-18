@@ -39,6 +39,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.status(200).json({
       rainUsername: user.rainUsername,
       discordUsername: user.discordUsername,
+      discordId: user.discordId, // Added discordId to the response
       verified: user.verified,
     });
   } catch (error) {
