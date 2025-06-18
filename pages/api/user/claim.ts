@@ -14,11 +14,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     try {
       // Fetch Rain ID dynamically using rainUsername
-      const leaderboardUrl = `https://api.rain.gg/v1/affiliates/leaderboard?start_date=2024-01-01T00%3A00%3A00.00Z&end_date=2026-01-01T00%3A00%3A00.00Z&type=deposited`;
-      const leaderboardResponse = await axios.get(leaderboardUrl, {
+      const leaderboardResponse = await axios.get(`${process.env.API_BASE_URL}/affiliates/leaderboard=deposited`, {
         headers: {
-          accept: "application/json",
-          "x-api-key": process.env.RAIN_API_KEY || "",
+          'Content-Type': 'application/json',
+          'x-api-key': process.env.RAIN_API_KEY,
         },
       });
 
@@ -49,7 +48,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // Notify the Discord bot
       const botEndpoint = `${process.env.API_BASE_URL}/discord/rankRewardClaim`.replace(/\/discord\/discord\//, '/discord/');
 
-      // Debug logging for bot endpoint and payload
       console.log("Bot endpoint:", botEndpoint);
       console.log("Payload sent to bot:", { discordId, rainId, rewardAmount });
 

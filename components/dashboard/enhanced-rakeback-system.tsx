@@ -176,7 +176,30 @@ export function EnhancedRakebackSystem() {
   }
 
   const handleClaimReward = async (level) => {
-    const rainId = localStorage.getItem("rainId")
+    const fetchRainId = async () => {
+      try {
+        const response = await fetch(`/api/user/claim`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username: user.username }),
+        })
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch Rain ID")
+        }
+
+        const data = await response.json()
+        localStorage.setItem("rainId", data.rainId)
+        return data.rainId
+      } catch (error) {
+        console.error("Error fetching Rain ID:", error)
+        return null
+      }
+    }
+
+    const rainId = localStorage.getItem("rainId") || await fetchRainId()
     const discordId = localStorage.getItem("discordId")
 
     if (!rainId || !discordId) {
