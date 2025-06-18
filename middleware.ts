@@ -17,8 +17,6 @@ export async function middleware(request: NextRequest) {
         where: { discordId },
       });
 
-      console.log("User data from database:", user);
-
       if (!user || user.rainUsername !== rainUsername || !user.verified) {
         console.log("Redirecting to login due to mismatched user data.");
         return NextResponse.redirect(new URL("/login", request.url));
@@ -29,7 +27,6 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  console.log("Middleware validation passed.");
   return NextResponse.next();
 }
 

@@ -22,11 +22,9 @@ export const authOptions: AuthOptions = {
     async jwt({ token, account, profile }: { token: JWT; account?: any; profile?: any }) {
       // Persist Discord username and ID in the token
       if (account && profile) {
-        console.log("🔵 PROFILE RECEIVED FROM DISCORD:", profile);
         token.name = profile.username; // Discord username
         token.sub = profile.id; // Discord user ID
       }
-      console.log("🔵 TOKEN AFTER JWT CALLBACK:", token);
       return token;
     },
     async session({ session, token }: { session: Session; token: JWT }) {
@@ -44,85 +42,11 @@ export const authOptions: AuthOptions = {
           // Set localStorage values for linked account
           session.user.rainUsername = userVerification.rainUsername;
           session.user.verified = true;
-          session.localStorage = {
-            rainUsername: userVerification.rainUsername,
-            discordUsername: token.name,
-            discordId: token.sub, // Save Discord ID in session storage
-            verified: "true",
-          };
-
-          // Fetch Rain ID from Rain.gg API
-          const leaderboardUrl = `https://api.rain.gg/v1/affiliates/leaderboard?start_date=2024-01-01T00%3A00%3A00.00Z&end_date=2026-01-01T00%3A00%3A00.00Z&type=deposited`;
-          const response = await fetch(leaderboardUrl, {
-            headers: {
-              accept: "application/json",
-              "x-api-key": process.env.RAIN_API_KEY || "",
-            },
-          });
-
-          if (response.ok) {
-            const data = await response.json();
-            const leaderboardUser = data.results.find(
-              (user: any) => user.username === userVerification.rainUsername
-            );
-
-            if (leaderboardUser) {
-              session.user.rainId = leaderboardUser.id; // Attach Rain ID to session
-              session.localStorage = {
-                rainId: leaderboardUser.id, // Ensure consistency with response field "id"
-                rainUsername: userVerification.rainUsername,
-                discordUsername: token.name,
-                discordId: token.sub, // Save Discord ID in session storage
-                verified: "true",
-              };
-            } else {
-              console.warn("No matching user found in leaderboard for Rain username:", userVerification.rainUsername);
-            }
-          } else {
-            const errorText = await response.text();
-            console.error("Failed to fetch Rain.gg leaderboard. Status:", response.status, "Response:", errorText);
-          }
+          session.user.rainId = userVerification.rainId;
         } else {
           session.user.verified = false;
         }
-
-        // Set signed cookies for Discord ID, Rain username, ID, and verified status
-        const discordId = session.user.id || "";
-        const rainUsername = session.user.rainUsername || "";
-        const rainId = session.user.rainId || "";
-        const verified = session.user.verified ? "true" : "false";
-
-        const discordIdCookie = serialize("discordId", discordId, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "Strict",
-          path: "/",
-        });
-
-        const rainUsernameCookie = serialize("rainUsername", rainUsername, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "Strict",
-          path: "/",
-        });
-
-        const rainIdCookie = serialize("rainId", rainId, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "Strict",
-          path: "/",
-        });
-
-        const verifiedCookie = serialize("verified", verified, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "Strict",
-          path: "/",
-        });
-
-        session.cookies = [discordIdCookie, rainUsernameCookie, rainIdCookie, verifiedCookie];
       }
-      console.log("🔵 SESSION AFTER SESSION CALLBACK:", session);
       return session;
     },
   },
