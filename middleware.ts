@@ -8,6 +8,8 @@ export async function middleware(request: NextRequest) {
   const rainId = request.cookies.get("rainId")?.value;
   const verified = request.cookies.get("verified")?.value;
 
+  console.log("Middleware validation started:", { discordId, rainUsername });
+
   // Ensure proper redirection to dashboard
   if (
     request.nextUrl.pathname.startsWith("/dashboard") &&
@@ -30,13 +32,19 @@ export async function middleware(request: NextRequest) {
         },
       });
 
+      console.log("API response status:", response.status);
+
       if (!response.ok) {
+        console.log("Redirecting to login due to API response failure.");
         return NextResponse.redirect(new URL("/login", request.url));
       }
 
       const userData = await response.json();
 
+      console.log("User data from API:", userData);
+
       if (userData.rainUsername !== rainUsername || userData.discordId !== discordId) {
+        console.log("Redirecting to login due to mismatched user data.");
         return NextResponse.redirect(new URL("/login", request.url));
       }
     } catch (error) {
@@ -45,6 +53,7 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  console.log("Middleware validation passed.");
   return NextResponse.next();
 }
 

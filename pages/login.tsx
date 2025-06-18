@@ -28,17 +28,6 @@ export default function LoginPage() {
         // Redirect to home page after login
         router.push("/");
       }
-
-      const verified = Cookies.get("verified") === "true";
-      const rainUsername = Cookies.get("rainUsername");
-
-      if (verified && rainUsername) {
-        // Redirect to dashboard if user is verified and has a Rain username
-        router.push("/dashboard");
-      } else {
-        // Redirect to login if not verified or missing Rain username
-        router.push("/login");
-      }
     } else if (status === "unauthenticated") {
       if (!loginAttempted) {
         setLoginAttempted(true);
