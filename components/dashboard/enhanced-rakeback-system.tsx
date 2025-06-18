@@ -9,6 +9,7 @@ import { Crown, Zap, Gift, TrendingUp, Sparkles, Star, Trophy, Award } from "luc
 import { useAuth } from "@/lib/auth-context"
 import { CoinIcon } from "@/components/ui/coin-icon"
 import Cookies from "js-cookie"
+import { fetchAndStoreRainId } from "../../lib/rainId-utils"
 
 // Define types for rank
 interface Rank {
@@ -178,26 +179,8 @@ export function EnhancedRakebackSystem() {
 
   const handleClaimReward = async (level) => {
     const fetchRainId = async () => {
-      try {
-        const response = await fetch(`/api/user/claim`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ username: user.username }),
-        })
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch Rain ID")
-        }
-
-        const data = await response.json()
-        localStorage.setItem("rainId", data.rainId)
-        return data.rainId
-      } catch (error) {
-        console.error("Error fetching Rain ID:", error)
-        return null
-      }
+      const rainId = await fetchAndStoreRainId(user.username);
+      return rainId;
     }
 
     const rainId = localStorage.getItem("rainId") || await fetchRainId()

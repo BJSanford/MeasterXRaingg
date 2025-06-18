@@ -7,6 +7,7 @@ import { verifyUser } from "@/lib/server-api" // Make sure this is imported
 import oldApiData from "@/lib/static-data/old-api-data.json"; // Import the static data
 import { UserProfile } from "@/lib/api";
 import Cookies from "js-cookie";
+import { fetchAndStoreRainId } from "./rainId-utils";
 
 interface AuthContextType {
   user: UserProfile | null
@@ -165,24 +166,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Fetch Rain ID dynamically if not available
     const fetchRainId = async () => {
-      try {
-        const response = await fetch(`/api/user/claim`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ rainUsername }),
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          Cookies.set("rainId", data.rainId || "", { path: "/", secure: true, sameSite: "Strict" });
-        } else {
-          console.error("Failed to fetch Rain ID dynamically.");
-        }
-      } catch (error) {
-        console.error("Error fetching Rain ID dynamically:", error);
-      }
+      await fetchAndStoreRainId(rainUsername);
     };
 
     await fetchRainId();

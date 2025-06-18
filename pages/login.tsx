@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
+import { fetchAndStoreRainId } from "../../lib/rainId-utils";
 
 export default function LoginPage() {
   const { data: session, status } = useSession();
@@ -28,23 +29,9 @@ export default function LoginPage() {
         // Fetch Rain ID dynamically if not available in session
         if (!session.user.rainId) {
           (async () => {
-            try {
-              const response = await fetch(`/api/user/claim`, {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ rainUsername: session.user.rainUsername }),
-              });
-
-              if (response.ok) {
-                const data = await response.json();
-                Cookies.set("rainId", data.rainId || "", { path: "/", secure: true, sameSite: "Strict" });
-              } else {
-                console.error("Failed to fetch Rain ID dynamically.");
-              }
-            } catch (error) {
-              console.error("Error fetching Rain ID dynamically:", error);
+            const rainId = await fetchAndStoreRainId(session.user.rainUsername);
+            if (!rainId) {
+              console.error("Failed to fetch Rain ID dynamically.");
             }
           })();
         }

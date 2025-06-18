@@ -58,7 +58,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         rewardAmount,
       });
 
-      res.status(200).json({ message: "Reward claimed successfully!" });
+      res.status(200).json({ success: true, rainId });
     } catch (error) {
       console.error("Error processing claim:", error);
       console.error("Error details:", error.response?.data || error.message || error);
