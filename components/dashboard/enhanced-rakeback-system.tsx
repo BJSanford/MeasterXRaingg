@@ -447,8 +447,8 @@ export function EnhancedRakebackSystem() {
                         className="w-full mb-4 bg-gradient-to-r from-green-600 via-green-700 to-emerald-600 hover:from-green-700 hover:via-green-800 hover:to-emerald-700 text-white border-0 px-6 py-4 text-base font-bold shadow-lg hover:shadow-green-500/25 transition-all duration-300 group-hover:scale-105"
                         onClick={async () => {
                           try {
-                            const discordId = Cookies.get("discordId") || localStorage.getItem("discordId") || user?.id
-                            const rainId = localStorage.getItem("rainId") || user?.rainId
+                            const discordId = Cookies.get("discordId") || user?.id
+                            const rainId = Cookies.get("rainId") || user?.rainId
 
                             if (!discordId || !rainId) {
                               console.error("Missing Discord ID or Rain ID.", { discordId, rainId })
