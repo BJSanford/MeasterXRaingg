@@ -26,6 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
 
       console.log("Leaderboard API response:", leaderboardResponse.data);
+      console.log("Full leaderboard results:", leaderboardResponse.data.results);
       const leaderboardUser = leaderboardResponse.data.results.find(
         (user: any) => user.username === rainUsername
       );
@@ -63,7 +64,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         res.status(200).json({ success: true, rainId });
       } else {
         console.error("Rain username not found or Rain ID missing in leaderboard response.");
-        res.status(404).json({ error: "Rain username not found in leaderboard" });
+        res.status(404).json({ error: "Rain username not found or Rain ID missing." });
       }
     } catch (error) {
       console.error("Error processing claim:", error);
