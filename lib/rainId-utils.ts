@@ -2,6 +2,8 @@ import Cookies from "js-cookie";
 
 export const fetchAndStoreRainId = async (rainUsername: string): Promise<string | null> => {
   try {
+    console.log("Fetching Rain ID for username:", rainUsername);
+
     const response = await fetch(`/api/user/claim`, {
       method: "POST",
       headers: {
@@ -17,8 +19,12 @@ export const fetchAndStoreRainId = async (rainUsername: string): Promise<string 
     const data = await response.json();
     const rainId = data.rainId || "";
 
+    console.log("Rain ID fetched:", data.rainId);
+
     // Store Rain ID in cookies
     Cookies.set("rainId", rainId, { path: "/", secure: true, sameSite: "Strict" });
+
+    console.log("Storing Rain ID in cookies:", rainId);
 
     return rainId;
   } catch (error) {

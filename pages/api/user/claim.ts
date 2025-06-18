@@ -30,7 +30,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(404).json({ error: "Rain username not found in leaderboard" });
       }
 
+      console.log("Leaderboard user found:", leaderboardUser);
+
       const rainId = leaderboardUser.id;
+
+      console.log("Rain ID fetched:", rainId);
 
       // Check if the reward has already been claimed
       const existingClaim = await prisma.rankRewardClaim.findFirst({
