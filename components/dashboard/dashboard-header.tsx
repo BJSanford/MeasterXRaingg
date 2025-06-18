@@ -103,6 +103,9 @@ export function DashboardHeader() {
 
   const rank = calculateRank(user?.totalWagered || 0)
 
+  // Fixed the undefined progressPercentage error by ensuring its calculation is included.
+  const progressPercentage = totalDeposited > 0 ? ((user?.totalWagered || 0) / totalDeposited) * 100 : 0
+
   // Updated display logic for rank and rakeback percentage.
   return (
     <div className="relative group">
