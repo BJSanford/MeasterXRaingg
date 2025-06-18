@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
+import { handler as dashboardHandler } from "./pages/api/user/dashboard";
 
 export async function middleware(request: NextRequest) {
   const discordId = request.cookies.get("discordId")?.value;
@@ -26,22 +27,18 @@ export async function middleware(request: NextRequest) {
 
   if (request.nextUrl.pathname.startsWith("/dashboard")) {
     try {
-      const response = await fetch(`${request.nextUrl.origin}/api/user/dashboard`, {
-        headers: {
-          cookie: request.headers.get("cookie") || "",
-        },
-      });
+      const req = {
+        cookies: request.cookies,
+        headers: request.headers,
+      };
 
-      console.log("API response status:", response.status);
+      const res = {
+        status: (code) => ({ json: (data) => ({ code, data }) }),
+      };
 
-      if (!response.ok) {
-        console.log("Redirecting to login due to API response failure.");
-        return NextResponse.redirect(new URL("/login", request.url));
-      }
+      const userData = await dashboardHandler(req, res);
 
-      const userData = await response.json();
-
-      console.log("User data from API:", userData);
+      console.log("User data from API handler:", userData);
 
       if (userData.rainUsername !== rainUsername || userData.discordId !== discordId) {
         console.log("Redirecting to login due to mismatched user data.");
