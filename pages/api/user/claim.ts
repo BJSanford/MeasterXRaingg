@@ -35,13 +35,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       console.log("Bot endpoint:", botEndpoint);
       console.log("Payload sent to bot:", { discordId, rainId, rewardAmount });
 
-      await axios.post(botEndpoint, {
-        discordId,
-        rainId,
-        rewardAmount,
-      });
+      try {
+        const botResponse = await axios.post(botEndpoint, {
+          discordId,
+          rainId,
+          rewardAmount,
+        });
 
-      res.status(200).json({ success: true, rainId });
+        console.log("Bot response:", botResponse.data);
+        res.status(200).json({ success: true, rainId });
+      } catch (error) {
+        console.error("Error sending request to bot endpoint:", error);
+        res.status(500).json({ error: "Failed to notify bot." });
+      }
     } catch (error) {
       console.error("Error processing claim:", error);
       console.error("Error details:", error.response?.data || error.message || error);
