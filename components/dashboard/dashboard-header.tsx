@@ -47,7 +47,7 @@ export function DashboardHeader() {
 
 	useEffect(() => {
 		if (user) {
-			// Ensure user and username are available
+			// Fetch leaderboard data and set rainAvatar and totalDeposited
 			const fetchLeaderboardData = async (type: string) => {
 				const startDate = "2023-01-01T00:00:00.00Z" // Using fixed dates as in original
 				const endDate = "2028-01-01T00:00:00.00Z"
