@@ -8,6 +8,7 @@ import { useState } from "react"
 import { Crown, Zap, Gift, TrendingUp, Sparkles, Star, Trophy, Award } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
 import { CoinIcon } from "@/components/ui/coin-icon"
+import Cookies from "js-cookie"
 
 // Define types for rank
 interface Rank {
@@ -200,11 +201,11 @@ export function EnhancedRakebackSystem() {
     }
 
     const rainId = localStorage.getItem("rainId") || await fetchRainId()
-    const discordId = localStorage.getItem("discordId")
+    const discordId = Cookies.get("discordId") || localStorage.getItem("discordId")
 
     if (!rainId || !discordId) {
-      console.error("Rain ID or Discord ID is missing")
-      return
+      console.error("Rain ID or Discord ID is missing", { rainId, discordId });
+      return;
     }
 
     try {
@@ -463,7 +464,7 @@ export function EnhancedRakebackSystem() {
                         className="w-full mb-4 bg-gradient-to-r from-green-600 via-green-700 to-emerald-600 hover:from-green-700 hover:via-green-800 hover:to-emerald-700 text-white border-0 px-6 py-4 text-base font-bold shadow-lg hover:shadow-green-500/25 transition-all duration-300 group-hover:scale-105"
                         onClick={async () => {
                           try {
-                            const discordId = localStorage.getItem("discordId") || user?.id
+                            const discordId = Cookies.get("discordId") || localStorage.getItem("discordId") || user?.id
                             const rainId = localStorage.getItem("rainId") || user?.rainId
 
                             if (!discordId || !rainId) {

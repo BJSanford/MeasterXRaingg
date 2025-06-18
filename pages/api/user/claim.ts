@@ -6,7 +6,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   console.log("Incoming request payload:", req.body);
 
   if (req.method === "POST") {
-    const { rainUsername, discordId, rewardAmount } = req.body;
+    const { rainUsername, rewardAmount } = req.body;
+    const discordId = req.cookies.discordId || req.body.discordId;
 
     if (!rainUsername || !discordId || !rewardAmount || typeof rewardAmount !== "number") {
       return res.status(400).json({ error: "Invalid request data" });

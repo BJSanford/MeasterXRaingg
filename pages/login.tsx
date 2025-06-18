@@ -25,6 +25,30 @@ export default function LoginPage() {
         const avatar = (session.user as any)?.image;
         localStorage.setItem("discordAvatar", typeof avatar === "string" ? avatar : "");
 
+        // Fetch Rain ID dynamically if not available in session
+        if (!session.user.rainId) {
+          (async () => {
+            try {
+              const response = await fetch(`/api/user/claim`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ rainUsername: session.user.rainUsername }),
+              });
+
+              if (response.ok) {
+                const data = await response.json();
+                Cookies.set("rainId", data.rainId || "", { path: "/", secure: true, sameSite: "Strict" });
+              } else {
+                console.error("Failed to fetch Rain ID dynamically.");
+              }
+            } catch (error) {
+              console.error("Error fetching Rain ID dynamically:", error);
+            }
+          })();
+        }
+
         // Redirect to home page after login
         router.push("/");
       }
