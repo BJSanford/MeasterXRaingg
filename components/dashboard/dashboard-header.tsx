@@ -87,18 +87,18 @@ export function DashboardHeader() {
   // Updated rank calculation and rakeback percentage logic based on the provided graph.
   // Added rank icon display next to the rank name.
   const calculateRank = (wagered: number) => {
-    if (wagered >= 200000) return { name: "Ascendent", icon: "/icons/ascendent.png", rakeback: 0.7 }
-    if (wagered >= 150000) return { name: "Imperial", icon: "/icons/imperial.png", rakeback: 0.65 }
-    if (wagered >= 100000) return { name: "Obsidian", icon: "/icons/obsidian.png", rakeback: 0.6 }
-    if (wagered >= 75000) return { name: "Blood Diamond", icon: "/icons/blood-diamond.png", rakeback: 0.55 }
-    if (wagered >= 50000) return { name: "Diamond", icon: "/icons/diamond.png", rakeback: 0.5 }
-    if (wagered >= 25000) return { name: "Emerald", icon: "/icons/emerald.png", rakeback: 0.45 }
-    if (wagered >= 15000) return { name: "Platinum", icon: "/icons/platinum.png", rakeback: 0.4 }
-    if (wagered >= 10000) return { name: "Gold", icon: "/icons/gold.png", rakeback: 0.35 }
-    if (wagered >= 5000) return { name: "Silver", icon: "/icons/silver.png", rakeback: 0.3 }
-    if (wagered >= 2500) return { name: "Bronze", icon: "/icons/bronze.png", rakeback: 0.25 }
-    if (wagered >= 1000) return { name: "Iron", icon: "/icons/iron.png", rakeback: 0.2 }
-    return { name: "Unranked", icon: "/icons/unranked.png", rakeback: 0 }
+    if (wagered >= 200000) return { name: "Ascendent", icon: "/images/tiers/ascendent.png", rakeback: 0.007 }
+    if (wagered >= 150000) return { name: "Imperial", icon: "/images/tiers/imperial.png", rakeback: 0.0065 }
+    if (wagered >= 100000) return { name: "Obsidian", icon: "/images/tiers/obsidian.png", rakeback: 0.006 }
+    if (wagered >= 75000) return { name: "Blood Diamond", icon: "/images/tiers/blood-diamond.png", rakeback: 0.0055 }
+    if (wagered >= 50000) return { name: "Diamond", icon: "/images/tiers/diamond.png", rakeback: 0.005 }
+    if (wagered >= 25000) return { name: "Emerald", icon: "/images/tiers/emerald.png", rakeback: 0.0045 }
+    if (wagered >= 15000) return { name: "Platinum", icon: "/images/tiers/platinum.png", rakeback: 0.004 }
+    if (wagered >= 10000) return { name: "Gold", icon: "/images/tiers/gold.png", rakeback: 0.0035 }
+    if (wagered >= 5000) return { name: "Silver", icon: "/images/tiers/silver.png", rakeback: 0.003 }
+    if (wagered >= 2500) return { name: "Bronze", icon: "/images/tiers/bronze.png", rakeback: 0.0025 }
+    if (wagered >= 1000) return { name: "Iron", icon: "/images/tiers/iron.png", rakeback: 0.002 }
+    return { name: "Unranked", icon: "/images/tiers/unranked.png", rakeback: 0 }
   }
 
   const rank = calculateRank(user?.totalWagered || 0)
