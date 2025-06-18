@@ -9,7 +9,8 @@ export async function middleware(request: NextRequest) {
 
   if (request.nextUrl.pathname.startsWith("/dashboard")) {
     try {
-      const response = await fetch(`${request.nextUrl.origin}/api/user/dashboard`, {
+      const apiBaseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+      const response = await fetch(`${apiBaseUrl}/api/user/dashboard`, {
         headers: {
           cookie: request.headers.get("cookie") || "",
         },
