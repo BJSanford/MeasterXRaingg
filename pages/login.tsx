@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
-import { fetchAndStoreRainId } from "../lib/rainId-utils";
-import { API_BASE_URL } from "../lib/server-api";
 
 export default function LoginPage() {
   const { data: session, status } = useSession();
@@ -27,39 +25,7 @@ export default function LoginPage() {
         const avatar = (session.user as any)?.image;
         localStorage.setItem("discordAvatar", typeof avatar === "string" ? avatar : "");
 
-        // Fetch Rain ID dynamically if not available in session
-        if (!session.user.rainId) {
-          (async () => {
-            try {
-              console.log("Fetching leaderboard data for Rain ID...");
-              const response = await fetch(`${API_BASE_URL}/affiliates/leaderboard?start_date=2020-01-01T00%3A00%3A00.00Z&end_date=2029-01-01T00%3A00%3A00.00Z&type=deposited`, {
-                method: "GET",
-                headers: {
-                  "Content-Type": "application/json",
-                  "x-api-key": process.env.RAIN_API_KEY,
-                },
-              });
-
-              if (response.ok) {
-                const data = await response.json();
-                console.log("Leaderboard API response:", data);
-                const leaderboardUser = data.results.find((user: any) => user.username === session.user.rainUsername);
-
-                if (leaderboardUser) {
-                  const rainId = leaderboardUser.id;
-                  console.log("Rain ID found:", rainId);
-                  Cookies.set("rainId", rainId, { path: "/", secure: true, sameSite: "Strict" });
-                } else {
-                  console.error("Rain username not found in leaderboard.");
-                }
-              } else {
-                console.error("Failed to fetch leaderboard data. Status:", response.status);
-              }
-            } catch (error) {
-              console.error("Error fetching Rain ID dynamically:", error);
-            }
-          })();
-        }
+        // Removed dynamic Rain ID fetch logic (now handled by NextAuth)
 
         // Redirect to home page after login
         router.push("/");
