@@ -39,7 +39,7 @@ export function Testimonials() {
           </Badge>
           <h2 className="text-3xl md:text-4xl font-bold mb-4">What Our Users Say</h2>
           <p className="text-gray-400 max-w-2xl mx-auto">
-            Don't just take our word for it. Here's what players using the MeasterSkins dashboard have to say.
+            Don't just take our word for it. Here's what players using the MeasterRewards dashboard have to say.
           </p>
         </div>
 

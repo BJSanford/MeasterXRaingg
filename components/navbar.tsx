@@ -62,7 +62,7 @@ export function Navbar({ session: initialSession }: NavbarProps) {
               className="w-10 h-10 rounded-full transition-transform duration-300 group-hover:scale-110"
             />
             <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-cyan-400 group-hover:from-purple-300 group-hover:to-cyan-300 transition-all duration-300">
-              MeasterCS
+              MeasterRewards
             </span>
           </Link>
         </div>

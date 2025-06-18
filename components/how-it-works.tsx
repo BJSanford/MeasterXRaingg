@@ -8,7 +8,7 @@ export function HowItWorks() {
     {
       title: "Connect with Discord",
       description:
-        "Login with your Discord account to create your MeasterSkins profile and start tracking your progress.",
+        "Login with your Discord account to create your MeasterRewards profile and start tracking your progress.",
       icon: MessageCircle,
       color: "bg-[#5865F2]",
     },
@@ -65,7 +65,7 @@ export function HowItWorks() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            Earning rewards with MeasterSkins is simple. Follow these steps to start collecting Measter Coins through
+            Earning rewards with MeasterRewards is simple. Follow these steps to start collecting Measter Coins through
             rakeback and stream drops.
           </motion.p>
         </div>
