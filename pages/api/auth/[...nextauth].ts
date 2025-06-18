@@ -86,10 +86,18 @@ export const authOptions: AuthOptions = {
           session.user.verified = false;
         }
 
-        // Set signed cookies for Rain username, ID, and verified status
+        // Set signed cookies for Discord ID, Rain username, ID, and verified status
+        const discordId = session.user.id || "";
         const rainUsername = session.user.rainUsername || "";
         const rainId = session.user.rainId || "";
         const verified = session.user.verified ? "true" : "false";
+
+        const discordIdCookie = serialize("discordId", discordId, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "Strict",
+          path: "/",
+        });
 
         const rainUsernameCookie = serialize("rainUsername", rainUsername, {
           httpOnly: true,
@@ -112,7 +120,7 @@ export const authOptions: AuthOptions = {
           path: "/",
         });
 
-        session.cookies = [rainUsernameCookie, rainIdCookie, verifiedCookie];
+        session.cookies = [discordIdCookie, rainUsernameCookie, rainIdCookie, verifiedCookie];
       }
       console.log("🔵 SESSION AFTER SESSION CALLBACK:", session);
       return session;

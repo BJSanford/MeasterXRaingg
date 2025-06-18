@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 export async function middleware(request: NextRequest) {
   const discordId = request.cookies.get("discordId")?.value;
@@ -9,25 +12,14 @@ export async function middleware(request: NextRequest) {
 
   if (request.nextUrl.pathname.startsWith("/dashboard")) {
     try {
-      const apiBaseUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
-      const response = await fetch(`${apiBaseUrl}/api/user/dashboard`, {
-        headers: {
-          cookie: request.headers.get("cookie") || "",
-        },
+      // Query the database directly for validation
+      const user = await prisma.userVerification.findUnique({
+        where: { discordId },
       });
 
-      console.log("API response status:", response.status);
+      console.log("User data from database:", user);
 
-      if (!response.ok) {
-        console.log("Redirecting to login due to API response failure.");
-        return NextResponse.redirect(new URL("/login", request.url));
-      }
-
-      const userData = await response.json();
-
-      console.log("User data from API:", userData);
-
-      if (userData.rainUsername !== rainUsername || userData.discordId !== discordId) {
+      if (!user || user.rainUsername !== rainUsername || !user.verified) {
         console.log("Redirecting to login due to mismatched user data.");
         return NextResponse.redirect(new URL("/login", request.url));
       }
