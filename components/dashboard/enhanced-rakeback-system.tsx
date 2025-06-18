@@ -274,7 +274,7 @@ export function EnhancedRakebackSystem() {
                     className="drop-shadow-lg"
                   />
                 </div>
-                <div className="absolute -top-2 -right-2 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full p-1 animate-pulse">
+                <div className="absolute -top-2 -right-2 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full p-1 animate-slowPulse">
                   <Crown className="h-4 w-4 text-white" />
                 </div>
               </div>
