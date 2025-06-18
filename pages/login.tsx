@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Cookies from "js-cookie";
-import { fetchAndStoreRainId } from "../../lib/rainId-utils";
+import { fetchAndStoreRainId } from "../lib/rainId-utils";
 
 export default function LoginPage() {
   const { data: session, status } = useSession();
