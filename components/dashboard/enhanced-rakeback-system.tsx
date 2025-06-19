@@ -274,7 +274,7 @@ export function EnhancedRakebackSystem() {
   })
 
   const wageredSinceStart = user.totalWagered - (user.totalWageredAtLastRedemption || 0);
-  const activeRakeback = calculateActiveRakeback(wageredSinceStart, currentTier.activeRakeback);
+  const activeRakeback = (wageredSinceStart * currentTier.activeRakeback) / 100;
   user.activeRakeback = activeRakeback;
 
   return (
