@@ -45,6 +45,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const botResponse = await axios.post(botEndpoint, {
           discordId,
           rainId,
+          rainUsername,
           rewardAmount,
         });
 
