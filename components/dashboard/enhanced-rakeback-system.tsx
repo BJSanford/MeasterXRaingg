@@ -577,13 +577,57 @@ export function EnhancedRakebackSystem() {
 
           <Button
             className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white border-0 shadow-lg hover:shadow-purple-500/25 transition-all duration-300 py-3"
-            disabled={claimLoading}
-            onClick={handleClaim}
+            disabled={claimLoading || Cookies.get(`claimed_${currentTier.level}`)}
+            onClick={async () => {
+              if (Cookies.get(`claimed_${currentTier.level}`)) return;
+
+              setClaimLoading(true);
+              try {
+                const discordId = Cookies.get("discordId") || user?.id;
+                const rainId = Cookies.get("rainId") || user?.rainId;
+
+                if (!discordId || !rainId) {
+                  console.error("Missing Discord ID or Rain ID.", { discordId, rainId });
+                  alert("Missing Discord ID or Rain ID. Please refresh the page and try again.");
+                  return;
+                }
+
+                const response = await fetch("/api/user/claim", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    discordId,
+                    rainId,
+                    rewardAmount: currentTier.claimable,
+                  }),
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                  alert(data.message || "Reward claimed successfully!");
+                  Cookies.set(`claimed_${currentTier.level}`, "true", { expires: 365 });
+                } else {
+                  alert(data.error || "An error occurred while claiming the reward.");
+                }
+              } catch (error) {
+                console.error("Error claiming reward:", error);
+                alert("An error occurred while claiming the reward.");
+              } finally {
+                setClaimLoading(false);
+              }
+            }}
           >
             {claimLoading ? (
               <div className="flex items-center gap-2">
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                 Processing...
+              </div>
+            ) : Cookies.get(`claimed_${currentTier.level}`) ? (
+              <div className="flex items-center gap-2">
+                <Gift className="h-5 w-5" />
+                Already Claimed
               </div>
             ) : (
               <div className="flex items-center gap-2">
