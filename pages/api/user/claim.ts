@@ -9,8 +9,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method === "POST") {
     const { rainId, rewardAmount } = req.body;
     const discordId = req.cookies.discordId || req.body.discordId;
+    const rainUsername = req.cookies.rainUsername || req.body.rainUsername;
 
-    if (!rainId || !discordId || !rewardAmount || typeof rewardAmount !== "number") {
+    if (!rainId || !discordId || !rainUsername || !rewardAmount || typeof rewardAmount !== "number") {
       return res.status(400).json({ error: "Invalid request data" });
     }
 
