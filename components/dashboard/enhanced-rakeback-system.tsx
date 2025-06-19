@@ -468,7 +468,7 @@ export function EnhancedRakebackSystem() {
                               body: JSON.stringify({
                                 discordId,
                                 rainId,
-                                rewardAmount: claimableRakeback,
+                                rewardAmount: tier.claimable,
                               }),
                             });
 
@@ -492,7 +492,7 @@ export function EnhancedRakebackSystem() {
                             <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                             Processing...
                           </div>
-                        ) : Cookies.get(`claimed_${currentTier.level}`) ? (
+                        ) : Cookies.get(`claimed_${tier.level}`) ? (
                           <div className="flex items-center gap-2">
                             <Gift className="h-5 w-5" />
                             Already Claimed
@@ -500,7 +500,7 @@ export function EnhancedRakebackSystem() {
                         ) : (
                           <div className="flex items-center gap-2">
                             <Gift className="h-5 w-5" />
-                            Claim {currentTier.level} Reward
+                            Claim {tier.level} Reward
                           </div>
                         )}
                       </Button>

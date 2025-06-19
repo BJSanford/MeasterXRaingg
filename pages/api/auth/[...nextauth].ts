@@ -56,7 +56,7 @@ export const authOptions: AuthOptions = {
             if (response.ok) {
               const data = await response.json();
               const leaderboardUser = data.results.find(
-                (user: any) => user.username === userVerification.rainUsername
+                (user: any) => user.username.toLowerCase() === userVerification.rainUsername.toLowerCase()
               );
 
               if (leaderboardUser) {
