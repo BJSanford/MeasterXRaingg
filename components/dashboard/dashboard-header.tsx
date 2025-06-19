@@ -30,7 +30,7 @@ export function DashboardHeader() {
             throw new Error(`Failed to fetch ${type} leaderboard: ${response.statusText}`)
           }
           const data = await response.json()
-          const participant = data.results.find((p: any) => p.username === user.username)
+          const participant = data.results.find((p: any) => p.username?.toLowerCase().trim() === user.username?.toLowerCase().trim())
           if (participant) {
             if (type === "wagered") {
               setRainAvatar(participant.avatar || "/placeholder-user.jpg")
