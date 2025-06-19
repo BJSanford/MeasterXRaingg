@@ -4,7 +4,7 @@ import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import Image from "next/image"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Crown, Zap, Gift, TrendingUp, Sparkles, Star, Trophy, Award } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
 import { CoinIcon } from "@/components/ui/coin-icon"
@@ -153,6 +153,7 @@ export function EnhancedRakebackSystem() {
   const { user, isLoading } = useAuth()
   const [cashoutLoading, setCashoutLoading] = useState(false)
   const [claimLoading, setClaimLoading] = useState(false)
+  const [rakeback, setRakeback] = useState({ amount: 0, wagered: 0, percentage: 0 });
 
   // Cashout handler (demo version)
   const handleCashout = async () => {
@@ -200,7 +201,25 @@ export function EnhancedRakebackSystem() {
     }
   }
 
-  const handleClaimRakeback = async (rakebackAmount) => {
+  const calculateRakeback = async () => {
+    try {
+      const userId = Cookies.get("userId");
+
+      // Fetch adjusted wagered amount and rakeback percentage
+      const response = await fetch(`/api/rakeback/active?userId=${userId}`);
+      const { wageredAmount, rakebackPercentage, rakebackAmount } = await response.json();
+
+      setRakeback({
+        amount: rakebackAmount,
+        wagered: wageredAmount,
+        percentage: rakebackPercentage,
+      });
+    } catch (error) {
+      console.error("Failed to calculate rakeback:", error);
+    }
+  };
+
+  const handleClaimRakeback = async () => {
     try {
       const userId = Cookies.get("userId");
       const discordId = Cookies.get("discordId");
@@ -209,14 +228,14 @@ export function EnhancedRakebackSystem() {
       await fetch("/api/rakeback/claim", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, claimedAmount: rakebackAmount }),
+        body: JSON.stringify({ userId, claimedAmount: rakeback.amount }),
       });
 
       // Notify Discord bot
       await fetch(`${process.env.API_BASE_URL}/rakeback-claim`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ discordId, rakebackAmount }),
+        body: JSON.stringify({ discordId, rakebackAmount: rakeback.amount }),
       });
 
       alert("Rakeback claimed successfully!");
@@ -225,6 +244,10 @@ export function EnhancedRakebackSystem() {
       alert("Failed to claim rakeback. Please try again later.");
     }
   };
+
+  useEffect(() => {
+    calculateRakeback();
+  }, []);
 
   if (isLoading || !user) {
     return (
