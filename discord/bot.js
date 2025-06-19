@@ -218,51 +218,26 @@ app.post("/discord/rankRewardClaim", async (req, res) => {
     }
 });
 
-app.post("/discord/rakebackClaim", async (req, res) => {
-    const { discordId, rainId, rainUsername, rakebackAmount } = req.body;
-
-    if (!discordId || !rainId || !rainUsername || !rakebackAmount) {
-        return res.status(400).json({ error: "Invalid request data" });
-    }
-
-    const guild = client.guilds.cache.get(GUILD_ID);
-    if (!guild) {
-        return res.status(500).json({ error: "Guild not cached" });
-    }
-
-    let member = guild.members.cache.get(discordId);
-    if (!member) {
-        try {
-            member = await guild.members.fetch(discordId);
-        } catch (err) {
-            console.error("Error fetching member:", err);
-            return res.status(400).json({ error: "Invalid Discord ID" });
-        }
-    }
-
+// Endpoint to handle rakeback claim notifications
+app.post('/rakeback-claim', async (req, res) => {
     try {
-        const modRole = guild.roles.cache.get(MOD_ROLE_ID);
-        if (!modRole) throw new Error("MOD_ROLE_ID not found in guild");
+        const { discordId, rakebackAmount } = req.body;
 
-        const channel = await guild.channels.create({
-            name: `${member.user.username}-Rakeback-Claim`,
-            type: ChannelType.GuildText,
-            permissionOverwrites: [
-                { id: guild.roles.everyone.id, deny: [PermissionsBitField.Flags.ViewChannel] },
-                { id: member.id, allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages] },
-                { id: modRole.id, allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages] },
-            ],
-        });
+        // Fetch the Discord user
+        const guild = await client.guilds.fetch(GUILD_ID);
+        const member = await guild.members.fetch(discordId);
 
-        await channel.send(
-            `⚡ <@${discordId}> has claimed their active rakeback of **${rakebackAmount} coins**.\nRain.gg ID: **${rainId}**.\nRain.gg Username: **${rainUsername}**.\nA moderator will assist you shortly.`
-        );
+        if (!member) {
+            return res.status(404).json({ error: 'Discord user not found' });
+        }
 
-        await channel.send(`<@${OWNER_DISCORD_ID}>, please assist with the rakeback distribution.`);
-        res.status(200).json({ message: "Rakeback claim channel created successfully!" });
-    } catch (err) {
-        console.error("Error creating rakeback claim channel:", err);
-        res.status(500).json({ error: "Internal server error" });
+        // Send a DM to the user
+        await member.send(`You have successfully claimed your rakeback of ${rakebackAmount} coins! 🎉`);
+
+        res.json({ message: 'Rakeback notification sent successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Failed to send rakeback notification' });
     }
 });
 

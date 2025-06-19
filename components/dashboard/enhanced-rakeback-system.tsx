@@ -4,7 +4,7 @@ import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import Image from "next/image"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Crown, Zap, Gift, TrendingUp, Sparkles, Star, Trophy, Award } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
 import { CoinIcon } from "@/components/ui/coin-icon"
@@ -150,65 +150,79 @@ const ranks: Rank[] = [
 ]
 
 export function EnhancedRakebackSystem() {
-  const { user, isLoading } = useAuth();
-  const [cashoutLoading, setCashoutLoading] = useState(false);
-  const [claimLoading, setClaimLoading] = useState(false);
-  const [rakebackAmount, setRakebackAmount] = useState(0);
-
-  const fetchRakebackData = async () => {
-    try {
-      const response = await fetch(`/api/rakeback/calculateRakeback?userId=${user.id}`);
-      const data = await response.json();
-
-      if (response.ok) {
-        setRakebackAmount(data.rakebackAmount);
-      } else {
-        console.error(data.message || "Failed to fetch rakeback data.");
-      }
-    } catch (error) {
-      console.error("Error fetching rakeback data:", error);
-    }
-  };
-
-  useEffect(() => {
-    if (user) {
-      fetchRakebackData();
-    }
-  }, [user]);
-
-  const minimumWithdrawAmount = 10;
+  const { user, isLoading } = useAuth()
+  const [cashoutLoading, setCashoutLoading] = useState(false)
+  const [claimLoading, setClaimLoading] = useState(false)
 
   // Cashout handler (demo version)
   const handleCashout = async () => {
-    if (!user || rakebackAmount < minimumWithdrawAmount) return;
-    setCashoutLoading(true);
+    if (!user || user.rakebackEarned <= 0) return
+    setCashoutLoading(true)
+
+    // Simulate API call
+    setTimeout(() => {
+      // In a real implementation, this would call an API endpoint
+      setCashoutLoading(false)
+    }, 1500)
+  }
+
+  // Claim handler (demo version)
+  const handleClaim = async () => {
+    if (!user) return
+    setClaimLoading(true)
+
+    // Simulate API call
+    setTimeout(() => {
+      setClaimLoading(false)
+    }, 1500)
+  }
+
+  const handleClaimReward = async (level) => {
+    const fetchRainId = async () => {
+      const rainId = await fetchAndStoreRainId(user.username);
+      return rainId;
+    }
+
+    const rainId = localStorage.getItem("rainId") || await fetchRainId()
+    const discordId = Cookies.get("discordId") || localStorage.getItem("discordId")
+
+    if (!rainId || !discordId) {
+      console.error("Rain ID or Discord ID is missing", { rainId, discordId });
+      return;
+    }
 
     try {
-      const response = await fetch("/api/user/rakebackClaim", {
+      // Simulate API call to claim reward
+      console.log(`Claiming reward for ${level} with Rain ID: ${rainId} and Discord ID: ${discordId}`)
+      user.claimedRewards = [...(user.claimedRewards || []), level]
+    } catch (error) {
+      console.error("Error claiming reward:", error)
+    }
+  }
+
+  const handleClaimRakeback = async (rakebackAmount) => {
+    try {
+      const userId = Cookies.get("userId");
+      const discordId = Cookies.get("discordId");
+
+      // Send claim request to backend
+      await fetch("/api/rakeback/claim", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          discordId: Cookies.get("discordId") || user.id,
-          rainId: Cookies.get("rainId") || user.rainId,
-          rainUsername: user.rainUsername,
-          rakebackAmount,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, claimedAmount: rakebackAmount }),
       });
 
-      const data = await response.json();
-      if (response.ok) {
-        alert(data.message || "Rakeback claimed successfully!");
-        setRakebackAmount(0); // Reset rakeback after cashout
-      } else {
-        alert(data.error || "An error occurred while claiming rakeback.");
-      }
+      // Notify Discord bot
+      await fetch(`${process.env.API_BASE_URL}/rakeback-claim`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ discordId, rakebackAmount }),
+      });
+
+      alert("Rakeback claimed successfully!");
     } catch (error) {
-      console.error("Error claiming rakeback:", error);
-      alert("An error occurred while claiming rakeback.");
-    } finally {
-      setCashoutLoading(false);
+      console.error("Failed to claim rakeback:", error);
+      alert("Failed to claim rakeback. Please try again later.");
     }
   };
 
@@ -273,33 +287,57 @@ export function EnhancedRakebackSystem() {
     return user.totalWagered >= tier.threshold && !user.claimedRewards?.includes(tier.level)
   })
 
-  const wageredSinceStart = user.totalWagered - (user.totalWageredAtLastRedemption || 0);
-  const activeRakeback = (wageredSinceStart * currentTier.activeRakeback) / 100;
-  user.activeRakeback = activeRakeback;
-
   return (
     <div className="space-y-8">
       {/* Current Tier Status */}
       <Card className="bg-gray-900/40 backdrop-blur-md border border-gray-800/50 overflow-hidden relative">
+        <div className={`absolute inset-0 bg-gradient-to-br ${currentTier.bgColor} opacity-50`}></div>
         <CardContent className="p-8 relative">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-            <div className="space-y-2">
-              <h2 className={`text-3xl font-bold ${currentTier.color}`}>{currentTier.level}</h2>
-              <p className="text-gray-400 flex items-center gap-1">
-                <CoinIcon className="mb-0.5" />
-                Active Rakeback: {activeRakeback.toFixed(2)} coins
-              </p>
-              {activeRakeback >= minimumWithdrawAmount ? (
-                <Button
-                  onClick={handleCashout}
-                  className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold text-sm px-4 py-2 rounded-lg whitespace-nowrap"
-                  disabled={cashoutLoading}
+            <div className="flex items-center gap-6">
+              <div className="relative">
+                <div
+                  className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${currentTier.bgColor} border-2 border-gray-700 flex items-center justify-center ${currentTier.glowColor} shadow-2xl`}
                 >
-                  Cashout {activeRakeback.toFixed(2)} coins
-                </Button>
-              ) : (
-                <p className="text-gray-400">Minimum withdraw amount: {minimumWithdrawAmount} coins</p>
-              )}
+                  <Image
+                    src={`/images/tiers/${currentTier.level.toLowerCase().replace(/ /g, "-")}.png`}
+                    alt={currentTier.level}
+                    width={48}
+                    height={48}
+                    className="drop-shadow-lg"
+                  />
+                </div>
+                <div className="absolute -top-2 -right-2 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full p-1 animate-pulse-slowest">
+                  <Crown className="h-4 w-4 text-white" />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center gap-3">
+                  <h2 className={`text-3xl font-bold ${currentTier.color}`}>{currentTier.level}</h2>
+                  <div className="px-3 py-1 bg-gray-800/50 rounded-full border border-cyan-500/30">
+                    <span className="text-cyan-400 text-sm font-semibold">{currentTier.activeRakeback}% Rakeback</span>
+                  </div>
+                </div>
+                <p className="text-gray-400 flex items-center gap-1">
+                  <CoinIcon className="mb-0.5" />
+                  {user.totalWagered.toLocaleString()} / {currentTier.threshold.toLocaleString()} wagered
+                </p>
+
+                {nextTier && (
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-400">Progress to {nextTier.level}</span>
+                      <span className="text-white font-semibold">{progressToNext.toFixed(1)}%</span>
+                    </div>
+                    <Progress value={progressToNext} className="h-2 bg-gray-800" />
+                    <p className="text-xs text-gray-500 flex items-center gap-1">
+                      <CoinIcon size={12} className="mb-0.5" />
+                      {(nextTier.threshold - user.totalWagered).toLocaleString()} to next tier
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </CardContent>
@@ -440,7 +478,7 @@ export function EnhancedRakebackSystem() {
                           setClaimLoading(true);
                           try {
                             const discordId = Cookies.get("discordId") || user?.id;
-                            const rainId = Cookies.get("RainId") || user?.rainId;
+                            const rainId = Cookies.get("rainId") || user?.rainId;
 
                             if (!discordId || !rainId) {
                               console.error("Missing Discord ID or Rain ID.", { discordId, rainId });
@@ -652,16 +690,37 @@ export function EnhancedRakebackSystem() {
                 <div className="flex items-center justify-center gap-2">
                   <TrendingUp className="h-6 w-6 text-green-400" />
                   <CoinIcon size={24} className="text-green-400" />
-                  <span className="text-4xl font-bold text-green-400">{user.activeRakeback.toFixed(2)}</span>
+                  <span className="text-4xl font-bold text-green-400">{user.rakebackEarned.toFixed(2)}</span>
                 </div>
                 <div className="flex items-center justify-center gap-2">
                   <span className="text-sm text-gray-400">From {currentTier.activeRakeback}% rakeback rate</span>
                 </div>
               </div>
 
+              <div className="space-y-3">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-400">Rakeback Rate:</span>
+                  <span className="text-cyan-400 font-semibold">{currentTier.activeRakeback}%</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-400">Total Wagered:</span>
+                  <span className="text-white font-semibold flex items-center gap-1">
+                    <CoinIcon size={14} className="mb-0.5" />
+                    {user.totalWagered.toLocaleString()}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-400">Available:</span>
+                  <span className="text-green-400 font-semibold flex items-center gap-1">
+                    <CoinIcon size={14} className="mb-0.5" />
+                    {user.rakebackEarned.toFixed(2)}
+                  </span>
+                </div>
+              </div>
+
               <Button
                 className="w-full bg-gradient-to-r from-cyan-600 to-green-600 hover:from-cyan-700 hover:to-green-700 text-white border-0 shadow-lg hover:shadow-cyan-500/25 transition-all duration-300 py-3"
-                disabled={!user || user.activeRakeback < minimumWithdrawAmount || cashoutLoading}
+                disabled={!user || user.rakebackEarned <= 0 || cashoutLoading}
                 onClick={handleCashout}
               >
                 {cashoutLoading ? (
@@ -672,7 +731,7 @@ export function EnhancedRakebackSystem() {
                 ) : (
                   <div className="flex items-center gap-2">
                     <Zap className="h-5 w-5" />
-                    Cashout <CoinIcon size={16} className="mx-0.5" /> {user.activeRakeback.toFixed(2)}
+                    Cashout <CoinIcon size={16} className="mx-0.5" /> {user ? user.rakebackEarned.toFixed(2) : "0.00"}
                   </div>
                 )}
               </Button>
