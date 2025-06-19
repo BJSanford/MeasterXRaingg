@@ -154,14 +154,25 @@ export function EnhancedRakebackSystem() {
   const [cashoutLoading, setCashoutLoading] = useState(false)
   const [claimLoading, setClaimLoading] = useState(false)
 
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - 7); // Testing start date: a week ago
+
+  const calculateActiveRakeback = (wageredSinceStart, rakebackRate) => {
+    return (wageredSinceStart * rakebackRate) / 100;
+  };
+
+  const minimumWithdrawAmount = 10;
+
   // Cashout handler (demo version)
   const handleCashout = async () => {
-    if (!user || user.rakebackEarned <= 0) return
+    if (!user || user.activeRakeback < minimumWithdrawAmount) return;
     setCashoutLoading(true)
 
     // Simulate API call
     setTimeout(() => {
-      // In a real implementation, this would call an API endpoint
+      user.lastRedeemedDate = new Date();
+      user.totalWageredAtLastRedemption = user.totalWagered;
+      user.activeRakeback = 0; // Reset rakeback after cashout
       setCashoutLoading(false)
     }, 1500)
   }
@@ -261,57 +272,33 @@ export function EnhancedRakebackSystem() {
     return user.totalWagered >= tier.threshold && !user.claimedRewards?.includes(tier.level)
   })
 
+  const wageredSinceStart = user.totalWagered - (user.totalWageredAtLastRedemption || 0);
+  const activeRakeback = calculateActiveRakeback(wageredSinceStart, currentTier.activeRakeback);
+  user.activeRakeback = activeRakeback;
+
   return (
     <div className="space-y-8">
       {/* Current Tier Status */}
       <Card className="bg-gray-900/40 backdrop-blur-md border border-gray-800/50 overflow-hidden relative">
-        <div className={`absolute inset-0 bg-gradient-to-br ${currentTier.bgColor} opacity-50`}></div>
         <CardContent className="p-8 relative">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-            <div className="flex items-center gap-6">
-              <div className="relative">
-                <div
-                  className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${currentTier.bgColor} border-2 border-gray-700 flex items-center justify-center ${currentTier.glowColor} shadow-2xl`}
+            <div className="space-y-2">
+              <h2 className={`text-3xl font-bold ${currentTier.color}`}>{currentTier.level}</h2>
+              <p className="text-gray-400 flex items-center gap-1">
+                <CoinIcon className="mb-0.5" />
+                Active Rakeback: {activeRakeback.toFixed(2)} coins
+              </p>
+              {activeRakeback >= minimumWithdrawAmount ? (
+                <Button
+                  onClick={handleCashout}
+                  className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-bold text-sm px-4 py-2 rounded-lg whitespace-nowrap"
+                  disabled={cashoutLoading}
                 >
-                  <Image
-                    src={`/images/tiers/${currentTier.level.toLowerCase().replace(/ /g, "-")}.png`}
-                    alt={currentTier.level}
-                    width={48}
-                    height={48}
-                    className="drop-shadow-lg"
-                  />
-                </div>
-                <div className="absolute -top-2 -right-2 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full p-1 animate-pulse-slowest">
-                  <Crown className="h-4 w-4 text-white" />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex items-center gap-3">
-                  <h2 className={`text-3xl font-bold ${currentTier.color}`}>{currentTier.level}</h2>
-                  <div className="px-3 py-1 bg-gray-800/50 rounded-full border border-cyan-500/30">
-                    <span className="text-cyan-400 text-sm font-semibold">{currentTier.activeRakeback}% Rakeback</span>
-                  </div>
-                </div>
-                <p className="text-gray-400 flex items-center gap-1">
-                  <CoinIcon className="mb-0.5" />
-                  {user.totalWagered.toLocaleString()} / {currentTier.threshold.toLocaleString()} wagered
-                </p>
-
-                {nextTier && (
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">Progress to {nextTier.level}</span>
-                      <span className="text-white font-semibold">{progressToNext.toFixed(1)}%</span>
-                    </div>
-                    <Progress value={progressToNext} className="h-2 bg-gray-800" />
-                    <p className="text-xs text-gray-500 flex items-center gap-1">
-                      <CoinIcon size={12} className="mb-0.5" />
-                      {(nextTier.threshold - user.totalWagered).toLocaleString()} to next tier
-                    </p>
-                  </div>
-                )}
-              </div>
+                  Cashout {activeRakeback.toFixed(2)} coins
+                </Button>
+              ) : (
+                <p className="text-gray-400">Minimum withdraw amount: {minimumWithdrawAmount} coins</p>
+              )}
             </div>
           </div>
         </CardContent>

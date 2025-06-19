@@ -7,6 +7,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id              Int      @id @default(autoincrement())
+  discordId       String?  @unique
+  discordUsername String?
+  rainUsername    String
+  verified        Boolean  @default(false)
+
+  activeRakebacks ActiveRakeback[]
+}
+
 model UserVerification {
   id              Int     @id @default(autoincrement())
   discordId       String? @unique
@@ -21,4 +31,17 @@ model RankRewardClaim {
   rainUsername String   // Use Rain Username for tracking claims
   rewardAmount Float
   claimedAt    DateTime @default(now())
+}
+
+model ActiveRakeback {
+  id                     Int      @id @default(autoincrement())
+  userId                 Int      // Reference to the user
+  totalWageredAtLastRedemption Float
+  lastRedeemedDate       DateTime @default(now())
+  activeRakeback         Float    @default(0)
+  redeemableRakeback     Float    @default(0)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
 }

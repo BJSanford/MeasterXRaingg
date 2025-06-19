@@ -218,6 +218,54 @@ app.post("/discord/rankRewardClaim", async (req, res) => {
     }
 });
 
+app.post("/discord/rakebackClaim", async (req, res) => {
+    const { discordId, rainId, rainUsername, rakebackAmount } = req.body;
+
+    if (!discordId || !rainId || !rainUsername || !rakebackAmount) {
+        return res.status(400).json({ error: "Invalid request data" });
+    }
+
+    const guild = client.guilds.cache.get(GUILD_ID);
+    if (!guild) {
+        return res.status(500).json({ error: "Guild not cached" });
+    }
+
+    let member = guild.members.cache.get(discordId);
+    if (!member) {
+        try {
+            member = await guild.members.fetch(discordId);
+        } catch (err) {
+            console.error("Error fetching member:", err);
+            return res.status(400).json({ error: "Invalid Discord ID" });
+        }
+    }
+
+    try {
+        const modRole = guild.roles.cache.get(MOD_ROLE_ID);
+        if (!modRole) throw new Error("MOD_ROLE_ID not found in guild");
+
+        const channel = await guild.channels.create({
+            name: `${member.user.username}-Rakeback-Claim`,
+            type: ChannelType.GuildText,
+            permissionOverwrites: [
+                { id: guild.roles.everyone.id, deny: [PermissionsBitField.Flags.ViewChannel] },
+                { id: member.id, allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages] },
+                { id: modRole.id, allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages] },
+            ],
+        });
+
+        await channel.send(
+            `⚡ <@${discordId}> has claimed their active rakeback of **${rakebackAmount} coins**.\nRain.gg ID: **${rainId}**.\nRain.gg Username: **${rainUsername}**.\nA moderator will assist you shortly.`
+        );
+
+        await channel.send(`<@${OWNER_DISCORD_ID}>, please assist with the rakeback distribution.`);
+        res.status(200).json({ message: "Rakeback claim channel created successfully!" });
+    } catch (err) {
+        console.error("Error creating rakeback claim channel:", err);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+
 const PORT = process.env.PORT || 20161;
 app.listen(PORT, () => {
     console.log(`HTTP server running on port ${PORT}`);
