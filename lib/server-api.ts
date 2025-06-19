@@ -66,6 +66,10 @@ export async function verifyUser(username: string): Promise<UserProfile | null> 
     user.username.trim().toLowerCase() === input
   );
 
+  console.log("API response data:", data);
+  console.log("Input username:", input);
+  console.log("Matched leaderboard user:", leaderboardUser);
+
   if (!leaderboardUser) return null;
 
   return {
