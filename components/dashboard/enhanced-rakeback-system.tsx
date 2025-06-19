@@ -440,7 +440,7 @@ export function EnhancedRakebackSystem() {
                           setClaimLoading(true);
                           try {
                             const discordId = Cookies.get("discordId") || user?.id;
-                            const rainId = Cookies.get("rainId") || user?.rainId;
+                            const rainId = Cookies.get("RainId") || user?.rainId;
 
                             if (!discordId || !rainId) {
                               console.error("Missing Discord ID or Rain ID.", { discordId, rainId });
