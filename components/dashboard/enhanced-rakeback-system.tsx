@@ -470,12 +470,18 @@ export function EnhancedRakebackSystem() {
                               }),
                             })
 
-                            const data = await response.json()
+                            const data = await response.json();
                             if (response.ok) {
-                              alert(data.message)
-                              user.claimedRewards = [...(user.claimedRewards || []), tier.level]
+                              alert(data.message || "Reward claimed successfully!");
+                              Cookies.set(`claimed_${tier.level}`, "true", { expires: 365 });
+                              user.claimedRewards = [...(user.claimedRewards || []), tier.level];
+                              setCanClaim(false); // Hide the button
                             } else {
-                              alert(data.error)
+                              alert(data.error || "An error occurred while claiming the reward.");
+                              if (data.error === "Reward already claimed") {
+                                Cookies.set(`claimed_${tier.level}`, "true", { expires: 365 });
+                                setCanClaim(false); // Hide the button
+                              }
                             }
                           } catch (error) {
                             console.error("Error claiming reward:", error)
@@ -658,5 +664,7 @@ export function EnhancedRakebackSystem() {
         </Card>
       </div>
     </div>
-  )
+  );
 }
+
+export default EnhancedRakebackSystem;

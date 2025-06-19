@@ -17,7 +17,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
       // Check if the reward has already been claimed
       const existingClaim = await prisma.rankRewardClaim.findFirst({
-        where: { rainId, rewardAmount },
+        where: {
+          OR: [
+            { rainId, rewardAmount },
+            { rainUsername, rewardAmount },
+          ],
+        },
       });
 
       if (existingClaim) {
@@ -26,7 +31,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       // Mark the reward as claimed
       await prisma.rankRewardClaim.create({
-        data: { rainId, rewardAmount },
+        data: { rainId, rainUsername, rewardAmount },
       });
 
       // Notify the Discord bot
