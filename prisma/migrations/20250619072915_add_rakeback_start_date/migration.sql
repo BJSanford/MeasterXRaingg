@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "ActiveRakeback" ADD COLUMN     "rakebackStartDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;

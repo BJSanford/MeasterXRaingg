@@ -40,6 +40,7 @@ model ActiveRakeback {
   lastRedeemedDate       DateTime @default(now())
   activeRakeback         Float    @default(0)
   redeemableRakeback     Float    @default(0)
+  rakebackStartDate      DateTime @default(now())
   createdAt              DateTime @default(now())
   updatedAt              DateTime @updatedAt
 

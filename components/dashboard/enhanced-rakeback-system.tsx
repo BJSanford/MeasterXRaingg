@@ -166,15 +166,35 @@ export function EnhancedRakebackSystem() {
   // Cashout handler (demo version)
   const handleCashout = async () => {
     if (!user || user.activeRakeback < minimumWithdrawAmount) return;
-    setCashoutLoading(true)
+    setCashoutLoading(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      user.lastRedeemedDate = new Date();
-      user.totalWageredAtLastRedemption = user.totalWagered;
-      user.activeRakeback = 0; // Reset rakeback after cashout
-      setCashoutLoading(false)
-    }, 1500)
+    try {
+      const response = await fetch("/api/user/rakebackClaim", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          discordId: Cookies.get("discordId") || user.id,
+          rainId: Cookies.get("rainId") || user.rainId,
+          rainUsername: user.rainUsername,
+          rakebackAmount: user.activeRakeback,
+        }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        alert(data.message || "Rakeback claimed successfully!");
+        user.activeRakeback = 0; // Reset rakeback after cashout
+      } else {
+        alert(data.error || "An error occurred while claiming rakeback.");
+      }
+    } catch (error) {
+      console.error("Error claiming rakeback:", error);
+      alert("An error occurred while claiming rakeback.");
+    } finally {
+      setCashoutLoading(false);
+    }
   }
 
   // Claim handler (demo version)
@@ -651,37 +671,16 @@ export function EnhancedRakebackSystem() {
                 <div className="flex items-center justify-center gap-2">
                   <TrendingUp className="h-6 w-6 text-green-400" />
                   <CoinIcon size={24} className="text-green-400" />
-                  <span className="text-4xl font-bold text-green-400">{user.rakebackEarned.toFixed(2)}</span>
+                  <span className="text-4xl font-bold text-green-400">{user.activeRakeback.toFixed(2)}</span>
                 </div>
                 <div className="flex items-center justify-center gap-2">
                   <span className="text-sm text-gray-400">From {currentTier.activeRakeback}% rakeback rate</span>
                 </div>
               </div>
 
-              <div className="space-y-3">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-400">Rakeback Rate:</span>
-                  <span className="text-cyan-400 font-semibold">{currentTier.activeRakeback}%</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-400">Total Wagered:</span>
-                  <span className="text-white font-semibold flex items-center gap-1">
-                    <CoinIcon size={14} className="mb-0.5" />
-                    {user.totalWagered.toLocaleString()}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-400">Available:</span>
-                  <span className="text-green-400 font-semibold flex items-center gap-1">
-                    <CoinIcon size={14} className="mb-0.5" />
-                    {user.rakebackEarned.toFixed(2)}
-                  </span>
-                </div>
-              </div>
-
               <Button
                 className="w-full bg-gradient-to-r from-cyan-600 to-green-600 hover:from-cyan-700 hover:to-green-700 text-white border-0 shadow-lg hover:shadow-cyan-500/25 transition-all duration-300 py-3"
-                disabled={!user || user.rakebackEarned <= 0 || cashoutLoading}
+                disabled={!user || user.activeRakeback < minimumWithdrawAmount || cashoutLoading}
                 onClick={handleCashout}
               >
                 {cashoutLoading ? (
@@ -692,7 +691,7 @@ export function EnhancedRakebackSystem() {
                 ) : (
                   <div className="flex items-center gap-2">
                     <Zap className="h-5 w-5" />
-                    Cashout <CoinIcon size={16} className="mx-0.5" /> {user ? user.rakebackEarned.toFixed(2) : "0.00"}
+                    Cashout <CoinIcon size={16} className="mx-0.5" /> {user.activeRakeback.toFixed(2)}
                   </div>
                 )}
               </Button>
