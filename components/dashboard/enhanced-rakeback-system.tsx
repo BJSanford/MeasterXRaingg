@@ -352,7 +352,7 @@ export function EnhancedRakebackSystem() {
               {ranks.map((tier, idx) => {
                 const reached = user.totalWagered >= tier.threshold
                 const isCurrent = idx === currentRankIndex
-                const canClaim = reached && !(user.claimedRewards || []).includes(tier.level)
+                const canClaim = reached && !(user.claimedRewards || []).includes(tier.level) && !isCurrent; // Exclude current rank
 
                 return (
                   <div
