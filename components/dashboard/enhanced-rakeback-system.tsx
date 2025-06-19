@@ -444,19 +444,21 @@ export function EnhancedRakebackSystem() {
                     {/* Enhanced Claim Button */}
                     {canClaim && (
                       <Button
-                        className="w-full mb-4 bg-gradient-to-r from-green-600 via-green-700 to-emerald-600 hover:from-green-700 hover:via-green-800 hover:to-emerald-700 text-white border-0 px-6 py-4 text-base font-bold shadow-lg hover:shadow-green-500/25 transition-all duration-300 group-hover:scale-105"
+                        className={`w-full mb-4 bg-gradient-to-r from-green-600 via-green-700 to-emerald-600 hover:from-green-700 hover:via-green-800 hover:to-emerald-700 text-white border-0 px-6 py-4 text-base font-bold shadow-lg hover:shadow-green-500/25 transition-all duration-300 group-hover:scale-105 ${Cookies.get("claimed_${tier.level}") ? "opacity-50 cursor-not-allowed" : ""}`}
+                        disabled={claimLoading || Cookies.get(`claimed_${tier.level}`)}
                         onClick={async () => {
+                          if (Cookies.get(`claimed_${tier.level}`)) return;
+
+                          setClaimLoading(true);
                           try {
-                            const discordId = Cookies.get("discordId") || user?.id
-                            const rainId = Cookies.get("rainId") || user?.rainId
+                            const discordId = Cookies.get("discordId") || user?.id;
+                            const rainId = Cookies.get("rainId") || user?.rainId;
 
                             if (!discordId || !rainId) {
-                              console.error("Missing Discord ID or Rain ID.", { discordId, rainId })
-                              alert("Missing Discord ID or Rain ID. Please refresh the page and try again.")
-                              return
+                              console.error("Missing Discord ID or Rain ID.", { discordId, rainId });
+                              alert("Missing Discord ID or Rain ID. Please refresh the page and try again.");
+                              return;
                             }
-
-                            console.log("Using Discord ID and Rain ID:", { discordId, rainId })
 
                             const response = await fetch("/api/user/claim", {
                               method: "POST",
@@ -466,37 +468,41 @@ export function EnhancedRakebackSystem() {
                               body: JSON.stringify({
                                 discordId,
                                 rainId,
-                                rewardAmount: tier.claimable,
+                                rewardAmount: claimableRakeback,
                               }),
-                            })
+                            });
 
                             const data = await response.json();
                             if (response.ok) {
                               alert(data.message || "Reward claimed successfully!");
                               Cookies.set(`claimed_${tier.level}`, "true", { expires: 365 });
-                              user.claimedRewards = [...(user.claimedRewards || []), tier.level];
-                              setCanClaim(false); // Hide the button
                             } else {
                               alert(data.error || "An error occurred while claiming the reward.");
-                              if (data.error === "Reward already claimed") {
-                                Cookies.set(`claimed_${tier.level}`, "true", { expires: 365 });
-                                setCanClaim(false); // Hide the button
-                              }
                             }
                           } catch (error) {
-                            console.error("Error claiming reward:", error)
-                            alert("An error occurred while claiming the reward.")
+                            console.error("Error claiming reward:", error);
+                            alert("An error occurred while claiming the reward.");
+                          } finally {
+                            setClaimLoading(false);
                           }
                         }}
                       >
-                        <div className="flex items-center gap-2">
-                          <Gift className="h-5 w-5" />
-                          <span>Claim {tier.level} Reward</span>
-                          <div className="flex items-center gap-1">
-                            <CoinIcon size={16} />
-                            <span>{tier.claimable}</span>
+                        {claimLoading ? (
+                          <div className="flex items-center gap-2">
+                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                            Processing...
                           </div>
-                        </div>
+                        ) : Cookies.get(`claimed_${currentTier.level}`) ? (
+                          <div className="flex items-center gap-2">
+                            <Gift className="h-5 w-5" />
+                            Already Claimed
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            <Gift className="h-5 w-5" />
+                            Claim {currentTier.level} Reward
+                          </div>
+                        )}
                       </Button>
                     )}
 
