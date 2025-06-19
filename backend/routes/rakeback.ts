@@ -89,4 +89,54 @@ router.post('/rakeback/updateStartDate', async (req, res) => {
   }
 });
 
+// Calculate rakeback based on wagered data
+router.get('/calculateRakeback', async (req, res) => {
+  const { userId } = req.query;
+
+  try {
+    const userRakeback = await prisma.activeRakeback.findUnique({
+      where: { userId: parseInt(userId) },
+    });
+
+    if (!userRakeback || !userRakeback.rakebackStartDate) {
+      return res.status(400).json({ message: 'Rakeback start date not set for user.' });
+    }
+
+    const wageredSinceStart = await fetchRainGGWageredData(userId, userRakeback.rakebackStartDate);
+
+    const rakebackRate = calculateRakebackRate(wageredSinceStart);
+    const rakebackAmount = (wageredSinceStart * rakebackRate) / 100;
+
+    res.status(200).json({ rakebackAmount });
+  } catch (error) {
+    console.error('Error calculating rakeback:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+// Helper function to fetch wagered data from Rain.gg API
+async function fetchRainGGWageredData(userId, startDate) {
+  try {
+    const response = await fetch(`https://api.rain.gg/wagered?userId=${userId}&startDate=${startDate.toISOString()}`);
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to fetch wagered data from Rain.gg API');
+    }
+
+    return data.wageredSinceStart;
+  } catch (error) {
+    console.error('Error fetching wagered data:', error);
+    throw error;
+  }
+}
+
+// Helper function to calculate rakeback rate
+function calculateRakebackRate(wageredSinceStart) {
+  if (wageredSinceStart >= 10000) return 0.5;
+  if (wageredSinceStart >= 5000) return 0.4;
+  if (wageredSinceStart >= 1000) return 0.3;
+  return 0.2;
+}
+
 export default router;

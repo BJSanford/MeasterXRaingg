@@ -4,7 +4,7 @@ import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import Image from "next/image"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Crown, Zap, Gift, TrendingUp, Sparkles, Star, Trophy, Award } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
 import { CoinIcon } from "@/components/ui/coin-icon"
@@ -150,22 +150,37 @@ const ranks: Rank[] = [
 ]
 
 export function EnhancedRakebackSystem() {
-  const { user, isLoading } = useAuth()
-  const [cashoutLoading, setCashoutLoading] = useState(false)
-  const [claimLoading, setClaimLoading] = useState(false)
+  const { user, isLoading } = useAuth();
+  const [cashoutLoading, setCashoutLoading] = useState(false);
+  const [claimLoading, setClaimLoading] = useState(false);
+  const [rakebackAmount, setRakebackAmount] = useState(0);
 
-  const startDate = new Date();
-  startDate.setDate(startDate.getDate() - 7); // Testing start date: a week ago
+  useEffect(() => {
+    if (user) {
+      fetchRakebackData();
+    }
+  }, [user]);
 
-  const calculateActiveRakeback = (wageredSinceStart, rakebackRate) => {
-    return (wageredSinceStart * rakebackRate) / 100;
+  const fetchRakebackData = async () => {
+    try {
+      const response = await fetch(`/api/rakeback/calculateRakeback?userId=${user.id}`);
+      const data = await response.json();
+
+      if (response.ok) {
+        setRakebackAmount(data.rakebackAmount);
+      } else {
+        console.error(data.message || "Failed to fetch rakeback data.");
+      }
+    } catch (error) {
+      console.error("Error fetching rakeback data:", error);
+    }
   };
 
   const minimumWithdrawAmount = 10;
 
   // Cashout handler (demo version)
   const handleCashout = async () => {
-    if (!user || user.activeRakeback < minimumWithdrawAmount) return;
+    if (!user || rakebackAmount < minimumWithdrawAmount) return;
     setCashoutLoading(true);
 
     try {
@@ -178,14 +193,14 @@ export function EnhancedRakebackSystem() {
           discordId: Cookies.get("discordId") || user.id,
           rainId: Cookies.get("rainId") || user.rainId,
           rainUsername: user.rainUsername,
-          rakebackAmount: user.activeRakeback,
+          rakebackAmount,
         }),
       });
 
       const data = await response.json();
       if (response.ok) {
         alert(data.message || "Rakeback claimed successfully!");
-        user.activeRakeback = 0; // Reset rakeback after cashout
+        setRakebackAmount(0); // Reset rakeback after cashout
       } else {
         alert(data.error || "An error occurred while claiming rakeback.");
       }
@@ -195,41 +210,7 @@ export function EnhancedRakebackSystem() {
     } finally {
       setCashoutLoading(false);
     }
-  }
-
-  // Claim handler (demo version)
-  const handleClaim = async () => {
-    if (!user) return
-    setClaimLoading(true)
-
-    // Simulate API call
-    setTimeout(() => {
-      setClaimLoading(false)
-    }, 1500)
-  }
-
-  const handleClaimReward = async (level) => {
-    const fetchRainId = async () => {
-      const rainId = await fetchAndStoreRainId(user.username);
-      return rainId;
-    }
-
-    const rainId = localStorage.getItem("rainId") || await fetchRainId()
-    const discordId = Cookies.get("discordId") || localStorage.getItem("discordId")
-
-    if (!rainId || !discordId) {
-      console.error("Rain ID or Discord ID is missing", { rainId, discordId });
-      return;
-    }
-
-    try {
-      // Simulate API call to claim reward
-      console.log(`Claiming reward for ${level} with Rain ID: ${rainId} and Discord ID: ${discordId}`)
-      user.claimedRewards = [...(user.claimedRewards || []), level]
-    } catch (error) {
-      console.error("Error claiming reward:", error)
-    }
-  }
+  };
 
   if (isLoading || !user) {
     return (
