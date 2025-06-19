@@ -114,38 +114,6 @@ router.get('/calculateRakeback', async (req, res) => {
   }
 });
 
-// Initialize rakeback data for new users
-router.post('/rakeback/initialize', async (req, res) => {
-  const { userId, totalWagered } = req.body;
-
-  try {
-    const existingRakeback = await prisma.activeRakeback.findUnique({
-      where: { userId: parseInt(userId) },
-    });
-
-    if (!existingRakeback) {
-      // Initialize rakeback data for new user
-      const newRakeback = await prisma.activeRakeback.create({
-        data: {
-          userId: parseInt(userId),
-          rakebackStartDate: totalWagered >= 1000 ? new Date() : null,
-          totalWageredAtLastRedemption: totalWagered,
-          activeRakeback: 0,
-          redeemableRakeback: 0,
-        },
-      });
-
-      return res.status(201).json(newRakeback);
-    }
-
-    res.status(200).json({ message: 'Rakeback data already exists' });
-  } catch (error) {
-    console.error('Error initializing rakeback data:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-});
-
-// Helper function to fetch wagered data from Rain.gg API
 async function fetchRainGGWageredData(userId, startDate) {
   try {
     const response = await fetch(`https://api.rain.gg/wagered?userId=${userId}&startDate=${startDate.toISOString()}`);
@@ -162,7 +130,6 @@ async function fetchRainGGWageredData(userId, startDate) {
   }
 }
 
-// Helper function to calculate rakeback rate
 function calculateRakebackRate(wageredSinceStart) {
   if (wageredSinceStart >= 10000) return 0.5;
   if (wageredSinceStart >= 5000) return 0.4;

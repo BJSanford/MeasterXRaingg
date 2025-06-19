@@ -155,12 +155,6 @@ export function EnhancedRakebackSystem() {
   const [claimLoading, setClaimLoading] = useState(false);
   const [rakebackAmount, setRakebackAmount] = useState(0);
 
-  useEffect(() => {
-    if (user) {
-      fetchRakebackData();
-    }
-  }, [user]);
-
   const fetchRakebackData = async () => {
     try {
       const response = await fetch(`/api/rakeback/calculateRakeback?userId=${user.id}`);
@@ -175,6 +169,12 @@ export function EnhancedRakebackSystem() {
       console.error("Error fetching rakeback data:", error);
     }
   };
+
+  useEffect(() => {
+    if (user) {
+      fetchRakebackData();
+    }
+  }, [user]);
 
   const minimumWithdrawAmount = 10;
 
