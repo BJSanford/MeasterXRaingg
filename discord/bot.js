@@ -218,6 +218,52 @@ app.post("/discord/rankRewardClaim", async (req, res) => {
     }
 });
 
+app.post("/discord/rakebackClaim", async (req, res) => {
+    const { discordId, rainId, rainUsername, claimedWagered, claimedAmount } = req.body;
+
+    if (!discordId || !rainId || !rainUsername || claimedWagered == null || claimedAmount == null) {
+        return res.status(400).json({ error: "Invalid request data" });
+    }
+
+    const guild = client.guilds.cache.get(GUILD_ID);
+    if (!guild) {
+        return res.status(500).json({ error: "Guild not available" });
+    }
+
+    let member = guild.members.cache.get(discordId);
+    if (!member) {
+        try {
+            member = await guild.members.fetch(discordId);
+        } catch (err) {
+            console.error("Error fetching member for rakeback claim:", err);
+            return res.status(400).json({ error: "Invalid Discord ID" });
+        }
+    }
+
+    try {
+        // Create a dedicated channel for the rakeback claim
+        const channel = await guild.channels.create({
+            name: `${member.user.username}-Rakeback-Claim`,
+            type: ChannelType.GuildText,
+            permissionOverwrites: [
+                { id: guild.roles.everyone.id, deny: [PermissionsBitField.Flags.ViewChannel] },
+                { id: discordId, allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages] },
+                { id: MOD_ROLE_ID, allow: [PermissionsBitField.Flags.ViewChannel, PermissionsBitField.Flags.SendMessages] },
+            ],
+        });
+
+        // Send message about rakeback claim
+        await channel.send(
+            `🤑 <@${discordId}> has claimed **${claimedAmount}** coins in rakeback for **${rainUsername}**! Total wagered logged: **${claimedWagered}**.`
+        );
+
+        return res.status(200).json({ message: "Rakeback claim sent to moderation channel." });
+    } catch (err) {
+        console.error("Error processing rakeback claim in Discord bot:", err);
+        return res.status(500).json({ error: "Failed to post rakeback claim" });
+    }
+});
+
 const PORT = process.env.PORT || 20161;
 app.listen(PORT, () => {
     console.log(`HTTP server running on port ${PORT}`);

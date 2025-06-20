@@ -24,6 +24,22 @@ export async function POST(request: Request) {
       },
     })
 
+    // Dispatch to Discord bot for payout via slash in verification channel
+    try {
+      const discordId = cookieStore.get('discordId')?.value
+      if (discordId) {
+        await fetch(`${process.env.API_BASE_URL}/discord/rakebackClaim`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ discordId, rainId, rainUsername, claimedWagered, claimedAmount }),
+        })
+      } else {
+        console.error('No discordId cookie, bot dispatch skipped')
+      }
+    } catch (botErr) {
+      console.error('Error dispatching to Discord bot:', botErr)
+    }
+
     return NextResponse.json({ message: 'Cashout recorded successfully.' })
   } catch (err) {
     console.error('Cashout API error:', err)
