@@ -73,7 +73,7 @@ export function Navbar({ session: initialSession }: NavbarProps) {
         </div>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-2">
+        <nav className="hidden md:flex flex-1 justify-center items-center space-x-2">
           {navItems.map((item) => {
             const Icon = item.icon
             return (
@@ -118,9 +118,9 @@ export function Navbar({ session: initialSession }: NavbarProps) {
           {/* Join CS2 button, smaller and right-aligned */}
           <button
             onClick={handleJoinCs2}
-            className="hidden md:inline-flex ml-4 px-3 py-1 bg-gradient-to-r from-purple-600 to-cyan-600 text-sm text-white font-medium rounded-full shadow transform transition-transform duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-600"
+            className="hidden md:inline-flex ml-4 px-2 py-0.5 bg-gradient-to-r from-purple-600 to-cyan-600 text-xs text-white font-semibold rounded-full shadow transform transition-transform duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-600"
           >
-            Join CS2 Live
+            JOIN CS2 VIEWER GAME SERVER
           </button>
           
           {/* Mobile menu button */}
