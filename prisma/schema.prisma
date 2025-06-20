@@ -22,3 +22,12 @@ model RankRewardClaim {
   rewardAmount Float
   claimedAt    DateTime @default(now())
 }
+
+model RakebackClaim {
+  id              Int      @id @default(autoincrement())
+  rainId          String   // Rain user ID
+  rainUsername    String   // Rain username
+  claimedWagered  Float    // Total wagered at time of claim
+  claimedAmount   Float    // Rakeback amount claimed
+  claimedAt       DateTime @default(now())
+}

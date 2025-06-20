@@ -4,7 +4,7 @@ import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import Image from "next/image"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Crown, Zap, Gift, TrendingUp, Sparkles, Star, Trophy, Award } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
 import { CoinIcon } from "@/components/ui/coin-icon"
@@ -153,17 +153,50 @@ export function EnhancedRakebackSystem() {
   const { user, isLoading } = useAuth()
   const [cashoutLoading, setCashoutLoading] = useState(false)
   const [claimLoading, setClaimLoading] = useState(false)
+  const [rakebackWagered, setRakebackWagered] = useState(0)
+  const [previousClaimedWagered, setPreviousClaimedWagered] = useState(0)
 
-  // Cashout handler (demo version)
+  // Fetch new wagered and previous claimed on server
+  useEffect(() => {
+    if (!user) return
+    const fetchActive = async () => {
+      try {
+        const res = await fetch('/api/rakeback/active')
+        const data = await res.json()
+        setRakebackWagered(data.rakebackWagered)
+        setPreviousClaimedWagered(data.previousClaimedWagered)
+      } catch (err) {
+        console.error('Failed to load active rakeback', err)
+      }
+    }
+    fetchActive()
+  }, [user])
+
+  // New cashout handler: only allow if >= 10 coins
   const handleCashout = async () => {
-    if (!user || user.rakebackEarned <= 0) return
+    const newWagered = rakebackWagered - previousClaimedWagered
+    const available = currentTier ? newWagered * (currentTier.activeRakeback / 100) : 0
+    if (!user || available < 10) return
     setCashoutLoading(true)
-
-    // Simulate API call
-    setTimeout(() => {
-      // In a real implementation, this would call an API endpoint
+    try {
+      const res = await fetch('/api/rakeback/cashout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ claimedWagered: rakebackWagered, claimedAmount: available }),
+      })
+      const json = await res.json()
+      if (res.ok) {
+        alert(json.message || 'Cashout successful!')
+        window.location.reload()
+      } else {
+        alert(json.error || 'Error during cashout.')
+      }
+    } catch (err) {
+      console.error('Cashout failed', err)
+      alert('An unexpected error occurred during cashout.')
+    } finally {
       setCashoutLoading(false)
-    }, 1500)
+    }
   }
 
   // Claim handler (demo version)
@@ -260,6 +293,10 @@ export function EnhancedRakebackSystem() {
   const unclaimedRewards = ranks.filter((tier, idx) => {
     return user.totalWagered >= tier.threshold && !user.claimedRewards?.includes(tier.level)
   })
+
+  // Compute new and available
+  const newWagered = rakebackWagered - previousClaimedWagered
+  const activeRakebackEarned = currentTier ? newWagered * (currentTier.activeRakeback / 100) : 0
 
   return (
     <div className="space-y-8">
@@ -664,7 +701,7 @@ export function EnhancedRakebackSystem() {
                 <div className="flex items-center justify-center gap-2">
                   <TrendingUp className="h-6 w-6 text-green-400" />
                   <CoinIcon size={24} className="text-green-400" />
-                  <span className="text-4xl font-bold text-green-400">{user.rakebackEarned.toFixed(2)}</span>
+                  <span className="text-4xl font-bold text-green-400">{activeRakebackEarned.toFixed(2)}</span>
                 </div>
                 <div className="flex items-center justify-center gap-2">
                   <span className="text-sm text-gray-400">From {currentTier.activeRakeback}% rakeback rate</span>
@@ -680,21 +717,20 @@ export function EnhancedRakebackSystem() {
                   <span className="text-gray-400">Total Wagered:</span>
                   <span className="text-white font-semibold flex items-center gap-1">
                     <CoinIcon size={14} className="mb-0.5" />
-                    {user.totalWagered.toLocaleString()}
+                    {rakebackWagered.toLocaleString()}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-400">Available:</span>
                   <span className="text-green-400 font-semibold flex items-center gap-1">
                     <CoinIcon size={14} className="mb-0.5" />
-                    {user.rakebackEarned.toFixed(2)}
+                    {activeRakebackEarned.toFixed(2)}
                   </span>
                 </div>
               </div>
 
-              <Button
+              <Button disabled={activeRakebackEarned < 10 || cashoutLoading}
                 className="w-full bg-gradient-to-r from-cyan-600 to-green-600 hover:from-cyan-700 hover:to-green-700 text-white border-0 shadow-lg hover:shadow-cyan-500/25 transition-all duration-300 py-3"
-                disabled={!user || user.rakebackEarned <= 0 || cashoutLoading}
                 onClick={handleCashout}
               >
                 {cashoutLoading ? (
@@ -705,7 +741,7 @@ export function EnhancedRakebackSystem() {
                 ) : (
                   <div className="flex items-center gap-2">
                     <Zap className="h-5 w-5" />
-                    Cashout <CoinIcon size={16} className="mx-0.5" /> {user ? user.rakebackEarned.toFixed(2) : "0.00"}
+                    Cashout <CoinIcon size={16} className="mx-0.5" /> {activeRakebackEarned.toFixed(2)}
                   </div>
                 )}
               </Button>
