@@ -252,9 +252,16 @@ app.post("/discord/rakebackClaim", async (req, res) => {
             ],
         });
 
-        // Send message about rakeback claim
+        // Format values to two decimal places
+        const roundedClaimedAmount = Number(claimedAmount).toFixed(2);
+        const roundedClaimedWagered = Number(claimedWagered).toFixed(2);
+        // Send formatted message about rakeback claim
         await channel.send(
-            `🤑 <@${discordId}> has claimed **${claimedAmount}** coins in rakeback for **${rainUsername}**! Total wagered logged: **${claimedWagered}**.`
+            `🎉 Congratulations <@${discordId}>! You have claimed your Active Rakeback at a value of **${roundedClaimedAmount}** coins! :moneyface:\n` +
+            `Rain.gg ID: **${rainId}**\n` +
+            `Rain.gg Username: **${rainUsername}**\n` +
+            `A moderator will assist you shortly.\n` +
+            `@MeasterCS Skins, please assist with the reward distribution.`
         );
 
         return res.status(200).json({ message: "Rakeback claim sent to moderation channel." });
