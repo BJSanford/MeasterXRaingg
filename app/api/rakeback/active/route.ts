@@ -12,18 +12,20 @@ export async function GET() {
       return NextResponse.json({ rakebackWagered: 0, previousClaimedWagered: 0 })
     }
 
-    // Compute date range
-    const now = new Date()
-    const end = now.toISOString()
-    const startDate = new Date(now)
-    startDate.setDate(now.getDate() - 7)
-    const start = startDate.toISOString()
+    // Use fixed perpetual window: from June 18, 2025 through Jan 1, 2030
+    const start = '2025-06-18T00:00:00.00Z'
+    const end = '2030-01-01T00:00:00.00Z'
 
     // Fetch from Rain API
     let json: any = {}
     try {
       const external = await fetch(
-        `https://api.rain.gg/v1/affiliates/leaderboard?start_date=${encodeURIComponent(start)}&end_date=${encodeURIComponent(end)}&type=deposited`
+        `https://api.rain.gg/v1/affiliates/leaderboard?start_date=${encodeURIComponent(start)}&end_date=${encodeURIComponent(end)}&type=deposited`,
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.RAIN_API_TOKEN}`,
+          },
+        }
       )
       if (external.ok) json = await external.json()
       else console.error('Rain API status', external.status)
