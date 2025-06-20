@@ -10,6 +10,7 @@ import { useAuth } from "@/lib/auth-context"
 import { CoinIcon } from "@/components/ui/coin-icon"
 import Cookies from "js-cookie"
 import { fetchAndStoreRainId } from "../../lib/rainId-utils"
+import { useEffect } from "react"
 
 // Define types for rank
 interface Rank {
@@ -149,13 +150,11 @@ const ranks: Rank[] = [
   },
 ]
 
-const fetchWageredData = async (startDate, endDate) => {
-  const response = await fetch(
-    `https://api.rain.gg/v1/affiliates/leaderboard?start_date=${startDate}&end_date=${endDate}&type=deposited`
-  );
-  const data = await response.json();
-  return data.totalWagered;
-};
+const fetchWageredData = async (username) => {
+  const response = await fetch(`/api/user/wagered?username=${encodeURIComponent(username)}`)
+  const data = await response.json()
+  return data.wagered
+}
 
 const calculateRakeback = (wagered, rakebackRate) => {
   return (wagered * rakebackRate) / 100;
@@ -171,12 +170,12 @@ export function EnhancedRakebackSystem() {
   const [cashoutLoading, setCashoutLoading] = useState(false)
   const [claimLoading, setClaimLoading] = useState(false)
   const [rakebackEarned, setRakebackEarned] = useState(0)
+  const [totalWagered, setTotalWagered] = useState(0)
 
   useEffect(() => {
     const fetchData = async () => {
-      const startDate = "2025-06-18T00:00:00.00Z"
-      const endDate = "2035-01-01T00:00:00.00Z"
-      const wagered = await fetchWageredData(startDate, endDate)
+      const wagered = await fetchWageredData(user.username)
+      setTotalWagered(wagered)
       const rakeback = calculateRakeback(wagered, user?.currentTier?.activeRakeback || 0)
       setRakebackEarned(rakeback)
     }
@@ -725,27 +724,27 @@ export function EnhancedRakebackSystem() {
               <div className="space-y-3">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-400">Rakeback Rate:</span>
-                  <span className="text-cyan-400 font-semibold">{currentTier.activeRakeback}%</span>
+                  <span className="text-cyan-400 font-semibold">{user?.currentTier?.activeRakeback}%</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-400">Total Wagered:</span>
+                  <span className="text-gray-400">Total Wagered Since 2025-06-18:</span>
                   <span className="text-white font-semibold flex items-center gap-1">
                     <CoinIcon size={14} className="mb-0.5" />
-                    {user.totalWagered.toLocaleString()}
+                    {totalWagered.toLocaleString()}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-400">Available:</span>
                   <span className="text-green-400 font-semibold flex items-center gap-1">
                     <CoinIcon size={14} className="mb-0.5" />
-                    {user.rakebackEarned.toFixed(2)}
+                    {rakebackEarned.toFixed(2)}
                   </span>
                 </div>
               </div>
 
               <Button
                 className="w-full bg-gradient-to-r from-cyan-600 to-green-600 hover:from-cyan-700 hover:to-green-700 text-white border-0 shadow-lg hover:shadow-cyan-500/25 transition-all duration-300 py-3"
-                disabled={!user || user.rakebackEarned <= 0 || cashoutLoading}
+                disabled={!user || rakebackEarned < 10 || cashoutLoading}
                 onClick={handleCashout}
               >
                 {cashoutLoading ? (
@@ -756,7 +755,7 @@ export function EnhancedRakebackSystem() {
                 ) : (
                   <div className="flex items-center gap-2">
                     <Zap className="h-5 w-5" />
-                    Cashout <CoinIcon size={16} className="mx-0.5" /> {user ? user.rakebackEarned.toFixed(2) : "0.00"}
+                    Cashout <CoinIcon size={16} className="mx-0.5" /> {rakebackEarned.toFixed(2)}
                   </div>
                 )}
               </Button>

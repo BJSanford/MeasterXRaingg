@@ -52,7 +52,7 @@ export function LeaderboardHeader({ startDate }: { startDate: string }) {
               <p className="text-xs text-gray-400">Prize Pool</p>
               <div className="flex items-center">
                 <img src="/coin.png" alt="Coin" width={20} height={20} className="w-5 h-5 mr-1" />
-                <p className="font-medium text-white">1,500</p>
+                <p className="font-medium text-white">2,000</p>
               </div>
               <p className="text-xs text-gray-500">Total for top 8</p>
             </div>
