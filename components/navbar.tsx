@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { DiscordLoginButton } from "@/components/ui/discord-login-button"
-import { MeasterLogo } from "@/components/ui/measter-logo"
 import UserProfileDropdown from "@/components/ui/user-profile-dropdown"
 import { Home, Trophy, Gift } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
@@ -41,6 +40,12 @@ export function Navbar({ session: initialSession }: NavbarProps) {
   const handleLogin = () => {
     if (typeof window !== "undefined") {
       window.location.href = "/login" // Redirect to /login page
+    }
+  }
+
+  const handleJoinCs2 = () => {
+    if (typeof window !== "undefined") {
+      window.location.href = 'steam://connect/169.155.120.84:26940'
     }
   }
 
@@ -99,6 +104,12 @@ export function Navbar({ session: initialSession }: NavbarProps) {
         </nav>
 
         <div className="flex items-center gap-4">
+          <button
+            onClick={handleJoinCs2}
+            className="hidden md:inline-flex px-4 py-2 bg-gradient-to-r from-purple-600 to-cyan-600 text-white font-medium rounded-full shadow-xl transform transition-all duration-300 hover:scale-105 hover:from-purple-500 hover:to-cyan-500 focus:outline-none focus:ring-2 focus:ring-purple-600"
+          >
+            Join CS2 Live viewer games
+          </button>
           {isLoggedIn ? (
             <UserProfileDropdown
               username={session.user.name || "User"}
