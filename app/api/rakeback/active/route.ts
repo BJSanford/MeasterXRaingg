@@ -19,12 +19,10 @@ export async function GET() {
     // Fetch from Rain API
     let json: any = {}
     try {
+      const rainToken = process.env.RAIN_API_KEY || ''
       const external = await fetch(
-        `https://api.rain.gg/v1/affiliates/leaderboard?start_date=${encodeURIComponent(start)}&end_date=${encodeURIComponent(end)}&type=deposited`,
-        {
-          headers: {
-            Authorization: `Bearer ${process.env.RAIN_API_TOKEN}`,
-          },
+        `https://api.rain.gg/v1/affiliates/leaderboard?start_date=${encodeURIComponent(start)}&end_date=${encodeURIComponent(end)}&type=deposited`, {
+          headers: { Authorization: `Bearer ${rainToken}` },
         }
       )
       if (external.ok) json = await external.json()
