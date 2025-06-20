@@ -16,13 +16,17 @@ export async function GET() {
     const start = '2025-06-18T00:00:00.00Z'
     const end = '2030-01-01T00:00:00.00Z'
 
-    // Fetch from Rain API
+    // Support either env var name
+    const rainApiKey = process.env.RAIN_API_KEY || process.env.RAIN_API_TOKEN || ''
     let json: any = {}
     try {
-      const rainToken = process.env.RAIN_API_KEY || ''
+      // Fetch leaderboard from Rain API
       const external = await fetch(
-        `https://api.rain.gg/v1/affiliates/leaderboard?start_date=${encodeURIComponent(start)}&end_date=${encodeURIComponent(end)}&type=deposited`, {
-          headers: { Authorization: `Bearer ${rainToken}` },
+        `https://api.rain.gg/v1/affiliates/leaderboard?start_date=${encodeURIComponent(start)}&end_date=${encodeURIComponent(end)}&type=deposited`,
+        {
+          headers: {
+            'x-api-key': rainApiKey,
+          },
         }
       )
       if (external.ok) json = await external.json()
