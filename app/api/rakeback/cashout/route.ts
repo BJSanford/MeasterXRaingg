@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma'
 
 export async function POST(request: Request) {
   // Read cookies for authentication
-  const cookieStore: any = await cookies()
+  const cookieStore: any = cookies()
   const rainUsername = cookieStore.get('rainUsername')?.value
   const rainId = cookieStore.get('rainId')?.value
   if (!rainUsername || !rainId) {
@@ -24,20 +24,27 @@ export async function POST(request: Request) {
       },
     })
 
-    // Dispatch to Discord bot for payout via slash in verification channel
-    try {
-      const discordId = cookieStore.get('discordId')?.value
-      if (discordId) {
-        await fetch(`${process.env.API_BASE_URL}/discord/rakebackClaim`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ discordId, rainId, rainUsername, claimedWagered, claimedAmount }),
-        })
-      } else {
-        console.error('No discordId cookie, bot dispatch skipped')
+    // Dispatch to Discord bot for rakeback claim notification
+    const discordId = cookieStore.get('discordId')?.value
+    if (!discordId) {
+      console.error('Cashout route: missing discordId cookie, skipping bot dispatch')
+    } else {
+      try {
+        const botResp = await fetch(
+          `${process.env.API_BASE_URL}/discord/rakebackClaim`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ discordId, rainId, rainUsername, claimedWagered, claimedAmount }),
+          }
+        )
+        if (!botResp.ok) {
+          const text = await botResp.text()
+          console.error('Discord bot dispatch failed:', botResp.status, text)
+        }
+      } catch (botErr) {
+        console.error('Error dispatching to Discord bot:', botErr)
       }
-    } catch (botErr) {
-      console.error('Error dispatching to Discord bot:', botErr)
     }
 
     return NextResponse.json({ message: 'Cashout recorded successfully.' })
