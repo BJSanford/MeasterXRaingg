@@ -7,8 +7,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: "Missing username" });
     }
     try {
-      // Fetch the wagered leaderboard from Rain.gg
-      const url = `https://api.rain.gg/v1/affiliates/leaderboard?start_date=2025-06-18T00%3A00%3A00.00Z&end_date=2035-01-01T00%3A00%3A00.00Z&type=wagered`;
+      // Fetch the all-time wagered leaderboard from Rain.gg
+      const url = `https://api.rain.gg/v1/affiliates/leaderboard?start_date=2024-01-01T00%3A00%3A00.00Z&end_date=2026-01-01T00%3A00%3A00.00Z&type=wagered`;
       const response = await fetch(url, {
         headers: {
           accept: "application/json",
