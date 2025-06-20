@@ -218,29 +218,6 @@ app.post("/discord/rankRewardClaim", async (req, res) => {
     }
 });
 
-// Endpoint to handle rakeback claim notifications
-app.post('/rakeback-claim', async (req, res) => {
-    try {
-        const { discordId, rakebackAmount } = req.body;
-
-        // Fetch the Discord user
-        const guild = await client.guilds.fetch(GUILD_ID);
-        const member = await guild.members.fetch(discordId);
-
-        if (!member) {
-            return res.status(404).json({ error: 'Discord user not found' });
-        }
-
-        // Send a DM to the user
-        await member.send(`You have successfully claimed your rakeback of ${rakebackAmount} coins! 🎉`);
-
-        res.json({ message: 'Rakeback notification sent successfully' });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Failed to send rakeback notification' });
-    }
-});
-
 const PORT = process.env.PORT || 20161;
 app.listen(PORT, () => {
     console.log(`HTTP server running on port ${PORT}`);

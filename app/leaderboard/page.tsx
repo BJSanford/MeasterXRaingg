@@ -12,7 +12,7 @@ import { LeaderboardTable } from "@/components/leaderboard/leaderboard-table"
 import { TopPlayers } from "@/components/leaderboard/top-players"
 import { AnimatedBackground } from "@/components/animated-background"
 
-const PRIZE_DISTRIBUTION = [700, 350, 200, 100, 75, 50, 15, 10] // Hardcoded prize distribution
+const PRIZE_DISTRIBUTION = [1000, 500, 250, 125, 75, 35, 10, 5] // Hardcoded prize distribution
 
 export default function LeaderboardPage() {
   const [leaderboard, setLeaderboard] = useState<any[]>([])

@@ -149,22 +149,72 @@ const ranks: Rank[] = [
   },
 ]
 
+const fetchWageredData = async (startDate, endDate) => {
+  const response = await fetch(
+    `https://api.rain.gg/v1/affiliates/leaderboard?start_date=${startDate}&end_date=${endDate}&type=deposited`
+  );
+  const data = await response.json();
+  return data.totalWagered;
+};
+
+const calculateRakeback = (wagered, rakebackRate) => {
+  return (wagered * rakebackRate) / 100;
+};
+
+const resetRakeback = (currentWagered, lastClaimedWagered, rakebackRate) => {
+  const newWagered = currentWagered - lastClaimedWagered;
+  return calculateRakeback(newWagered, rakebackRate);
+};
+
 export function EnhancedRakebackSystem() {
   const { user, isLoading } = useAuth()
   const [cashoutLoading, setCashoutLoading] = useState(false)
   const [claimLoading, setClaimLoading] = useState(false)
-  const [rakeback, setRakeback] = useState({ amount: 0, wagered: 0, percentage: 0 });
+  const [rakebackEarned, setRakebackEarned] = useState(0)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const startDate = "2025-06-18T00:00:00.00Z"
+      const endDate = "2035-01-01T00:00:00.00Z"
+      const wagered = await fetchWageredData(startDate, endDate)
+      const rakeback = calculateRakeback(wagered, user?.currentTier?.activeRakeback || 0)
+      setRakebackEarned(rakeback)
+    }
+
+    if (user) {
+      fetchData()
+    }
+  }, [user])
 
   // Cashout handler (demo version)
   const handleCashout = async () => {
-    if (!user || user.rakebackEarned <= 0) return
+    if (!user || rakebackEarned < 10) return
     setCashoutLoading(true)
 
-    // Simulate API call
-    setTimeout(() => {
-      // In a real implementation, this would call an API endpoint
+    try {
+      const response = await fetch("/api/user/cashout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          amount: rakebackEarned,
+        }),
+      })
+
+      if (response.ok) {
+        const lastClaimedWagered = user.totalWagered
+        user.lastClaimedWagered = lastClaimedWagered
+        setRakebackEarned(resetRakeback(user.totalWagered, lastClaimedWagered, user.currentTier.activeRakeback))
+      } else {
+        console.error("Cashout failed.")
+      }
+    } catch (error) {
+      console.error("Error during cashout:", error)
+    } finally {
       setCashoutLoading(false)
-    }, 1500)
+    }
   }
 
   // Claim handler (demo version)
@@ -200,54 +250,6 @@ export function EnhancedRakebackSystem() {
       console.error("Error claiming reward:", error)
     }
   }
-
-  const calculateRakeback = async () => {
-    try {
-      const userId = Cookies.get("userId");
-
-      // Fetch adjusted wagered amount and rakeback percentage
-      const response = await fetch(`/api/rakeback/active?userId=${userId}`);
-      const { wageredAmount, rakebackPercentage, rakebackAmount } = await response.json();
-
-      setRakeback({
-        amount: rakebackAmount,
-        wagered: wageredAmount,
-        percentage: rakebackPercentage,
-      });
-    } catch (error) {
-      console.error("Failed to calculate rakeback:", error);
-    }
-  };
-
-  const handleClaimRakeback = async () => {
-    try {
-      const userId = Cookies.get("userId");
-      const discordId = Cookies.get("discordId");
-
-      // Send claim request to backend
-      await fetch("/api/rakeback/claim", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, claimedAmount: rakeback.amount }),
-      });
-
-      // Notify Discord bot
-      await fetch(`${process.env.API_BASE_URL}/rakeback-claim`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ discordId, rakebackAmount: rakeback.amount }),
-      });
-
-      alert("Rakeback claimed successfully!");
-    } catch (error) {
-      console.error("Failed to claim rakeback:", error);
-      alert("Failed to claim rakeback. Please try again later.");
-    }
-  };
-
-  useEffect(() => {
-    calculateRakeback();
-  }, []);
 
   if (isLoading || !user) {
     return (
@@ -713,10 +715,10 @@ export function EnhancedRakebackSystem() {
                 <div className="flex items-center justify-center gap-2">
                   <TrendingUp className="h-6 w-6 text-green-400" />
                   <CoinIcon size={24} className="text-green-400" />
-                  <span className="text-4xl font-bold text-green-400">{user.rakebackEarned.toFixed(2)}</span>
+                  <span className="text-4xl font-bold text-green-400">{rakebackEarned.toFixed(2)}</span>
                 </div>
                 <div className="flex items-center justify-center gap-2">
-                  <span className="text-sm text-gray-400">From {currentTier.activeRakeback}% rakeback rate</span>
+                  <span className="text-sm text-gray-400">From {user?.currentTier?.activeRakeback}% rakeback rate</span>
                 </div>
               </div>
 
