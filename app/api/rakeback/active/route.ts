@@ -13,7 +13,7 @@ export async function GET() {
     }
 
     // Use fixed perpetual window: from June 18, 2025 through Jan 1, 2030
-    const start = '2025-06-18T00:00:00.00Z'
+    const start = '2025-06-11T00:00:00.00Z'
     const end = '2030-01-01T00:00:00.00Z'
 
     // Support either env var name
