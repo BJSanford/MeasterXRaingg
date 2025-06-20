@@ -29,21 +29,25 @@ export async function POST(request: Request) {
     if (!discordId) {
       console.error('Cashout route: missing discordId cookie, skipping bot dispatch')
     } else {
-      try {
-        const botResp = await fetch(
-          `${process.env.API_BASE_URL}/discord/rakebackClaim`,
-          {
+      // Determine bot service URL
+      const baseBotUrl = process.env.DISCORD_BOT_URL || process.env.API_BASE_URL || ''
+      if (!baseBotUrl) {
+        console.error('Cashout route: missing DISCORD_BOT_URL or API_BASE_URL env var')
+      } else {
+        const url = baseBotUrl.replace(/\/+$/, '') + '/discord/rakebackClaim'
+        try {
+          const botResp = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ discordId, rainId, rainUsername, claimedWagered, claimedAmount }),
+          })
+          if (!botResp.ok) {
+            const text = await botResp.text()
+            console.error('Discord bot dispatch failed:', botResp.status, text)
           }
-        )
-        if (!botResp.ok) {
-          const text = await botResp.text()
-          console.error('Discord bot dispatch failed:', botResp.status, text)
+        } catch (botErr) {
+          console.error('Error dispatching to Discord bot:', botErr)
         }
-      } catch (botErr) {
-        console.error('Error dispatching to Discord bot:', botErr)
       }
     }
 
