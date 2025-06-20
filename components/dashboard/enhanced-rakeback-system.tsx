@@ -162,9 +162,13 @@ export function EnhancedRakebackSystem() {
     const fetchActive = async () => {
       try {
         const res = await fetch('/api/rakeback/active')
+        if (!res.ok) {
+          console.error('Failed to load active rakeback:', res.status)
+          return
+        }
         const data = await res.json()
-        setRakebackWagered(data.rakebackWagered)
-        setPreviousClaimedWagered(data.previousClaimedWagered)
+        setRakebackWagered(data.rakebackWagered ?? 0)
+        setPreviousClaimedWagered(data.previousClaimedWagered ?? 0)
       } catch (err) {
         console.error('Failed to load active rakeback', err)
       }
