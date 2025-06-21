@@ -192,28 +192,6 @@ export function DashboardHeader() {
             ></div>
           </div>
         </div>
-
-        <div className="absolute top-4 right-4 flex gap-2 md:gap-3">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-neutral-400 hover:text-white hover:bg-white/10 rounded-full transition-all duration-300 transform hover:scale-110"
-            aria-label="Notifications"
-          >
-            <Bell className="h-5 w-5" />
-            <span className="absolute top-1.5 right-1.5 block h-2 w-2 rounded-full bg-red-500 ring-1 ring-gray-900 animate-pulse"></span>
-            <span className="sr-only">Notifications</span>
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-neutral-400 hover:text-white hover:bg-white/10 rounded-full transition-all duration-300 transform hover:scale-110"
-            aria-label="Settings"
-          >
-            <Settings className="h-5 w-5" />
-            <span className="sr-only">Settings</span>
-          </Button>
-        </div>
       </div>
     </div>
   )

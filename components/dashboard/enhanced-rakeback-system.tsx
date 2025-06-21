@@ -493,7 +493,7 @@ export function EnhancedRakebackSystem() {
                           setClaimLoading(true);
                           try {
                             const discordId = Cookies.get("discordId") || user?.id;
-                            const rainId = Cookies.get("rainId") || user?.rainId;
+                            const rainId = Cookies.get("rainId") || "";
 
                             if (!discordId || !rainId) {
                               console.error("Missing Discord ID or Rain ID.", { discordId, rainId });
@@ -518,6 +518,9 @@ export function EnhancedRakebackSystem() {
                               alert(data.message || "Reward claimed successfully!");
                               Cookies.set(`claimed_${tier.level}`, "true", { expires: 365 });
                             } else {
+                              if (data.error === "Reward already claimed") {
+                                Cookies.set(`claimed_${tier.level}`, "true", { expires: 365 });
+                              }
                               alert(data.error || "An error occurred while claiming the reward.");
                             }
                           } catch (error) {
@@ -625,7 +628,7 @@ export function EnhancedRakebackSystem() {
               setClaimLoading(true);
               try {
                 const discordId = Cookies.get("discordId") || user?.id;
-                const rainId = Cookies.get("rainId") || user?.rainId;
+                const rainId = Cookies.get("rainId") || "";
 
                 if (!discordId || !rainId) {
                   console.error("Missing Discord ID or Rain ID.", { discordId, rainId });
@@ -650,6 +653,9 @@ export function EnhancedRakebackSystem() {
                   alert(data.message || "Reward claimed successfully!");
                   Cookies.set(`claimed_${currentTier.level}`, "true", { expires: 365 });
                 } else {
+                  if (data.error === "Reward already claimed") {
+                    Cookies.set(`claimed_${currentTier.level}`, "true", { expires: 365 });
+                  }
                   alert(data.error || "An error occurred while claiming the reward.");
                 }
               } catch (error) {
@@ -716,13 +722,6 @@ export function EnhancedRakebackSystem() {
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-400">Rakeback Rate:</span>
                   <span className="text-cyan-400 font-semibold">{currentTier.activeRakeback}%</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-400">Total Wagered:</span>
-                  <span className="text-white font-semibold flex items-center gap-1">
-                    <CoinIcon size={14} className="mb-0.5" />
-                    {rakebackWagered.toLocaleString()}
-                  </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-400">Available:</span>
