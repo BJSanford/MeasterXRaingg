@@ -37,7 +37,7 @@ export async function GET() {
 
     // Determine wagered
     const entry = json.results?.find((e: any) => e.username?.toLowerCase() === rainUsername.toLowerCase())
-    const rakebackWagered = entry?.deposited ?? 0
+    const rakebackWagered = entry?.wagered ?? 0
 
     // Get previous claim
     const lastClaim = await (prisma as any).rakebackClaim.findFirst({
