@@ -75,17 +75,17 @@ export default function LinkAccountPage() {
       const res = await fetch(`/api/verification/status?discordId=${session?.user?.id}`);
       const data = await res.json();
       if (data.verified) {
-        // Fetch latest user info and update localStorage
-        const dashRes = await fetch("/api/user/dashboard");
-        if (dashRes.ok) {
-          const dashData = await dashRes.json();
-          if (dashData.rainUsername) {
-
-            document.cookie = `discordUsername=${dashData.discordUsername}; path=/`;
-            document.cookie = `rainUsername=${dashData.rainUsername}; path=/`;
-            document.cookie = `rainId=${dashData.rainId || ''}; path=/`;
-            document.cookie = `verified=${dashData.verified ? "true" : "false"}; path=/`;
-          }
+        // Fetch updated authenticaton session to get fresh user info
+        const sessionRes = await fetch('/api/auth/session');
+        if (sessionRes.ok) {
+          const sessionData = await sessionRes.json();
+          const user = sessionData.user || {};
+          // Set cookies similar to login flow
+          document.cookie = `discordUsername=${user.name || ''}; path=/`;
+          document.cookie = `discordId=${user.id || ''}; path=/`;
+          document.cookie = `rainUsername=${user.rainUsername || ''}; path=/`;
+          document.cookie = `rainId=${user.rainId || ''}; path=/`;
+          document.cookie = `verified=${user.verified ? 'true' : 'false'}; path=/`;
         }
         router.push("/dashboard");
       } else {
