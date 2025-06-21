@@ -78,25 +78,25 @@ export default function HomePage() {
                     <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white">
                       Ready to Dominate the Leaderboard?
                     </h2>
-                    <p className="text-gray-200 text-lg mb-8 max-w-2xl mx-auto">
-                      Join thousands of players competing for the top spot. Use code MEASTER and start your climb to
-                      victory today!
+                    <p className="text-gray-200 text-lg mb-4 max-w-2xl mx-auto">
+                      Join hundreds of players competing for the top spot. Use code MEASTER and start your climb to victory today!
                     </p>
+                    {/* Promotional Banner */}
+                    <div className="max-w-2xl mx-auto mb-8">
+                      <p className="text-white font-bold text-lg">
+                        Thinking about switching to code MEASTER? First-time depositors get a 10% deposit bonus!
+                      </p>
+                      <p className="text-gray-400 text-sm">
+                        10% depo bonus is only up to 100 coins
+                      </p>
+                    </div>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                       <Button
                         size="lg"
                         className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white border-0 text-lg px-8 py-4"
                         asChild
                       >
-                        <Link href="/leaderboard">Join Competition</Link>
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="lg"
-                        className="border-white/30 text-white hover:bg-white/10 text-lg px-8 py-4 bg-white/5 backdrop-blur-sm"
-                        asChild
-                      >
-                        <Link href="/about">Learn More</Link>
+                        <Link href="https://rain.gg/r/measter" target="_blank">Join Competition</Link>
                       </Button>
                     </div>
                   </div>

@@ -43,12 +43,6 @@ export function Navbar({ session: initialSession }: NavbarProps) {
     }
   }
 
-  const handleJoinCs2 = () => {
-    if (typeof window !== "undefined") {
-      window.location.href = 'steam://connect/169.155.120.84:26940'
-    }
-  }
-
   const navItems = [
     { name: "Home", href: "/", icon: Home },
     { name: "Leaderboard", href: "/leaderboard", icon: Trophy },
@@ -114,14 +108,6 @@ export function Navbar({ session: initialSession }: NavbarProps) {
           ) : (
             <DiscordLoginButton onClick={handleLogin} />
           )}
-          
-          {/* Join CS2 button, smaller and right-aligned */}
-          <button
-            onClick={handleJoinCs2}
-            className="hidden md:inline-flex ml-4 px-2 py-0.5 bg-gradient-to-r from-purple-600 to-cyan-600 text-xs text-white font-semibold rounded-full shadow transform transition-transform duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-purple-600"
-          >
-            JOIN CS2 VIEWER GAME SERVER
-          </button>
           
           {/* Mobile menu button */}
           <Button

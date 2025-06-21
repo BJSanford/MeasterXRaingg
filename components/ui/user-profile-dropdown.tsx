@@ -190,6 +190,29 @@ const UserProfileDropdown: React.FC<UserProfileDropdownProps> = ({
                       </Menu.Item>
                     )}
 
+                    {/* Join CS2 Viewer Game Server */}
+                    <Menu.Item>
+                      {({ active }) => (
+                        <button
+                          onClick={() => { if (typeof window !== 'undefined') window.location.href = 'steam://connect/169.155.120.84:26940' }}
+                          className={cn(
+                            "group flex items-center w-full px-4 py-3 text-sm font-medium rounded-xl mx-1 transition-all duration-200",
+                            active
+                              ? "bg-gradient-to-r from-purple-500/20 to-cyan-500/20 text-purple-700 transform scale-[1.02]"
+                              : "text-gray-700 hover:bg-gray-50"
+                          )}
+                        >
+                          <ExternalLink
+                            className={cn(
+                              "mr-3 h-4 w-4 transition-all duration-200",
+                              active ? "text-purple-600" : "text-gray-400"
+                            )}
+                          />
+                          Join CS2 Viewer Game Server
+                        </button>
+                      )}
+                    </Menu.Item>
+
                     <Menu.Item>
                       {({ active }) => (
                         <button
