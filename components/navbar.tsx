@@ -57,7 +57,7 @@ export function Navbar({ session: initialSession }: NavbarProps) {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-gray-800 bg-black/80 backdrop-blur-md">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
+      <div className="container mx-auto relative flex h-16 items-center justify-between px-4">
         <div className="flex items-center">
           <Link href="/" className="flex items-center gap-3 group">
             {/* Updated the logo to display within a circular frame */}
@@ -73,7 +73,7 @@ export function Navbar({ session: initialSession }: NavbarProps) {
         </div>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex flex-1 justify-center items-center space-x-2">
+        <nav className="hidden md:flex absolute left-0 right-0 justify-center items-center space-x-2">
           {navItems.map((item) => {
             const Icon = item.icon
             return (
