@@ -6,11 +6,7 @@ import Image from "next/image"
 import { Star, Trophy, Zap } from "lucide-react"
 
 // Helper to format large numbers
-const formatNumber = (num: number) => {
-  if (num >= 1_000_000) return (num / 1_000_000).toFixed(1) + "M"
-  if (num >= 1_000) return (num / 1_000).toFixed(1) + "K"
-  return num.toLocaleString()
-}
+const formatNumber = (num: number) => num.toLocaleString()
 
 export function TopPlayers({ topPlayers }: { topPlayers: any[] }) {
   const podiumPositions = [
